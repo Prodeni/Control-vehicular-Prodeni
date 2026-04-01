@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+  <title>PRODENI · Inspección Vehicular</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1B5E20">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <style>
+    :root {
+      --verde-deep: #1B5E20;
+      --verde-corp: #2E7D32;
+      --verde-mid: #388E3C;
+      --verde-light: #66BB6A;
+      --verde-pale: #E8F5E9;
+      --amarillo: #F9A825;
+      --rojo: #C62828;
+      --bg: #F0F4F0;
+      --border: #D8E8D8;
+      --text: #1A2E1A;
+      --text-soft: #5A7A5A;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* HEADER */
+    .header {
+      background: linear-gradient(135deg, var(--verde-corp), var(--verde-deep));
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .header-brand { display: flex; align-items: center; gap: 10px; }
+    .header-name { font-size: 1rem; font-weight: 800; color: white; letter-spacing: 1.5px; }
+    .header-slogan { font-size: 0.6rem; font-weight: 400; color: rgba(255,255,255,0.75); letter-spacing: 1px; }
+    .header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .conn-badge { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; background: rgba(255,255,255,0.15); color: white; }
+    .conn-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .conn-dot.online { background: #A5D6A7; animation: pulse 2s infinite; }
+    .conn-dot.offline { background: #EF9A9A; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .user-chip { background: rgba(255,255,255,0.12); border-radius: 20px; padding: 5px 10px; display: flex; align-items: center; gap: 6px; }
+    .user-ava { width: 28px; height: 28px; border-radius: 50%; background: var(--amarillo); color: var(--verde-deep); font-weight: 800; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
+    .btn-exit { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 6px 12px; border-radius: 8px; font-family: inherit; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+
+    /* MAIN */
+    .main { max-width: 1200px; margin: 0 auto; padding: 16px; }
+    .form-card { background: white; border-radius: 20px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
+    .form-card-header { background: var(--verde-pale); padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+    .form-card-icon { width: 40px; height: 40px; background: var(--verde-corp); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; }
+    .form-card-title { font-weight: 700; font-size: 1rem; }
+    .form-card-sub { font-size: 0.7rem; color: var(--text-soft); margin-top: 2px; }
+    .form-body { padding: 20px; }
+
+    /* GRIDS */
+    .grid-2, .grid-3, .grid-4 { display: grid; gap: 16px; margin-bottom: 20px; }
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    .col-span-2 { grid-column: span 2; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 0.7rem; font-weight: 700; color: var(--verde-corp); text-transform: uppercase; letter-spacing: 1px; }
+    .field input, .field select, .field textarea {
+      padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 12px;
+      font-family: inherit; font-size: 0.85rem; background: #fefefe;
+      outline: none; transition: all 0.2s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--verde-mid); box-shadow: 0 0 0 2px rgba(56,142,60,0.1); }
+
+    /* ESTADO (OK/REG/MAL) */
+    .estado-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .estado-item { background: var(--bg); padding: 10px; border-radius: 12px; }
+    .estado-item label { font-weight: 600; font-size: 0.75rem; display: block; margin-bottom: 6px; }
+    .estado-btns { display: flex; gap: 6px; }
+    .estado-btn { flex: 1; padding: 6px; border: 1px solid var(--border); background: white; border-radius: 20px; font-size: 0.7rem; font-weight: 600; cursor: pointer; text-align: center; }
+    .estado-btn.ok { background: #1e6f3f; color: white; border-color: #1e6f3f; }
+    .estado-btn.reg { background: #c97e00; color: white; border-color: #c97e00; }
+    .estado-btn.mal { background: #b33; color: white; border-color: #b33; }
+
+    /* TABLA MANTENIMIENTO */
+    .mantto-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.8rem; }
+    .mantto-table th, .mantto-table td { padding: 8px 6px; border: 1px solid var(--border); vertical-align: middle; }
+    .mantto-table th { background: var(--bg); font-size: 0.7rem; text-transform: uppercase; }
+    .mantto-table input { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid var(--border); }
+
+    /* FOTOS */
+    .foto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .foto-slot { border: 1px dashed var(--border); border-radius: 12px; aspect-ratio: 4/3; background: var(--bg); position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .foto-slot input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .foto-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .foto-slot-label { font-size: 0.7rem; color: var(--text-soft); text-align: center; pointer-events: none; }
+
+    /* GPS */
+    .gps-block { background: #F8FBF8; border: 2px dashed var(--border); border-radius: 14px; padding: 16px; margin-bottom: 20px; }
+    .gps-block.captured { border-color: var(--verde-light); background: var(--verde-pale); border-style: solid; }
+    .gps-status-row { display: flex; align-items: center; gap: 12px; }
+    .gps-status-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+    .gps-label { font-weight: 700; font-size: 0.85rem; }
+    .gps-coords { font-size: 0.7rem; color: var(--text-soft); font-family: monospace; }
+    .gps-badge { display: none; background: #E8F5E9; color: var(--verde-corp); border-radius: 8px; padding: 4px 10px; font-size: 0.7rem; font-weight: 700; }
+
+    /* BOTONES */
+    .btn-primary { background: linear-gradient(135deg, var(--verde-corp), var(--verde-deep)); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 700; cursor: pointer; width: 100%; font-size: 0.9rem; }
+    .btn-secondary { background: white; border: 1.5px solid var(--border); padding: 10px 16px; border-radius: 12px; font-weight: 600; cursor: pointer; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--border); border-radius: 12px; padding: 8px 12px; cursor: pointer; }
+    .btn-teal { background: #00796B; color: white; border: none; padding: 8px 12px; border-radius: 12px; cursor: pointer; }
+
+    /* TOAST */
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px); background: var(--verde-deep); color: white; padding: 10px 18px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; z-index: 9999; transition: transform 0.3s; max-width: 90vw; }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.success { background: var(--verde-corp); }
+    .toast.error { background: var(--rojo); }
+    .toast.warn { background: #E65100; }
+
+    @media (max-width: 768px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .col-span-2 { grid-column: span 1; }
+      .form-body { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-brand">
+    <div>
+      <div class="header-name">PRODENI · Control Vehicular</div>
+      <div class="header-slogan">Inspección de flota</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="conn-badge">
+      <div class="conn-dot" id="connDot"></div>
+      <span id="connTxt">Online</span>
+    </div>
+    <div class="user-chip">
+      <div class="user-ava" id="userAva">T</div>
+      <span id="userName">Técnico</span>
+    </div>
+    <button class="btn-exit" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Salir</button>
+  </div>
+</header>
+
+<main class="main">
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-card-icon"><i class="fas fa-clipboard-list"></i></div>
+      <div>
+        <div class="form-card-title">Inspección Vehicular</div>
+        <div class="form-card-sub">Registro completo de estado y mantenimiento</div>
+      </div>
+    </div>
+    <div class="form-body">
+      <form id="formInspeccion">
+        <!-- ========== DATOS DEL VEHÍCULO ========== -->
+        <div class="grid-2">
+          <div class="field"><label>Folio</label><input type="text" id="folio" value="PRODENI-" + new Date().toISOString().slice(0,10) + "-001" readonly></div>
+          <div class="field"><label>Fecha</label><input type="date" id="fechaInspeccion"></div>
+        </div>
+        <div class="grid-4">
+          <div class="field"><label>Marca</label><select id="marca"><option>RAM</option><option>Ford</option><option>Chevrolet</option><option>Nissan</option></select></div>
+          <div class="field"><label>Modelo</label><input type="text" id="modelo" placeholder="Ej. RAM 700"></div>
+          <div class="field"><label>Versión</label><input type="text" id="version" placeholder="Ej. Work"></div>
+          <div class="field"><label>Año</label><input type="number" id="anio" placeholder="2024"></div>
+        </div>
+        <div class="grid-4">
+          <div class="field"><label>Color</label><input type="text" id="color" placeholder="Blanco"></div>
+          <div class="field"><label>Placas</label><input type="text" id="placas" placeholder="ABC-123-X"></div>
+          <div class="field"><label>NIV (VIN)</label><input type="text" id="vin" placeholder="3C6UR5DL0MG123456"></div>
+          <div class="field"><label>Económico</label><input type="text" id="economico" placeholder="U-001"></div>
+        </div>
+        <div class="grid-3">
+          <div class="field"><label>Km actual</label><input type="number" id="kmActual" placeholder="0"></div>
+          <div class="field"><label>Km último servicio</label><input type="number" id="kmUltimoServ"></div>
+          <div class="field"><label>Km próximo servicio</label><input type="number" id="kmProxServ"></div>
+        </div>
+        
+        <!-- ========== RESPONSABLE ========== -->
+        <div class="grid-3">
+          <div class="field col-span-2"><label>Conductor responsable</label><input type="text" id="conductor" placeholder="Nombre completo"></div>
+          <div class="field"><label>No. empleado</label><input type="text" id="empleado"></div>
+        </div>
+        <div class="grid-3">
+          <div class="field"><label>Teléfono</label><input type="tel" id="telefono"></div>
+          <div class="field"><label>Licencia</label><input type="text" id="licencia"></div>
+          <div class="field"><label>Ruta asignada</label><input type="text" id="ruta"></div>
+        </div>
+
+        <!-- ========== ESTADO VEHÍCULO (OK/REG/MAL) ========== -->
+        <div id="estadoContainer"></div>
+
+        <!-- ========== MANTENIMIENTO PREVENTIVO ========== -->
+        <div class="grid-2">
+          <div class="field"><label>Observaciones de mantenimiento</label><textarea id="obsMantto" rows="2" placeholder="Detalles de servicios realizados..."></textarea></div>
+          <div class="field"><label>Próximo mantenimiento (recomendación)</label><input type="text" id="recomendacion" placeholder="Ej. cambio aceite en 5000km"></div>
+        </div>
+
+        <!-- ========== GPS ========== -->
+        <div class="gps-block" id="gpsBlock">
+          <div class="gps-status-row">
+            <div class="gps-status-icon"><i class="fas fa-location-crosshairs"></i></div>
+            <div style="flex:1;">
+              <div class="gps-label" id="gpsLabel">Ubicación no capturada</div>
+              <div class="gps-coords" id="gpsCoords">Presiona para capturar GPS</div>
+            </div>
+            <div class="gps-badge" id="gpsBadge">✓</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <button type="button" class="btn-teal" id="btnGps" onclick="capturarGPS()" style="flex:1;"><i class="fas fa-satellite-dish"></i> Capturar GPS</button>
+            <button type="button" class="btn-outline" id="btnMapa" onclick="toggleMapa()" style="flex:1;"><i class="fas fa-map-marker-alt"></i> Mapa manual</button>
+          </div>
+          <div id="mapaContainer" style="display:none; margin-top: 12px;">
+            <div id="mapa" style="height: 220px; border-radius: 12px; border: 2px solid var(--verde-corp);"></div>
+            <button type="button" class="btn-secondary" style="margin-top: 8px; width:100%;" onclick="confirmarMapa()">Usar esta ubicación</button>
+          </div>
+        </div>
+
+        <!-- ========== FOTOS ========== -->
+        <div id="fotosContainer"></div>
+
+        <!-- ========== NOTAS ========== -->
+        <div class="field"><label>Observaciones generales</label><textarea id="notasGenerales" rows="3" placeholder="Detalles adicionales, novedades, etc."></textarea></div>
+
+        <!-- ========== BOTONES ========== -->
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
+          <button type="submit" class="btn-primary" id="btnEnviar"><i class="fas fa-save"></i> Guardar Inspección</button>
+          <button type="button" class="btn-secondary" onclick="limpiarFormulario()">Limpiar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="pendingInfo" style="background: #FFF8E1; border-radius: 12px; padding: 12px; font-size: 0.75rem; display: none;">
+    <i class="fas fa-clock"></i> Tienes <span id="pendingCount">0</span> inspecciones pendientes de sincronizar.
+    <button onclick="sincronizarTodo()" style="background: var(--verde-corp); color: white; border: none; border-radius: 8px; padding: 4px 12px; margin-left: 8px;">Sincronizar ahora</button>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+// ============================================================
+// CONFIGURACIÓN
+// ============================================================
+const SCRIPT_URL = localStorage.getItem('prodeni_script_url') || 
+  'https://script.google.com/macros/s/AKfycbzVdwSxXOZ7Q3jeNGf1aWoAhlYaTCyz1FXjrrpAGGU6bV1OappWIuymBXjghuJmaN4V/exec';
+
+let currentUser = null;
+let gpsData = null;
+let leafletMap = null;
+let leafletMarker = null;
+
+// ============================================================
+// SESIÓN
+// ============================================================
+function getSession() {
+  try {
+    const raw = localStorage.getItem('prodeni_session');
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+function logout() {
+  localStorage.removeItem('prodeni_session');
+  window.location.href = 'index.html';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', async () => {
+  currentUser = getSession();
+  if (!currentUser) {
+    window.location.href = 'index.html';
+    return;
+  }
+  
+  document.getElementById('userAva').textContent = currentUser.username[0].toUpperCase();
+  document.getElementById('userName').textContent = currentUser.username;
+  document.getElementById('fechaInspeccion').value = new Date().toISOString().split('T')[0];
+  
+  generarFolio();
+  actualizarEstadoConexion();
+  cargarComponentesEstado();
+  cargarFotosSlots();
+  cargarPendientes();
+  
+  window.addEventListener('online', () => { actualizarEstadoConexion(); sincronizarTodo(); });
+  window.addEventListener('offline', actualizarEstadoConexion);
+  
+  document.getElementById('formInspeccion').addEventListener('submit', guardarInspeccion);
+});
+
+function generarFolio() {
+  const hoy = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  const random = Math.floor(Math.random() * 1000);
+  document.getElementById('folio').value = `PRODENI-${hoy}-${random}`;
+}
+
+function actualizarEstadoConexion() {
+  const online = navigator.onLine;
+  const dot = document.getElementById('connDot');
+  const txt = document.getElementById('connTxt');
+  dot.className = `conn-dot ${online ? 'online' : 'offline'}`;
+  txt.textContent = online ? 'Online' : 'Offline';
+}
+
+// ============================================================
+// COMPONENTES DE ESTADO (OK/REG/MAL)
+// ============================================================
+const categoriasEstado = {
+  carroceria: ['Capó','Parabrisas','Puertas','Defensas','Pintura','Espejos','Luces'],
+  llantas: ['Delantera Izq','Delantera Der','Trasera Izq','Trasera Der','Refacción'],
+  motor: ['Aceite motor','Refrigerante','Batería','Frenos','Suspensión'],
+  interior: ['Tablero','Asientos','Cinturones','Aire acondicionado','Radio/GPS']
+};
+
+function cargarComponentesEstado() {
+  let html = '';
+  for (const [cat, items] of Object.entries(categoriasEstado)) {
+    html += `<div style="margin-top: 16px;"><strong style="color: var(--verde-corp);">${cat.toUpperCase()}</strong><div class="estado-grid">`;
+    items.forEach(item => {
+      html += `<div class="estado-item">
+        <label>${item}</label>
+        <div class="estado-btns">
+          <button type="button" class="estado-btn" onclick="setEstado(this,'ok')">OK</button>
+          <button type="button" class="estado-btn" onclick="setEstado(this,'reg')">REG</button>
+          <button type="button" class="estado-btn" onclick="setEstado(this,'mal')">MAL</button>
+        </div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+  document.getElementById('estadoContainer').innerHTML = html;
+}
+
+window.setEstado = function(btn, tipo) {
+  const parent = btn.closest('.estado-btns');
+  parent.querySelectorAll('.estado-btn').forEach(b => b.classList.remove('ok','reg','mal'));
+  btn.classList.add(tipo);
+};
+
+function obtenerEstados() {
+  const estados = {};
+  document.querySelectorAll('.estado-item').forEach(item => {
+    const label = item.querySelector('label').innerText;
+    const active = item.querySelector('.estado-btn.ok, .estado-btn.reg, .estado-btn.mal');
+    estados[label] = active ? active.innerText : 'Pendiente';
+  });
+  return estados;
+}
+
+// ============================================================
+// FOTOS SLOTS
+// ============================================================
+const fotosSlots = ['Frente', 'Lateral Izq', 'Lateral Der', 'Trasera', 'Motor', 'Interior'];
+
+function cargarFotosSlots() {
+  let html = '<div class="foto-grid">';
+  fotosSlots.forEach(nombre => {
+    html += `<div class="foto-slot" onclick="this.querySelector('input').click()">
+      <input type="file" accept="image/*" onchange="previewFoto(this)">
+      <img>
+      <div class="foto-slot-label"><i class="fas fa-camera"></i> ${nombre}</div>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('fotosContainer').innerHTML = html;
+}
+
+window.previewFoto = function(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    const slot = input.closest('.foto-slot');
+    const img = slot.querySelector('img');
+    const label = slot.querySelector('.foto-slot-label');
+    reader.onload = e => {
+      img.src = e.target.result;
+      img.style.display = 'block';
+      if (label) label.style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+};
+
+function obtenerFotosBase64() {
+  const fotos = [];
+  document.querySelectorAll('.foto-slot img').forEach(img => {
+    if (img.src && img.src.startsWith('data:image')) fotos.push(img.src);
+  });
+  return fotos;
+}
+
+// ============================================================
+// GPS
+// ============================================================
+window.capturarGPS = function() {
+  if (!navigator.geolocation) {
+    toast('GPS no disponible en este dispositivo', 'error');
+    return;
+  }
+  
+  const btn = document.getElementById('btnGps');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Capturando...';
+  
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      gpsData = {
+        lat: pos.coords.latitude,
+        lon: pos.coords.longitude,
+        accuracy: Math.round(pos.coords.accuracy),
+        timestamp: new Date().toISOString()
+      };
+      actualizarUI_GPS();
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Re-capturar GPS';
+      toast(`Ubicación capturada ±${gpsData.accuracy}m`, 'success');
+    },
+    err => {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-satellite-dish"></i> Capturar GPS';
+      toast('Error al obtener GPS: ' + (err.message || 'intenta de nuevo'), 'error');
+    },
+    { enableHighAccuracy: true, timeout: 15000 }
+  );
+};
+
+function actualizarUI_GPS() {
+  if (!gpsData) return;
+  document.getElementById('gpsLabel').textContent = 'Ubicación capturada';
+  document.getElementById('gpsCoords').textContent = `${gpsData.lat.toFixed(6)}, ${gpsData.lon.toFixed(6)} · ±${gpsData.accuracy}m`;
+  document.getElementById('gpsBadge').style.display = 'block';
+  document.getElementById('gpsBlock').classList.add('captured');
+}
+
+let mapaAbierto = false;
+window.toggleMapa = function() {
+  const container = document.getElementById('mapaContainer');
+  mapaAbierto = !mapaAbierto;
+  container.style.display = mapaAbierto ? 'block' : 'none';
+  
+  if (mapaAbierto && !leafletMap) {
+    const lat = gpsData ? gpsData.lat : 19.4326;
+    const lon = gpsData ? gpsData.lon : -99.1332;
+    leafletMap = L.map('mapa').setView([lat, lon], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(leafletMap);
+    leafletMarker = L.marker([lat, lon], { draggable: true }).addTo(leafletMap);
+    leafletMarker.on('dragend', () => {
+      const pos = leafletMarker.getLatLng();
+      document.getElementById('mapa').setAttribute('data-lat', pos.lat);
+      document.getElementById('mapa').setAttribute('data-lon', pos.lng);
+    });
+    leafletMap.on('click', e => {
+      leafletMarker.setLatLng(e.latlng);
+      document.getElementById('mapa').setAttribute('data-lat', e.latlng.lat);
+      document.getElementById('mapa').setAttribute('data-lon', e.latlng.lng);
+    });
+  }
+};
+
+window.confirmarMapa = function() {
+  const lat = parseFloat(document.getElementById('mapa').getAttribute('data-lat'));
+  const lon = parseFloat(document.getElementById('mapa').getAttribute('data-lon'));
+  if (!isNaN(lat) && !isNaN(lon)) {
+    gpsData = { lat, lon, accuracy: 0, timestamp: new Date().toISOString(), manual: true };
+    actualizarUI_GPS();
+    document.getElementById('mapaContainer').style.display = 'none';
+    mapaAbierto = false;
+    toast('Ubicación manual confirmada', 'success');
+  } else {
+    toast('Selecciona un punto en el mapa primero', 'warn');
+  }
+};
+
+// ============================================================
+// GUARDAR INSPECCIÓN
+// ============================================================
+async function guardarInspeccion(e) {
+  e.preventDefault();
+  
+  const datos = {
+    action: 'saveData',
+    folio: document.getElementById('folio').value,
+    fecha: document.getElementById('fechaInspeccion').value,
+    marca: document.getElementById('marca').value,
+    modelo: document.getElementById('modelo').value,
+    version: document.getElementById('version').value,
+    anio: document.getElementById('anio').value,
+    color: document.getElementById('color').value,
+    placas: document.getElementById('placas').value,
+    vin: document.getElementById('vin').value,
+    economico: document.getElementById('economico').value,
+    kmActual: document.getElementById('kmActual').value,
+    kmUltimoServ: document.getElementById('kmUltimoServ').value,
+    kmProxServ: document.getElementById('kmProxServ').value,
+    conductor: document.getElementById('conductor').value,
+    empleado: document.getElementById('empleado').value,
+    telefono: document.getElementById('telefono').value,
+    licencia: document.getElementById('licencia').value,
+    ruta: document.getElementById('ruta').value,
+    estados: JSON.stringify(obtenerEstados()),
+    obsMantto: document.getElementById('obsMantto').value,
+    recomendacion: document.getElementById('recomendacion').value,
+    notasGenerales: document.getElementById('notasGenerales').value,
+    lat: gpsData?.lat || null,
+    lon: gpsData?.lon || null,
+    gps_accuracy: gpsData?.accuracy || null,
+    fotos: obtenerFotosBase64(),
+    usuario: currentUser.username,
+    timestamp: Date.now()
+  };
+  
+  const btn = document.getElementById('btnEnviar');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+  
+  if (navigator.onLine) {
+    try {
+      const result = await enviarAlServidor(datos);
+      if (result.success !== false) {
+        toast('Inspección guardada exitosamente ✓', 'success');
+        limpiarFormulario();
+      } else {
+        throw new Error('Error del servidor');
+      }
+    } catch(err) {
+      guardarLocalmente(datos);
+    }
+  } else {
+    guardarLocalmente(datos);
+  }
+  
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fas fa-save"></i> Guardar Inspección';
+}
+
+async function enviarAlServidor(datos) {
+  const url = `${SCRIPT_URL}?action=saveData&${new URLSearchParams(datos).toString()}`;
+  const res = await fetch(url, { method: 'GET', cache: 'no-store' });
+  return await res.json();
+}
+
+function guardarLocalmente(datos) {
+  const pendientes = JSON.parse(localStorage.getItem('inspecciones_pendientes') || '[]');
+  pendientes.push(datos);
+  localStorage.setItem('inspecciones_pendientes', JSON.stringify(pendientes));
+  cargarPendientes();
+  toast('Sin conexión. Guardado localmente. Se sincronizará automáticamente.', 'warn');
+  limpiarFormulario();
+}
+
+function limpiarFormulario() {
+  document.getElementById('formInspeccion').reset();
+  document.getElementById('fechaInspeccion').value = new Date().toISOString().split('T')[0];
+  generarFolio();
+  gpsData = null;
+  document.getElementById('gpsLabel').textContent = 'Ubicación no capturada';
+  document.getElementById('gpsCoords').textContent = 'Presiona para capturar GPS';
+  document.getElementById('gpsBadge').style.display = 'none';
+  document.getElementById('gpsBlock').classList.remove('captured');
+  cargarComponentesEstado();
+  cargarFotosSlots();
+  toast('Formulario limpiado', 'info');
+}
+
+// ============================================================
+// SINCRONIZACIÓN OFFLINE
+// ============================================================
+function cargarPendientes() {
+  const pendientes = JSON.parse(localStorage.getItem('inspecciones_pendientes') || '[]');
+  const pendingInfo = document.getElementById('pendingInfo');
+  const pendingCount = document.getElementById('pendingCount');
+  
+  if (pendientes.length > 0) {
+    pendingInfo.style.display = 'block';
+    pendingCount.textContent = pendientes.length;
+  } else {
+    pendingInfo.style.display = 'none';
+  }
+}
+
+window.sincronizarTodo = async function() {
+  const pendientes = JSON.parse(localStorage.getItem('inspecciones_pendientes') || '[]');
+  if (pendientes.length === 0) return;
+  
+  if (!navigator.onLine) {
+    toast('Sin conexión a internet. Conéctate para sincronizar.', 'warn');
+    return;
+  }
+  
+  toast(`Sincronizando ${pendientes.length} registro(s)...`, 'info');
+  let ok = 0;
+  let nuevosPendientes = [];
+  
+  for (const item of pendientes) {
+    try {
+      await enviarAlServidor(item);
+      ok++;
+    } catch(e) {
+      nuevosPendientes.push(item);
+    }
+  }
+  
+  localStorage.setItem('inspecciones_pendientes', JSON.stringify(nuevosPendientes));
+  cargarPendientes();
+  
+  if (ok > 0) toast(`${ok} registro(s) sincronizados ✓`, 'success');
+  if (nuevosPendientes.length > 0) toast(`${nuevosPendientes.length} registro(s) pendientes`, 'warn');
+};
+
+// ============================================================
+// UTILIDADES
+// ============================================================
+function toast(msg, tipo) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show ${tipo || ''}`;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
