@@ -32,7 +32,6 @@
         body { background: var(--gris); font-family: 'Outfit', sans-serif; color: var(--texto); padding: 20px; }
         .wrap { max-width: 1400px; margin: 0 auto; background: var(--blanco); border-radius: 28px; box-shadow: var(--sombra); overflow: hidden; }
 
-        /* HEADER PREMIUM */
         .header {
             background: linear-gradient(135deg, var(--verde-deep), var(--verde-corp));
             padding: 18px 32px;
@@ -53,31 +52,26 @@
         .btn-logout { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 18px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
         .btn-logout:hover { background: rgba(255,255,255,0.3); transform: translateY(-1px); }
 
-        /* BUSCADOR DE VEHÍCULO */
         .search-section { background: var(--verde-pale); margin: 20px 28px 0 28px; border-radius: 20px; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; border: 1px solid var(--borde); }
         .search-field { flex: 2; min-width: 200px; display: flex; align-items: center; gap: 12px; background: white; padding: 8px 16px; border-radius: 50px; border: 1px solid var(--borde); }
         .search-field i { color: var(--verde-corp); font-size: 1rem; }
         .search-field input { border: none; outline: none; flex: 1; font-size: 0.9rem; padding: 8px 0; }
         .btn-search { background: var(--verde-corp); color: white; border: none; padding: 10px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
         .btn-search:hover { background: var(--verde-deep); transform: translateY(-1px); }
+        .btn-nuevo { background: white; border: 1px solid var(--verde-corp); color: var(--verde-corp); padding: 10px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
         .historial-badge { background: var(--oro); color: var(--verde-deep); padding: 6px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 700; }
 
-        /* TABS */
         .tabs { display: flex; background: var(--blanco); border-bottom: 2px solid var(--borde); padding: 0 28px; gap: 4px; flex-wrap: wrap; }
         .tab-btn { padding: 14px 24px; font-weight: 700; font-size: 0.85rem; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; color: var(--texto-suave); transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
-        .tab-btn i { font-size: 1rem; }
         .tab-btn.active { color: var(--verde-corp); border-bottom-color: var(--verde-corp); background: var(--verde-pale); border-radius: 12px 12px 0 0; }
-        .tab-btn:hover:not(.active) { color: var(--verde-deep); background: rgba(46,125,50,0.05); }
         .panel { display: none; padding: 28px; background: var(--blanco); }
         .panel.active { display: block; }
 
-        /* SECCIONES */
         .section-title { display: flex; align-items: center; gap: 12px; margin: 28px 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid var(--borde); }
         .section-title:first-of-type { margin-top: 0; }
         .section-title i { font-size: 1.2rem; color: var(--verde-corp); background: var(--verde-pale); padding: 8px; border-radius: 12px; }
         .section-title h3 { font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--verde-deep); }
 
-        /* GRIDS */
         .grid-2, .grid-3, .grid-4 { display: grid; gap: 20px; margin-bottom: 20px; }
         .grid-2 { grid-template-columns: repeat(2, 1fr); }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
@@ -87,7 +81,6 @@
         .field input, .field select, .field textarea { padding: 12px 14px; border: 1.5px solid var(--borde); border-radius: 14px; font-family: inherit; font-size: 0.9rem; transition: all 0.2s; background: var(--blanco); }
         .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--verde-mid); outline: none; box-shadow: 0 0 0 3px rgba(56,142,60,0.1); }
 
-        /* ESTADO OK/REG/MAL */
         .estado-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
         .estado-item { background: var(--verde-pale); border-radius: 14px; padding: 12px; border: 1px solid var(--borde); }
         .estado-item label { font-weight: 700; font-size: 0.8rem; display: block; margin-bottom: 8px; color: var(--verde-deep); }
@@ -97,16 +90,13 @@
         .estado-btn.reg { background: #E65100; color: white; border-color: #E65100; }
         .estado-btn.mal { background: var(--rojo); color: white; border-color: var(--rojo); }
 
-        /* TABLA MANTENIMIENTO SIMPLIFICADA */
         .mantto-simple { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
         .mantto-categoria { background: var(--verde-pale); border-radius: 20px; padding: 16px 20px; border: 1px solid var(--borde); }
         .mantto-categoria h4 { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; margin-bottom: 12px; color: var(--verde-deep); }
         .mantto-items { display: flex; flex-wrap: wrap; gap: 12px; }
         .mantto-item { display: flex; align-items: center; gap: 10px; background: white; padding: 8px 16px; border-radius: 40px; border: 1px solid var(--borde); }
         .mantto-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--verde-corp); }
-        .mantto-item label { font-size: 0.85rem; font-weight: 500; }
 
-        /* FOTOS */
         .foto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 14px; margin-bottom: 24px; }
         .foto-slot { border: 2px dashed var(--borde); border-radius: 16px; aspect-ratio: 1; background: var(--verde-pale); position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; overflow: hidden; }
         .foto-slot:hover { border-color: var(--verde-corp); background: #E8F5E9; }
@@ -114,7 +104,6 @@
         .foto-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
         .foto-slot-label { font-size: 0.7rem; color: var(--texto-suave); text-align: center; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 6px; }
 
-        /* FOOTER */
         .footer-bar { background: var(--verde-pale); padding: 16px 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-top: 1px solid var(--borde); }
         .sync-status { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--texto-suave); }
         .btn-primary, .btn-secondary { padding: 10px 24px; border-radius: 40px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; border: none; display: inline-flex; align-items: center; gap: 8px; }
@@ -123,12 +112,12 @@
         .btn-secondary { background: white; border: 1.5px solid var(--borde); color: var(--texto-suave); }
         .btn-secondary:hover { border-color: var(--verde-corp); color: var(--verde-corp); }
 
-        /* TOAST */
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--verde-deep); color: white; padding: 12px 24px; border-radius: 40px; font-weight: 600; z-index: 9999; transition: transform 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
         .toast.show { transform: translateX(-50%) translateY(0); }
         .toast.success { background: var(--verde-corp); }
         .toast.error { background: var(--rojo); }
 
+        .historial-card { background: var(--verde-pale); border-radius: 16px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--verde-corp); }
         @media (max-width: 768px) {
             .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
             .search-section { flex-direction: column; margin: 16px; }
@@ -139,7 +128,6 @@
 </head>
 <body>
 <div class="wrap">
-    <!-- HEADER PREMIUM -->
     <div class="header">
         <div class="header-left">
             <h1><i class="fas fa-leaf"></i> PRODENI Fleet</h1>
@@ -157,18 +145,16 @@
         </div>
     </div>
 
-    <!-- BUSCADOR DE VEHÍCULO / RESPONSABLE -->
     <div class="search-section">
         <div class="search-field">
             <i class="fas fa-search"></i>
             <input type="text" id="buscadorVehiculo" placeholder="Buscar por placas, responsable o número económico..." autocomplete="off">
         </div>
-        <button class="btn-search" onclick="buscarVehiculo()"><i class="fas fa-history"></i> Cargar historial</button>
-        <button class="btn-secondary" onclick="limpiarFormularioCompleto()" style="background:white;"><i class="fas fa-plus-circle"></i> Nueva inspección</button>
+        <button class="btn-search" onclick="buscarVehiculo()"><i class="fas fa-history"></i> Buscar / Cargar</button>
+        <button class="btn-nuevo" onclick="nuevaInspeccion()"><i class="fas fa-plus-circle"></i> Nueva inspección</button>
         <div id="historialInfo" class="historial-badge" style="display:none;"></div>
     </div>
 
-    <!-- TABS -->
     <div class="tabs">
         <button class="tab-btn active" onclick="showTab('vehiculo')"><i class="fas fa-truck"></i> Vehículo</button>
         <button class="tab-btn" onclick="showTab('responsable')"><i class="fas fa-user-check"></i> Responsable</button>
@@ -178,7 +164,7 @@
         <button class="tab-btn" onclick="showTab('historial')"><i class="fas fa-chart-line"></i> Historial</button>
     </div>
 
-    <!-- ==================== PANEL 1: VEHÍCULO ==================== -->
+    <!-- PANEL 1: VEHÍCULO -->
     <div class="panel active" id="tab-vehiculo">
         <div style="display: flex; justify-content: space-between; background: var(--verde-pale); padding: 14px 20px; border-radius: 20px; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
             <div><strong><i class="fas fa-hashtag"></i> Folio:</strong> <span id="folio-display">NUEVO-001</span></div>
@@ -189,15 +175,15 @@
         <div class="section-title"><i class="fas fa-id-card"></i><h3>Identificación del vehículo</h3></div>
         <div class="grid-4">
             <div class="field"><label>Marca</label><select id="marcaSelect"><option>RAM</option><option>Ford</option><option>Chevrolet</option><option>Nissan</option></select></div>
-            <div class="field"><label>Modelo</label><select id="modeloSelect" onchange="updateVehiclePreview()"><option value="RAM 700">RAM 700</option><option value="RAM 1200">RAM 1200</option><option value="RAM 1500">RAM 1500</option><option value="RAM 2500">RAM 2500</option></select></div>
-            <div class="field"><label>Versión</label><select><option>Work</option><option>ST</option><option>SLT</option><option>Laramie</option></select></div>
+            <div class="field"><label>Modelo</label><select id="modeloSelect"><option>RAM 700</option><option>RAM 1200</option><option>RAM 1500</option><option>RAM 2500</option></select></div>
+            <div class="field"><label>Versión</label><select id="versionSelect"><option>Work</option><option>ST</option><option>SLT</option><option>Laramie</option></select></div>
             <div class="field"><label>Año</label><input type="number" id="anioVehiculo" placeholder="2024"></div>
         </div>
         <div class="grid-4">
-            <div class="field"><label>Color</label><select id="colorSelect" onchange="updateVehiclePreview()"><option>Blanco</option><option>Negro</option><option>Rojo</option><option>Gris</option><option>Azul</option><option>Plata</option></select></div>
+            <div class="field"><label>Color</label><select id="colorSelect"><option>Blanco</option><option>Negro</option><option>Rojo</option><option>Gris</option><option>Azul</option><option>Plata</option></select></div>
             <div class="field"><label>Placas</label><input type="text" id="placas" placeholder="ABC-123-X" style="text-transform:uppercase;"></div>
             <div class="field"><label>Económico</label><input type="text" id="economico" placeholder="U-001"></div>
-            <div class="field"><label>Estado placas</label><select><option>Vigentes</option><option>Por vencer</option><option>Vencidas</option></select></div>
+            <div class="field"><label>Estado placas</label><select id="estadoPlacas"><option>Vigentes</option><option>Por vencer</option><option>Vencidas</option></select></div>
         </div>
         <div class="grid-2">
             <div class="field"><label>NIV (VIN)</label><input type="text" id="vin" maxlength="17" placeholder="3C6UR5DL0MG123456"></div>
@@ -219,7 +205,7 @@
         </div>
     </div>
 
-    <!-- ==================== PANEL 2: RESPONSABLE ==================== -->
+    <!-- PANEL 2: RESPONSABLE -->
     <div class="panel" id="tab-responsable">
         <div class="section-title"><i class="fas fa-user-circle"></i><h3>Datos del responsable</h3></div>
         <div class="grid-3"><div class="field col-span-2"><label>Nombre completo</label><input type="text" id="respNombre" placeholder="Apellido Paterno, Materno, Nombre(s)"></div><div class="field"><label>No. empleado</label><input type="text" id="respEmpleado"></div></div>
@@ -234,7 +220,7 @@
         </div>
     </div>
 
-    <!-- ==================== PANEL 3: ESTADO ==================== -->
+    <!-- PANEL 3: ESTADO -->
     <div class="panel" id="tab-estado">
         <div class="section-title"><i class="fas fa-clipboard-check"></i><h3>Evaluación de componentes</h3></div>
         <div id="estadoCarroceria" class="estado-grid"></div>
@@ -248,14 +234,14 @@
         </div>
     </div>
 
-    <!-- ==================== PANEL 4: MANTENIMIENTO SIMPLIFICADO ==================== -->
+    <!-- PANEL 4: MANTENIMIENTO -->
     <div class="panel" id="tab-mantto">
         <div class="section-title"><i class="fas fa-tools"></i><h3>Servicios realizados</h3></div>
         <div class="mantto-simple">
             <div class="mantto-categoria"><h4><i class="fas fa-oil-can"></i> Motor y lubricación</h4><div class="mantto-items" id="manttoMotor"></div></div>
-            <div class="mantto-categoria"><h4><i class="fas fa-car-battery"></i> Sistema eléctrico y encendido</h4><div class="mantto-items" id="manttoElectrico"></div></div>
+            <div class="mantto-categoria"><h4><i class="fas fa-car-battery"></i> Sistema eléctrico</h4><div class="mantto-items" id="manttoElectrico"></div></div>
             <div class="mantto-categoria"><h4><i class="fas fa-brake-warning"></i> Frenos y suspensión</h4><div class="mantto-items" id="manttoFrenos"></div></div>
-            <div class="mantto-categoria"><h4><i class="fas fa-filter"></i> Filtros y fluidos</h4><div class="mantto-items" id="manttoFiltros"></div></div>
+            <div class="mantto-categoria"><h4><i class="fas fa-filter"></i> Filtros</h4><div class="mantto-items" id="manttoFiltros"></div></div>
         </div>
         
         <div class="section-title"><i class="fas fa-notes-medical"></i><h3>Correctivo / Observaciones</h3></div>
@@ -275,7 +261,7 @@
         </div>
     </div>
 
-    <!-- ==================== PANEL 5: FOTOS ==================== -->
+    <!-- PANEL 5: FOTOS -->
     <div class="panel" id="tab-fotos">
         <div class="section-title"><i class="fas fa-camera-retro"></i><h3>Fotografías del vehículo</h3></div>
         <div class="foto-grid" id="fotoGridPrincipal"></div>
@@ -285,10 +271,10 @@
         <div class="field"><textarea id="obsGenerales" rows="3" placeholder="Detalles adicionales, recomendaciones, condiciones especiales..."></textarea></div>
     </div>
 
-    <!-- ==================== PANEL 6: HISTORIAL DEL VEHÍCULO ==================== -->
+    <!-- PANEL 6: HISTORIAL -->
     <div class="panel" id="tab-historial">
         <div class="section-title"><i class="fas fa-chart-line"></i><h3>Historial de inspecciones</h3></div>
-        <div id="historialLista" style="max-height: 400px; overflow-y: auto;">
+        <div id="historialLista" style="max-height: 500px; overflow-y: auto;">
             <div style="text-align: center; padding: 40px; color: var(--texto-suave);">
                 <i class="fas fa-search fa-2x"></i>
                 <p style="margin-top: 12px;">Busca un vehículo arriba para ver su historial completo</p>
@@ -298,26 +284,24 @@
 
     <div class="footer-bar">
         <div class="sync-status"><i class="fas fa-leaf"></i> <span id="syncStatus">✅ Sincronizado</span></div>
-        <div><button class="btn-secondary" onclick="guardarRespaldoLocal()"><i class="fas fa-database"></i> Respaldo</button><button class="btn-primary" onclick="guardarInspeccion()"><i class="fas fa-save"></i> Guardar inspección</button><button class="btn-primary" onclick="exportarWordPremium()" style="background: var(--oro); color: var(--verde-deep);"><i class="fas fa-file-word"></i> Exportar PDF/Word</button></div>
+        <div><button class="btn-secondary" onclick="guardarRespaldoLocal()"><i class="fas fa-database"></i> Respaldo</button><button class="btn-primary" onclick="guardarInspeccion()"><i class="fas fa-save"></i> Guardar inspección</button><button class="btn-primary" onclick="exportarWordPremium()" style="background: var(--oro); color: var(--verde-deep);"><i class="fas fa-file-word"></i> Exportar Word</button></div>
     </div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
 // ============================================================
-// CONFIGURACIÓN Y VARIABLES GLOBALES
+// CONFIGURACIÓN
 // ============================================================
 const SCRIPT_URL = localStorage.getItem('prodeni_script_url') || 'https://script.google.com/macros/s/AKfycbzVdwSxXOZ7Q3jeNGf1aWoAhlYaTCyz1FXjrrpAGGU6bV1OappWIuymBXjghuJmaN4V/exec';
 let currentUser = null;
-let historialInspecciones = [];
-let vehiculoActual = null;
-let modoEdicion = false;
-let idEditando = null;
+let historialGlobal = [];
+let vehiculoEditando = null;
 
 // ============================================================
 // INICIALIZACIÓN
 // ============================================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     currentUser = JSON.parse(localStorage.getItem('prodeni_session') || 'null');
     if (!currentUser) { window.location.href = 'index.html'; return; }
     
@@ -327,14 +311,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('fecha-insp').value = new Date().toISOString().split('T')[0];
     let prox = new Date(); prox.setMonth(prox.getMonth()+3);
     document.getElementById('fecha-prox').value = prox.toISOString().split('T')[0];
-    document.getElementById('folio-display').textContent = `PRODENI-${new Date().toISOString().slice(0,10).replace(/-/g,'')}-${Math.floor(Math.random()*1000)}`;
+    generarFolio();
     
     buildEstadosCompletos();
     cargarMantenimientoCategorias();
     crearSlots(['Frente','Lateral izq','Lateral der','Trasera','Motor','Interior'], 'fotoGridPrincipal');
     crearSlots(['Daño 1','Daño 2','Daño 3'], 'fotoDanios');
-    updateVehiclePreview();
-    cargarPendientes();
     
     document.getElementById('turnoSelect').addEventListener('change', function(){
         document.getElementById('horarioPersonalizado').style.display = this.value === 'OTRO' ? 'block' : 'none';
@@ -350,8 +332,15 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('online', () => { sincronizarTodo(); actualizarSyncStatus(); });
     window.addEventListener('offline', actualizarSyncStatus);
     actualizarSyncStatus();
-    cargarHistorialLocal();
+    
+    await cargarHistorialDesdeSheet();
 });
+
+function generarFolio() {
+    const fecha = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    const random = Math.floor(Math.random() * 1000);
+    document.getElementById('folio-display').textContent = `PRODENI-${fecha}-${random}`;
+}
 
 // ============================================================
 // ESTADOS COMPLETOS
@@ -369,7 +358,8 @@ function buildEstadosCompletos() {
         gruposEstado[grupo].forEach(item => {
             html += `<div class="estado-item"><label>${item}</label><div class="estado-btns"><button class="estado-btn" onclick="setEstadoBtn(this,'ok')">OK</button><button class="estado-btn" onclick="setEstadoBtn(this,'reg')">REG</button><button class="estado-btn" onclick="setEstadoBtn(this,'mal')">MAL</button></div></div>`;
         });
-        document.getElementById(`estado${grupo.charAt(0).toUpperCase()+grupo.slice(1)}`).innerHTML = html;
+        const container = document.getElementById(`estado${grupo.charAt(0).toUpperCase()+grupo.slice(1)}`);
+        if(container) container.innerHTML = html;
     });
 }
 
@@ -389,7 +379,7 @@ function obtenerEstados() {
 }
 
 // ============================================================
-// MANTENIMIENTO SIMPLIFICADO
+// MANTENIMIENTO
 // ============================================================
 const mantenimientoCategorias = {
     motor: ['Cambio de aceite motor', 'Aceite de transmisión', 'Aceite diferencial', 'Revisión de motor'],
@@ -417,10 +407,11 @@ function obtenerServiciosRealizados() {
 }
 
 // ============================================================
-// FOTOS SLOTS
+// FOTOS
 // ============================================================
 function crearSlots(arr, contId) {
     const container = document.getElementById(contId);
+    if(!container) return;
     container.innerHTML = '';
     arr.forEach(nombre => {
         let slot = document.createElement('div'); slot.className = 'foto-slot';
@@ -450,15 +441,6 @@ function obtenerFotosBase64() {
 }
 
 // ============================================================
-// PREVIEW VEHÍCULO
-// ============================================================
-window.updateVehiclePreview = function() {
-    let modelo = document.getElementById('modeloSelect').value;
-    let color = document.getElementById('colorSelect').value;
-    document.getElementById('previewModelo')?.setAttribute('data-preview', `${modelo} ${color}`);
-};
-
-// ============================================================
 // MANTENIMIENTO PREDICTIVO
 // ============================================================
 window.calcularMantenimientoPredictivo = function() {
@@ -481,23 +463,68 @@ window.calcularMantenimientoPredictivo = function() {
 };
 
 // ============================================================
-// BUSCAR VEHÍCULO Y CARGAR HISTORIAL
+// CARGAR HISTORIAL DESDE GOOGLE SHEETS
+// ============================================================
+async function cargarHistorialDesdeSheet() {
+    try {
+        const url = `${SCRIPT_URL}?action=getData`;
+        const res = await fetch(url, { cache: 'no-store' });
+        const data = await res.json();
+        if(data.rows && data.rows.length) {
+            historialGlobal = data.rows.map(row => ({
+                id: row[1] || row[27] || Date.now(),
+                fecha: row[0],
+                folio: row[1],
+                usuario: row[2],
+                marca: row[3],
+                modelo: row[4],
+                version: row[5],
+                anio: row[6],
+                color: row[7],
+                placas: row[8],
+                economico: row[10],
+                vin: row[9],
+                kmActual: row[11],
+                kmUltimoServ: row[12],
+                kmProxServ: row[13],
+                conductor: row[14],
+                empleado: row[15],
+                telefono: row[16],
+                ruta: row[18],
+                estados: row[19],
+                observaciones: row[22],
+                dictamen: row[23],
+                urgencia: row[24],
+                inspector: row[25],
+                timestamp: row[26]
+            }));
+            localStorage.setItem('historial_sheet', JSON.stringify(historialGlobal));
+        }
+    } catch(e) {
+        console.log('Error al cargar desde sheet, usando caché local');
+        const cached = localStorage.getItem('historial_sheet');
+        if(cached) historialGlobal = JSON.parse(cached);
+    }
+}
+
+// ============================================================
+// BUSCAR VEHÍCULO
 // ============================================================
 async function buscarVehiculo() {
     const termino = document.getElementById('buscadorVehiculo').value.trim().toLowerCase();
     if(!termino) { toast('Ingresa placas, responsable o número económico', 'warn'); return; }
     
-    // Cargar historial desde localStorage primero
-    const historial = JSON.parse(localStorage.getItem('historial_inspecciones') || '[]');
-    const encontrados = historial.filter(i => 
+    await cargarHistorialDesdeSheet();
+    
+    const encontrados = historialGlobal.filter(i => 
         (i.placas && i.placas.toLowerCase().includes(termino)) ||
         (i.conductor && i.conductor.toLowerCase().includes(termino)) ||
         (i.economico && i.economico.toLowerCase().includes(termino))
     );
     
     if(encontrados.length > 0) {
-        vehiculoActual = encontrados[encontrados.length-1];
-        cargarDatosVehiculo(vehiculoActual);
+        const ultimo = encontrados[encontrados.length-1];
+        cargarDatosVehiculo(ultimo);
         mostrarHistorial(encontrados);
         document.getElementById('historialInfo').style.display = 'inline-flex';
         document.getElementById('historialInfo').innerHTML = `<i class="fas fa-history"></i> ${encontrados.length} inspección(es) previa(s)`;
@@ -505,11 +532,11 @@ async function buscarVehiculo() {
     } else {
         toast('No se encontró historial para este vehículo. Puedes crear uno nuevo.', 'info');
         document.getElementById('historialInfo').style.display = 'none';
+        document.getElementById('historialLista').innerHTML = '<div style="text-align:center;padding:40px;"><i class="fas fa-search"></i><p>No hay registros previos para este vehículo</p></div>';
     }
 }
 
 function cargarDatosVehiculo(data) {
-    // Cargar datos del vehículo
     document.getElementById('placas').value = data.placas || '';
     document.getElementById('economico').value = data.economico || '';
     document.getElementById('marcaSelect').value = data.marca || 'RAM';
@@ -519,14 +546,28 @@ function cargarDatosVehiculo(data) {
     document.getElementById('vin').value = data.vin || '';
     document.getElementById('kmActual').value = data.kmActual || '';
     document.getElementById('kmUltimoServ').value = data.kmUltimoServ || '';
-    
-    // Cargar datos del responsable
     document.getElementById('respNombre').value = data.conductor || '';
     document.getElementById('respEmpleado').value = data.empleado || '';
     document.getElementById('respTelefono').value = data.telefono || '';
     document.getElementById('ruta').value = data.ruta || '';
+    document.getElementById('dictamenGeneral').value = data.dictamen || 'Apto para operación';
+    document.getElementById('urgencia').value = data.urgencia || 'Sin urgencia';
+    document.getElementById('obsGenerales').value = data.observaciones || '';
     
-    updateVehiclePreview();
+    if(data.estados) {
+        try {
+            const estadosObj = JSON.parse(data.estados);
+            document.querySelectorAll('.estado-item').forEach(item => {
+                const label = item.querySelector('label').innerText;
+                const valor = estadosObj[label];
+                if(valor) {
+                    const btn = item.querySelector(`.estado-btn.${valor.toLowerCase()}`);
+                    if(btn) setEstadoBtn(btn, valor.toLowerCase());
+                }
+            });
+        } catch(e) {}
+    }
+    
     calcularMantenimientoPredictivo();
 }
 
@@ -538,34 +579,41 @@ function mostrarHistorial(historial) {
     }
     
     container.innerHTML = historial.slice().reverse().map((h, idx) => `
-        <div style="background: var(--verde-pale); border-radius: 16px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--verde-corp);">
+        <div class="historial-card">
             <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
                 <strong><i class="fas fa-calendar"></i> ${h.fecha || 'Sin fecha'}</strong>
                 <span style="background: var(--verde-corp); color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.7rem;">Km: ${h.kmActual || '?'}</span>
             </div>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 6px; font-size: 0.8rem;">
                 <div><i class="fas fa-user"></i> ${h.conductor || 'N/A'}</div>
-                <div><i class="fas fa-tachometer-alt"></i> Último servicio: ${h.kmUltimoServ || 'N/A'} km</div>
-                <div><i class="fas fa-clipboard"></i> Dictamen: ${h.dictamen || 'N/A'}</div>
+                <div><i class="fas fa-tachometer-alt"></i> Servicio: ${h.kmUltimoServ || 'N/A'} km</div>
+                <div><i class="fas fa-clipboard"></i> ${h.dictamen || 'N/A'}</div>
             </div>
             <div style="margin-top: 10px;">
-                <button class="btn-secondary" style="padding: 5px 12px; font-size: 0.7rem;" onclick="cargarInspeccionParaEditar(${idx})"><i class="fas fa-edit"></i> Editar / Continuar</button>
+                <button class="btn-secondary" style="padding: 5px 12px; font-size: 0.7rem;" onclick="cargarInspeccionParaEditar('${h.id}')"><i class="fas fa-edit"></i> Editar / Continuar</button>
             </div>
         </div>
     `).join('');
 }
 
-function cargarInspeccionParaEditar(index) {
-    const historial = JSON.parse(localStorage.getItem('historial_inspecciones') || '[]');
-    const data = historial[index];
-    if(data) {
-        cargarDatosVehiculo(data);
-        modoEdicion = true;
-        idEditando = data.id || Date.now();
+function cargarInspeccionParaEditar(id) {
+    const encontrado = historialGlobal.find(h => String(h.id) === String(id));
+    if(encontrado) {
+        cargarDatosVehiculo(encontrado);
+        vehiculoEditando = encontrado;
+        generarFolio();
         toast('Puedes actualizar los datos y guardar de nuevo', 'info');
-        document.getElementById('folio-display').textContent = `EDITANDO-${data.folio || data.id}`;
         showTab('vehiculo');
     }
+}
+
+function nuevaInspeccion() {
+    limpiarFormularioCompleto();
+    vehiculoEditando = null;
+    generarFolio();
+    document.getElementById('buscadorVehiculo').value = '';
+    document.getElementById('historialInfo').style.display = 'none';
+    toast('Nueva inspección iniciada', 'info');
 }
 
 // ============================================================
@@ -573,29 +621,43 @@ function cargarInspeccionParaEditar(index) {
 // ============================================================
 function obtenerDatosFormulario() {
     return {
-        id: modoEdicion ? idEditando : Date.now(),
+        id: vehiculoEditando?.id || Date.now(),
         folio: document.getElementById('folio-display').innerText,
         fecha: document.getElementById('fecha-insp').value,
         fechaProx: document.getElementById('fecha-prox').value,
         marca: document.getElementById('marcaSelect').value,
         modelo: document.getElementById('modeloSelect').value,
+        version: document.getElementById('versionSelect').value,
         anio: document.getElementById('anioVehiculo').value,
         color: document.getElementById('colorSelect').value,
         placas: document.getElementById('placas').value,
         economico: document.getElementById('economico').value,
+        estadoPlacas: document.getElementById('estadoPlacas').value,
         vin: document.getElementById('vin').value,
+        numMotor: document.getElementById('numMotor').value,
         kmActual: document.getElementById('kmActual').value,
         kmUltimoServ: document.getElementById('kmUltimoServ').value,
         kmProxServ: document.getElementById('kmProxServ').value,
+        kmDiario: document.getElementById('kmDiario').value,
+        poliza: document.getElementById('poliza').value,
+        vigenciaSeguro: document.getElementById('vigenciaSeguro').value,
         conductor: document.getElementById('respNombre').value,
         empleado: document.getElementById('respEmpleado').value,
         telefono: document.getElementById('respTelefono').value,
+        email: document.getElementById('respEmail').value,
+        licencia: document.getElementById('respLicencia').value,
+        tipoLicencia: document.getElementById('respTipoLicencia').value,
+        vigenciaLicencia: document.getElementById('respVigenciaLicencia').value,
         ruta: document.getElementById('ruta').value,
+        baseOrigen: document.getElementById('baseOrigen').value,
+        turno: document.getElementById('turnoSelect').value === 'OTRO' ? document.getElementById('horarioPersonalizado').value : document.getElementById('turnoSelect').value,
+        tipoUso: document.getElementById('tipoUsoSelect').value === 'OTRO_USO' ? document.getElementById('otroUsoTexto').value : document.getElementById('tipoUsoSelect').value,
         estados: JSON.stringify(obtenerEstados()),
         serviciosRealizados: obtenerServiciosRealizados(),
         fallaDetectada: document.getElementById('fallaDetectada').value,
         accionCorrectiva: document.getElementById('accionCorrectiva').value,
         taller: document.getElementById('taller').value,
+        fechaIngreso: document.getElementById('fechaIngreso').value,
         costo: document.getElementById('costo').value,
         bandas: document.getElementById('bandas').value,
         pastillas: document.getElementById('pastillas').value,
@@ -612,32 +674,40 @@ function obtenerDatosFormulario() {
 async function guardarInspeccion() {
     const datos = obtenerDatosFormulario();
     
-    // Guardar en historial local
-    let historial = JSON.parse(localStorage.getItem('historial_inspecciones') || '[]');
-    if(modoEdicion) {
-        const index = historial.findIndex(h => h.id === idEditando);
-        if(index !== -1) historial[index] = datos;
-        else historial.push(datos);
-    } else {
-        historial.push(datos);
+    if(!datos.placas && !datos.economico && !datos.conductor) {
+        toast('Ingresa al menos placas, económico o responsable para identificar el vehículo', 'warn');
+        return;
     }
-    localStorage.setItem('historial_inspecciones', JSON.stringify(historial));
     
-    if (navigator.onLine) {
-        try {
+    const btn = document.querySelector('.btn-primary');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+    
+    try {
+        if(navigator.onLine) {
             const url = `${SCRIPT_URL}?action=saveData&${new URLSearchParams(datos).toString()}`;
-            await fetch(url, { method: 'GET', cache: 'no-store' });
-            toast('Inspección guardada exitosamente ✓', 'success');
-            limpiarFormularioCompleto();
-            modoEdicion = false;
-            idEditando = null;
-        } catch(err) {
+            const res = await fetch(url, { method: 'GET', cache: 'no-store' });
+            const result = await res.json();
+            if(result.success !== false) {
+                await cargarHistorialDesdeSheet();
+                toast('Inspección guardada exitosamente ✓', 'success');
+                nuevaInspeccion();
+            } else {
+                throw new Error('Error del servidor');
+            }
+        } else {
             guardarLocalmente(datos);
+            toast('Sin conexión. Guardado localmente.', 'warn');
+            nuevaInspeccion();
         }
-    } else {
+    } catch(err) {
         guardarLocalmente(datos);
+        toast('Error de red. Guardado localmente.', 'warn');
+        nuevaInspeccion();
     }
-    cargarHistorialLocal();
+    
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-save"></i> Guardar inspección';
 }
 
 function guardarLocalmente(datos) {
@@ -645,34 +715,25 @@ function guardarLocalmente(datos) {
     pendientes.push(datos);
     localStorage.setItem('inspecciones_pendientes', JSON.stringify(pendientes));
     cargarPendientes();
-    toast('Sin conexión. Guardado localmente.', 'warn');
 }
 
 function limpiarFormularioCompleto() {
-    document.querySelectorAll('input, select, textarea').forEach(el => { 
-        if(el.id !== 'fecha-insp' && el.id !== 'fecha-prox') {
-            if(el.type !== 'checkbox') el.value = '';
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        if(el.id !== 'fecha-insp' && el.id !== 'fecha-prox' && el.type !== 'checkbox') {
+            el.value = '';
         }
     });
     document.querySelectorAll('.mantto-item input[type="checkbox"]').forEach(cb => cb.checked = false);
     document.querySelectorAll('.estado-btn').forEach(b => b.classList.remove('ok','reg','mal'));
     document.getElementById('fecha-insp').value = new Date().toISOString().split('T')[0];
+    document.getElementById('inspector').value = currentUser?.username || '';
     document.getElementById('folio-display').textContent = `PRODENI-${new Date().toISOString().slice(0,10).replace(/-/g,'')}-${Math.floor(Math.random()*1000)}`;
-    document.getElementById('buscadorVehiculo').value = '';
-    document.getElementById('historialInfo').style.display = 'none';
-    modoEdicion = false;
-    idEditando = null;
+    document.getElementById('kmActual').value = '';
+    document.getElementById('kmUltimoServ').value = '';
+    document.getElementById('kmDiario').value = '';
     buildEstadosCompletos();
     crearSlots(['Frente','Lateral izq','Lateral der','Trasera','Motor','Interior'], 'fotoGridPrincipal');
     crearSlots(['Daño 1','Daño 2','Daño 3'], 'fotoDanios');
-    toast('Formulario limpiado', 'info');
-}
-
-function cargarHistorialLocal() {
-    const historial = JSON.parse(localStorage.getItem('historial_inspecciones') || '[]');
-    if(historial.length > 0 && document.getElementById('buscadorVehiculo').value) {
-        buscarVehiculo();
-    }
 }
 
 // ============================================================
@@ -681,13 +742,14 @@ function cargarHistorialLocal() {
 window.exportarWordPremium = function() {
     const datos = obtenerDatosFormulario();
     const estadosObj = JSON.parse(datos.estados || '{}');
+    const serviciosLista = datos.serviciosRealizados?.length ? datos.serviciosRealizados.map(s => `✓ ${s}`).join('<br>') : 'Ninguno registrado';
     
     const htmlExport = `<!DOCTYPE html>
     <html>
-    <head><meta charset="UTF-8"><title>Inspección PRODENI - ${datos.placas}</title>
+    <head><meta charset="UTF-8"><title>Inspección PRODENI - ${datos.placas || datos.economico || 'Nuevo'}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Outfit', 'Segoe UI', sans-serif; padding: 40px; background: white; color: #1a2e1a; }
+        body { font-family: 'Segoe UI', 'Outfit', sans-serif; padding: 40px; background: white; color: #1a2e1a; }
         .report-header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #2E7D32; padding-bottom: 20px; }
         .report-header h1 { color: #1B5E20; font-size: 28px; letter-spacing: 1px; }
         .report-header p { color: #5A7A5A; margin-top: 5px; }
@@ -703,6 +765,7 @@ window.exportarWordPremium = function() {
         .badge-ok { color: #2E7D32; font-weight: 700; }
         .badge-reg { color: #E65100; font-weight: 700; }
         .badge-mal { color: #C62828; font-weight: 700; }
+        .servicios-box { background: #F5F5F5; padding: 15px; border-radius: 12px; line-height: 1.6; }
         .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #E8F5E9; text-align: center; font-size: 11px; color: #5A7A5A; }
         .firma-row { display: flex; justify-content: space-between; margin-top: 40px; }
         .firma { text-align: center; width: 45%; }
@@ -718,10 +781,12 @@ window.exportarWordPremium = function() {
     <div class="info-grid">
         <div class="info-item"><span class="info-label">Folio</span><span class="info-value">${datos.folio}</span></div>
         <div class="info-item"><span class="info-label">Inspector</span><span class="info-value">${datos.inspector}</span></div>
-        <div class="info-item"><span class="info-label">Vehículo</span><span class="info-value">${datos.marca} ${datos.modelo} ${datos.anio}</span></div>
-        <div class="info-item"><span class="info-label">Placas / Económico</span><span class="info-value">${datos.placas} / ${datos.economico}</span></div>
-        <div class="info-item"><span class="info-label">Kilometraje</span><span class="info-value">${datos.kmActual} km</span></div>
-        <div class="info-item"><span class="info-label">Conductor</span><span class="info-value">${datos.conductor}</span></div>
+        <div class="info-item"><span class="info-label">Vehículo</span><span class="info-value">${datos.marca} ${datos.modelo} ${datos.version} ${datos.anio}</span></div>
+        <div class="info-item"><span class="info-label">Placas / Económico</span><span class="info-value">${datos.placas || 'N/A'} / ${datos.economico || 'N/A'}</span></div>
+        <div class="info-item"><span class="info-label">Kilometraje actual</span><span class="info-value">${datos.kmActual || '0'} km</span></div>
+        <div class="info-item"><span class="info-label">Conductor</span><span class="info-value">${datos.conductor || 'N/A'}</span></div>
+        <div class="info-item"><span class="info-label">Próximo servicio</span><span class="info-value">${datos.kmProxServ ? datos.kmProxServ + ' km' : 'N/A'}</span></div>
+        <div class="info-item"><span class="info-label">Ruta asignada</span><span class="info-value">${datos.ruta || 'N/A'}</span></div>
     </div>
     
     <div class="section"><div class="section-title">📋 Evaluación de componentes</div>
@@ -729,14 +794,14 @@ window.exportarWordPremium = function() {
     ${Object.entries(estadosObj).map(([k,v]) => `<tr><td>${k}</td><td class="badge-${v.toLowerCase()}">${v === 'OK' ? '✓ OK' : v === 'REG' ? '⚠ REG' : '✗ MAL'}</td></tr>`).join('')}
     </tbody></table></div>
     
-    <div class="section"><div class="section-title">🔧 Mantenimiento realizado</div>
-    <div style="background:#F5F5F5; padding:15px; border-radius:12px;">${datos.serviciosRealizados?.length ? datos.serviciosRealizados.map(s => `✓ ${s}`).join('<br>') : 'Sin servicios registrados'}</div></div>
+    <div class="section"><div class="section-title">🔧 Servicios realizados</div>
+    <div class="servicios-box">${serviciosLista}</div></div>
     
     <div class="section"><div class="section-title">📝 Observaciones y recomendaciones</div>
-    <div style="background:#F5F5F5; padding:15px; border-radius:12px;">${datos.observaciones || 'Sin observaciones'}</div></div>
+    <div class="servicios-box">${datos.observaciones || 'Sin observaciones'}</div></div>
     
     <div class="section"><div class="section-title">⚙️ Desgaste de componentes</div>
-    <div style="background:#F5F5F5; padding:15px; border-radius:12px;">Bandas/Correas: ${datos.bandas || 'N/A'}<br>Pastillas de freno: ${datos.pastillas || 'N/A'}</div></div>
+    <div class="servicios-box">Bandas/Correas: ${datos.bandas || 'N/A'}<br>Pastillas de freno: ${datos.pastillas || 'N/A'}</div></div>
     
     <div class="section"><div class="section-title">📊 Dictamen final</div>
     <div style="background:#E8F5E9; padding:15px; border-radius:12px; text-align:center; font-weight:700;">${datos.dictamen} · Nivel de urgencia: ${datos.urgencia}</div></div>
@@ -751,7 +816,7 @@ window.exportarWordPremium = function() {
     const blob = new Blob([htmlExport], {type: 'application/msword'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `Inspeccion_PRODENI_${datos.placas}_${datos.fecha}.doc`;
+    a.download = `Inspeccion_PRODENI_${datos.placas || datos.economico || 'nuevo'}_${datos.fecha}.doc`;
     a.click();
     toast('Documento exportado correctamente', 'success');
 };
@@ -799,6 +864,7 @@ async function sincronizarTodo() {
     }
     localStorage.setItem('inspecciones_pendientes', JSON.stringify(nuevosPendientes));
     cargarPendientes();
+    await cargarHistorialDesdeSheet();
     toast('Sincronización completada', 'success');
 }
 
