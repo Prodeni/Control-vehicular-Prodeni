@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-  <title>Control Vehicular PRODENI</title>
+  <title>PRODENI · Control Vehicular</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1B5E20">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,14 +16,13 @@
       --verde-corp:  #2E7D32;
       --verde-light: #4CAF50;
       --amarillo:    #F9A825;
-      --tierra:      #5D4037;
-      --error:       #C62828;
+      --rojo:        #C62828;
       --bg:          #0F3A12;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Outfit', sans-serif;
-      min-height: 100vh;
+      min-height: 100svh;
       background: var(--bg);
       display: flex;
       align-items: center;
@@ -31,151 +30,70 @@
       position: relative;
       overflow: hidden;
     }
-    body::before, body::after {
+    body::before {
       content: '';
       position: fixed;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(76,175,80,.15), transparent 70%);
+      top: -200px; right: -200px;
       border-radius: 50%;
-      opacity: 0.08;
+      animation: drift 14s ease-in-out infinite alternate;
       pointer-events: none;
     }
-    body::before {
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, #4CAF50, transparent);
-      top: -200px; right: -200px;
-      animation: drift 12s ease-in-out infinite alternate;
-    }
     body::after {
+      content: '';
+      position: fixed;
       width: 400px; height: 400px;
-      background: radial-gradient(circle, #F9A825, transparent);
+      background: radial-gradient(circle, rgba(249,168,37,.1), transparent 70%);
       bottom: -100px; left: -100px;
-      animation: drift 16s ease-in-out infinite alternate-reverse;
+      border-radius: 50%;
+      animation: drift 18s ease-in-out infinite alternate-reverse;
+      pointer-events: none;
     }
     @keyframes drift {
       from { transform: translate(0,0) scale(1); }
-      to   { transform: translate(40px,30px) scale(1.1); }
+      to   { transform: translate(40px,30px) scale(1.12); }
     }
+
     .card {
       background: white;
       border-radius: 28px;
-      width: 90%;
+      width: 92%;
       max-width: 400px;
-      padding: 2.5rem 2rem;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+      padding: 2.5rem 2rem 2rem;
+      box-shadow: 0 32px 80px rgba(0,0,0,.5);
       position: relative;
       z-index: 10;
-      animation: slideUp 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+      animation: slideUp .5s cubic-bezier(.34,1.56,.64,1) both;
     }
     @keyframes slideUp {
       from { transform: translateY(60px); opacity: 0; }
       to   { transform: translateY(0);    opacity: 1; }
     }
+
+    /* BRAND */
     .brand {
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1.8rem;
     }
     .brand-logo {
-      width: 100px;
+      width: 110px;
       height: auto;
-      margin-bottom: 10px;
-      filter: drop-shadow(0 4px 12px rgba(46,125,50,0.3));
+      margin-bottom: 8px;
+      filter: drop-shadow(0 4px 14px rgba(46,125,50,.3));
     }
     .brand-slogan {
-      font-size: 0.82rem;
-      font-weight: 300;
+      font-size: 0.78rem;
+      font-weight: 400;
       color: var(--verde-corp);
       font-style: italic;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
     }
-    .form-title {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #aaa;
-      margin-bottom: 1.2rem;
-      text-align: center;
-    }
-    .field {
-      position: relative;
-      margin-bottom: 14px;
-    }
-    .field i.icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #bbb;
-      font-size: 0.9rem;
-      pointer-events: none;
-    }
-    .field input {
-      width: 100%;
-      padding: 14px 14px 14px 40px;
-      border: 1.5px solid #e8e8e8;
-      border-radius: 12px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.95rem;
-      background: #fafafa;
-      transition: all 0.2s;
-      outline: none;
-    }
-    .field input:focus {
-      border-color: var(--verde-corp);
-      background: #fff;
-    }
-    .toggle-pass {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #bbb;
-    }
-    .btn-login {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, var(--verde-corp), var(--verde-deep));
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      cursor: pointer;
-      margin-top: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      transition: transform 0.15s;
-      box-shadow: 0 8px 20px rgba(46,125,50,0.35);
-    }
-    .btn-login:hover { transform: translateY(-2px); }
-    .btn-login.loading { opacity: 0.8; pointer-events: none; }
-    .btn-login .spinner { display: none; }
-    .btn-login.loading .spinner { display: block; }
-    .btn-login.loading .btn-text { display: none; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .fa-spin-custom { animation: spin 0.8s linear infinite; }
-    .error-box {
-      background: #fff5f5;
-      border: 1.5px solid #fca5a5;
-      border-radius: 10px;
-      padding: 10px 14px;
-      margin-top: 12px;
-      font-size: 0.82rem;
-      color: var(--error);
-      display: none;
-      align-items: center;
-      gap: 8px;
-    }
-    .error-box.show { display: flex; }
+
+    /* OFFLINE BADGE */
     .offline-badge {
       display: none;
       align-items: center;
@@ -191,24 +109,156 @@
       margin-bottom: 14px;
     }
     .offline-badge.show { display: flex; }
+
+    /* INSTALL BANNER */
+    .install-banner {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: #E8F5E9;
+      border: 1.5px solid var(--verde-corp);
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      cursor: pointer;
+    }
+    .install-banner.show { display: flex; }
+    .install-banner-icon { font-size: 1.4rem; }
+    .install-banner-text { flex: 1; }
+    .install-banner-title { font-size: 0.82rem; font-weight: 700; color: var(--verde-deep); }
+    .install-banner-sub   { font-size: 0.7rem; color: var(--verde-corp); }
+    .btn-install-small {
+      background: var(--verde-corp);
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* FORM */
+    .form-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 1.1rem;
+      text-align: center;
+    }
+    .field { position: relative; margin-bottom: 13px; }
+    .field i.icon {
+      position: absolute;
+      left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: #bbb; font-size: 0.88rem;
+      pointer-events: none;
+    }
+    .field input {
+      width: 100%;
+      padding: 13px 13px 13px 40px;
+      border: 1.5px solid #e8e8e8;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      background: #fafafa;
+      transition: border-color .2s, background .2s;
+      outline: none;
+    }
+    .field input:focus { border-color: var(--verde-corp); background: #fff; }
+    .toggle-pass {
+      position: absolute;
+      right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      cursor: pointer; color: #bbb;
+      padding: 4px;
+    }
+
+    /* BOTONES */
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--verde-corp), var(--verde-deep));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      cursor: pointer;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: transform .15s, opacity .15s;
+      box-shadow: 0 8px 20px rgba(46,125,50,.35);
+    }
+    .btn-login:hover { transform: translateY(-2px); }
+    .btn-login.loading { opacity: .8; pointer-events: none; }
+    .btn-login .spinner { display: none; }
+    .btn-login.loading .spinner { display: inline-flex; align-items: center; gap: 8px; }
+    .btn-login.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .fa-spin-c { animation: spin .8s linear infinite; display: inline-block; }
+
+    /* ERROR */
+    .error-box {
+      background: #fff5f5;
+      border: 1.5px solid #fca5a5;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-top: 11px;
+      font-size: 0.82rem;
+      color: var(--rojo);
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .error-box.show { display: flex; }
+
     .version {
       text-align: center;
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       color: #ccc;
-      margin-top: 1.5rem;
+      margin-top: 1.4rem;
     }
   </style>
 </head>
 <body>
+
 <div class="card">
+  <!-- BRAND -->
   <div class="brand">
-    <div class="brand-logo" style="font-size: 2rem; font-weight: 800; color: var(--verde-corp);">PRODENI</div>
+    <img src="logo_prodeni.png" alt="PRODENI" class="brand-logo"
+         onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block'">
+    <div id="logoFallback" style="display:none; font-size:2rem; font-weight:800; color:var(--verde-corp); margin-bottom:8px;">PRODENI</div>
     <span class="brand-slogan">Control Vehicular · Flota Sustentable</span>
   </div>
+
+  <!-- INSTALL BANNER (aparece solo cuando el browser lo permite) -->
+  <div class="install-banner" id="installBanner">
+    <div class="install-banner-icon">📲</div>
+    <div class="install-banner-text">
+      <div class="install-banner-title">Instalar la app</div>
+      <div class="install-banner-sub">Acceso directo, funciona sin internet</div>
+    </div>
+    <button class="btn-install-small" id="btnInstall">Instalar</button>
+  </div>
+
+  <!-- OFFLINE BADGE -->
   <div class="offline-badge" id="offlineBadge">
     <i class="fas fa-wifi-slash"></i> Modo sin conexión
   </div>
+
   <p class="form-title">Acceso al sistema</p>
+
   <div class="field">
     <i class="fas fa-user icon"></i>
     <input type="text" id="inputUser" placeholder="Usuario" autocomplete="username">
@@ -220,97 +270,118 @@
       <i class="fas fa-eye" id="eyeIcon"></i>
     </button>
   </div>
+
   <button class="btn-login" id="btnLogin" onclick="doLogin()">
     <span class="btn-text"><i class="fas fa-truck"></i> INGRESAR</span>
-    <span class="spinner"><i class="fas fa-leaf fa-spin-custom"></i> Verificando...</span>
+    <span class="spinner"><i class="fas fa-leaf fa-spin-c"></i> Verificando...</span>
   </button>
+
   <div class="error-box" id="errorBox">
     <i class="fas fa-exclamation-circle"></i>
     <span id="errorMsg">Error</span>
   </div>
-  <p class="version">PRODENI Fleet v1.0</p>
+
+  <p class="version">PRODENI Fleet v2.0</p>
 </div>
 
 <script>
 // ============================================================
-// CONFIGURACIÓN ÚNICA: TU URL DE APPS SCRIPT
+// URL DEL APPS SCRIPT — CAMBIA ESTO
 // ============================================================
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVdwSxXOZ7Q3jeNGf1aWoAhlYaTCyz1FXjrrpAGGU6bV1OappWIuymBXjghuJmaN4V/exec';
 
-// Guardar URL para que otros módulos la usen
 localStorage.setItem('prodeni_script_url', SCRIPT_URL);
 
 // ============================================================
-// GESTOR DE SESIÓN
+// SERVICE WORKER
 // ============================================================
-const SessionManager = {
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+
+// ============================================================
+// PWA INSTALL PROMPT
+// ============================================================
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBanner').classList.add('show');
+});
+
+document.getElementById('btnInstall').addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('installBanner').classList.remove('show');
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner').classList.remove('show');
+  deferredPrompt = null;
+});
+
+// ============================================================
+// GESTOR DE SESIÓN — 7 días offline
+// ============================================================
+const Session = {
   KEY: 'prodeni_session',
-  
+
   set(userData) {
-    const session = {
+    const now = new Date();
+    // Expira en 7 días para permitir uso offline prolongado
+    const expires = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).getTime();
+    localStorage.setItem(this.KEY, JSON.stringify({
       username: userData.username,
-      role: userData.role || 'tecnico',
-      email: userData.email || '',
-      expiresAt: new Date().setHours(23, 59, 59, 999)
-    };
-    localStorage.setItem(this.KEY, JSON.stringify(session));
+      role:     userData.role || 'tecnico',
+      email:    userData.email || '',
+      expiresAt: expires,
+      loginAt:   now.getTime()
+    }));
   },
-  
+
   get() {
     try {
       const raw = localStorage.getItem(this.KEY);
       if (!raw) return null;
       const s = JSON.parse(raw);
-      if (s.expiresAt && Date.now() > s.expiresAt) {
+      if (Date.now() > s.expiresAt) {
         localStorage.removeItem(this.KEY);
         return null;
       }
       return s;
     } catch(e) { return null; }
   },
-  
-  logout() {
-    localStorage.removeItem(this.KEY);
-    window.location.href = 'index.html';
-  },
-  
-  require() {
-    const s = this.get();
-    if (!s) window.location.href = 'index.html';
-    return s;
-  }
+
+  clear() { localStorage.removeItem(this.KEY); }
 };
 
 // ============================================================
-// CREDENCIALES OFFLINE
+// CREDENCIALES OFFLINE (válidas 7 días, no solo hoy)
 // ============================================================
-function hashCreds(user, pass) {
-  return btoa(unescape(encodeURIComponent(user + '::' + pass + '::prodeni')));
+function hashCreds(u, p) {
+  return btoa(unescape(encodeURIComponent(u + '::' + p + '::prodeni_v2')));
 }
 
 function saveOfflineCreds(username, password, role) {
-  localStorage.setItem('prodeni_creds', JSON.stringify({
+  const expires = Date.now() + 7 * 24 * 60 * 60 * 1000;
+  localStorage.setItem('prodeni_creds_v2', JSON.stringify({
     h: hashCreds(username, password),
-    u: username,
-    r: role,
-    t: Date.now()
+    u: username, r: role, exp: expires
   }));
 }
 
 function checkOfflineCreds(username, password) {
   try {
-    const c = JSON.parse(localStorage.getItem('prodeni_creds') || 'null');
-    if (!c) return null;
-    const today = new Date();
-    const savedDate = new Date(c.t);
-    if (savedDate.toDateString() !== today.toDateString()) return null;
+    const raw = localStorage.getItem('prodeni_creds_v2');
+    if (!raw) return null;
+    const c = JSON.parse(raw);
+    if (Date.now() > c.exp) return null;
     if (c.h !== hashCreds(username, password)) return null;
     return { username: c.u, role: c.r };
   } catch(e) { return null; }
-}
-
-function invalidateOfflineCreds() {
-  localStorage.removeItem('prodeni_creds');
 }
 
 // ============================================================
@@ -318,50 +389,53 @@ function invalidateOfflineCreds() {
 // ============================================================
 async function doLogin() {
   const user = document.getElementById('inputUser').value.trim();
-  const pass = document.getElementById('inputPass').value.trim();
-  if (!user || !pass) {
-    showError('Ingresa usuario y contraseña');
-    return;
-  }
-  
+  const pass = document.getElementById('inputPass').value;
+  if (!user || !pass) { showError('Ingresa usuario y contraseña'); return; }
+
   hideError();
   const btn = document.getElementById('btnLogin');
   btn.classList.add('loading');
-  
+
   if (navigator.onLine) {
     try {
       const url = `${SCRIPT_URL}?action=login&user=${encodeURIComponent(user)}&pass=${encodeURIComponent(pass)}`;
-      const res = await fetch(url, { cache: 'no-store' });
+      const res  = await fetch(url, { cache: 'no-store' });
       const data = await res.json();
-      
+
       if (data.valid && data.user) {
-        const userData = { username: data.user.username, role: data.user.role || 'tecnico', email: data.user.email || '' };
-        SessionManager.set(userData);
-        saveOfflineCreds(user, pass, userData.role);
-        window.location.href = userData.role === 'admin' ? 'admin.html' : 'tecnico.html';
+        const ud = { username: data.user.username, role: data.user.role || 'tecnico', email: data.user.email || '' };
+        Session.set(ud);
+        saveOfflineCreds(user, pass, ud.role);
+        redirect(ud.role);
         return;
       } else {
-        invalidateOfflineCreds();
+        localStorage.removeItem('prodeni_creds_v2');
         showError(data.message || 'Credenciales incorrectas');
       }
     } catch(e) {
-      tryOfflineLogin(user, pass);
+      // Red falló → intentar offline
+      tryOffline(user, pass);
     }
   } else {
-    tryOfflineLogin(user, pass);
+    tryOffline(user, pass);
   }
-  
+
   btn.classList.remove('loading');
 }
 
-function tryOfflineLogin(user, pass) {
+function tryOffline(user, pass) {
   const cached = checkOfflineCreds(user, pass);
   if (cached) {
-    SessionManager.set(cached);
-    window.location.href = cached.role === 'admin' ? 'admin.html' : 'tecnico.html';
+    Session.set(cached);
+    redirect(cached.role);
   } else {
-    showError('Sin conexión. Credenciales no válidas o expiradas.');
+    document.getElementById('btnLogin').classList.remove('loading');
+    showError('Sin conexión. Inicia sesión en línea al menos una vez.');
   }
+}
+
+function redirect(role) {
+  window.location.href = role === 'admin' ? 'admin.html' : 'tecnico.html';
 }
 
 function showError(msg) {
@@ -373,24 +447,22 @@ function hideError() {
 }
 function togglePass() {
   const inp = document.getElementById('inputPass');
-  const icon = document.getElementById('eyeIcon');
+  const ico = document.getElementById('eyeIcon');
   inp.type = inp.type === 'password' ? 'text' : 'password';
-  icon.className = inp.type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+  ico.className = inp.type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
 }
 
-// Redirigir si ya hay sesión activa
-const existing = SessionManager.get();
-if (existing) {
-  window.location.href = existing.role === 'admin' ? 'admin.html' : 'tecnico.html';
-}
+// Redirigir si ya tiene sesión válida
+const existing = Session.get();
+if (existing) redirect(existing.role);
 
 // Estado de conexión
-function updateOfflineBadge() {
+function updateOffline() {
   document.getElementById('offlineBadge').classList.toggle('show', !navigator.onLine);
 }
-window.addEventListener('online', updateOfflineBadge);
-window.addEventListener('offline', updateOfflineBadge);
-updateOfflineBadge();
+window.addEventListener('online', updateOffline);
+window.addEventListener('offline', updateOffline);
+updateOffline();
 
 // Enter para login
 document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
