@@ -6,34 +6,34 @@
     <meta name="theme-color" content="#1B5E20">
     <title>PRODENI · Inspección Vehicular</title>
     <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --ram-dark: #1a1a1a;
-            --ram-red: #c0392b;
-            --ram-red-light: #e74c3c;
-            --ram-gold: #b8860b;
-            --ram-surface: #ffffff;
-            --ram-bg: #f5f5f7;
-            --ram-border: #e0e0e0;
-            --ram-border-strong: #c0c0c0;
-            --ram-text: #2c2c2c;
-            --ram-muted: #6c6c6c;
-            --ram-hint: #9e9e9e;
-            --f-head: 'Barlow Condensed', sans-serif;
-            --f-body: 'Barlow', sans-serif;
+            --verde-deep: #1B5E20;
+            --verde-corp: #2E7D32;
+            --verde-mid: #388E3C;
+            --verde-light: #66BB6A;
+            --verde-pale: #E8F5E9;
+            --amarillo: #F9A825;
+            --rojo: #C62828;
+            --tierra: #5D4037;
+            --bg: #F0F4F0;
+            --border: #D8E8D8;
+            --text: #1A2E1A;
+            --text-soft: #5A7A5A;
+            --white: #FFFFFF;
         }
 
-        body { background: #e8eef2; padding: 20px; font-family: var(--f-body); color: var(--ram-text); }
-        .wrap { max-width: 1400px; margin: 0 auto; background: var(--ram-surface); border-radius: 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.1); overflow: hidden; }
+        body { background: var(--bg); padding: 20px; font-family: 'Outfit', sans-serif; color: var(--text); }
+        .wrap { max-width: 1400px; margin: 0 auto; background: var(--white); border-radius: 24px; box-shadow: 0 12px 30px rgba(0,0,0,0.1); overflow: hidden; }
 
-        /* HEADER */
+        /* HEADER PRODENI */
         .header {
-            background: var(--ram-dark);
-            color: #fff;
+            background: linear-gradient(135deg, var(--verde-corp), var(--verde-deep));
+            color: white;
             padding: 16px 28px;
             display: flex;
             align-items: center;
@@ -41,57 +41,48 @@
             flex-wrap: wrap;
             gap: 15px;
             position: relative;
-            overflow: hidden;
-        }
-        .header::after {
-            content: '';
-            position: absolute;
-            left: 0; bottom: 0;
-            width: 100%; height: 3px;
-            background: linear-gradient(90deg, var(--ram-red) 0%, var(--ram-gold) 100%);
         }
         .header-left { display: flex; flex-direction: column; gap: 2px; }
         .header-brand {
-            font-family: var(--f-head);
+            font-family: 'Outfit', sans-serif;
             font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: #fff;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: white;
             text-transform: uppercase;
         }
         .header-sub {
             font-size: 11px;
             letter-spacing: 2px;
-            color: rgba(255,255,255,0.55);
+            color: rgba(255,255,255,0.7);
             text-transform: uppercase;
         }
         .header-badge {
-            background: var(--ram-red);
-            color: #fff;
-            font-family: var(--f-head);
+            background: var(--amarillo);
+            color: var(--verde-deep);
+            font-family: 'Outfit', sans-serif;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             padding: 6px 16px;
             border-radius: 30px;
         }
         .vehicle-preview {
             display: flex;
             align-items: center;
-            gap: 15px;
-            background: rgba(0,0,0,0.3);
-            padding: 6px 15px 6px 10px;
+            gap: 12px;
+            background: rgba(255,255,255,0.15);
+            padding: 5px 15px 5px 8px;
             border-radius: 50px;
-            backdrop-filter: blur(4px);
         }
-        .preview-img { width: 55px; height: 55px; border-radius: 12px; background: #2c2c2c; overflow: hidden; border: 1px solid var(--ram-gold); }
+        .preview-img { width: 48px; height: 48px; border-radius: 12px; background: var(--white); overflow: hidden; border: 2px solid var(--amarillo); }
         .preview-img img { width: 100%; height: 100%; object-fit: cover; }
-        .preview-data { font-size: 13px; font-weight: 500; line-height: 1.3; }
-        .preview-data span { font-size: 11px; opacity: 0.7; display: block; }
+        .preview-data { font-size: 13px; font-weight: 600; line-height: 1.3; }
+        .preview-data span { font-size: 10px; opacity: 0.8; display: block; }
 
         /* ALERTA MANTENIMIENTO */
         .alert-banner {
-            background: linear-gradient(135deg, #fff3e0, #ffe0b3);
-            border-left: 5px solid var(--ram-gold);
+            background: #FFF8E1;
+            border-left: 5px solid var(--amarillo);
             padding: 12px 20px;
             margin: 0 28px 20px 28px;
             border-radius: 12px;
@@ -101,62 +92,57 @@
             flex-wrap: wrap;
             gap: 12px;
         }
-        .alert-banner.warning { border-left-color: #e67e22; background: #fff2e0; }
-        .alert-banner.critical { border-left-color: var(--ram-red); background: #ffe6e6; }
+        .alert-banner.warning { border-left-color: #E65100; background: #FFF3E0; }
+        .alert-banner.critical { border-left-color: var(--rojo); background: #FFEBEE; }
 
         /* TABS */
         .tabs {
             display: flex;
-            background: var(--ram-bg);
-            border-bottom: 1px solid var(--ram-border);
+            background: var(--verde-pale);
+            border-bottom: 1px solid var(--border);
             flex-wrap: wrap;
         }
         .tab-btn {
             flex: 1;
-            padding: 12px 8px;
-            font-family: var(--f-head);
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 1.5px;
+            padding: 14px 8px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
             text-transform: uppercase;
             background: none;
             border: none;
-            border-bottom: 2px solid transparent;
+            border-bottom: 3px solid transparent;
             cursor: pointer;
-            color: var(--ram-muted);
+            color: var(--text-soft);
             transition: all 0.2s;
         }
         .tab-btn.active {
-            color: var(--ram-red);
-            border-bottom-color: var(--ram-red);
-            background: var(--ram-surface);
+            color: var(--verde-corp);
+            border-bottom-color: var(--verde-corp);
+            background: var(--white);
         }
-        .panel { display: none; padding: 24px 28px; background: var(--ram-surface); }
+        .tab-btn:hover:not(.active) { color: var(--verde-deep); background: rgba(46,125,50,0.05); }
+        .panel { display: none; padding: 24px 28px; background: var(--white); }
         .panel.active { display: block; }
 
         /* SECCIONES */
         .section-title {
-            font-family: var(--f-head);
+            font-family: 'Outfit', sans-serif;
             font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 3px;
+            font-weight: 800;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            color: var(--ram-red);
-            margin: 20px 0 16px 0;
+            color: var(--verde-corp);
+            margin: 24px 0 16px 0;
             padding-bottom: 8px;
-            border-bottom: 1px solid var(--ram-border);
+            border-bottom: 2px solid var(--border);
             display: flex;
             align-items: center;
             gap: 8px;
         }
         .section-title:first-of-type { margin-top: 0; }
-        .section-title::before {
-            content: '';
-            display: inline-block;
-            width: 4px; height: 18px;
-            background: var(--ram-red);
-            border-radius: 3px;
-        }
+        .section-title i { color: var(--amarillo); font-size: 14px; }
 
         /* GRIDS */
         .grid-2, .grid-3, .grid-4 { display: grid; gap: 16px; margin-bottom: 18px; }
@@ -165,78 +151,104 @@
         .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
         .col-span-2 { grid-column: span 2; }
         .field { display: flex; flex-direction: column; gap: 6px; }
-        .field label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--ram-muted); }
+        .field label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-soft); }
         .field input, .field select, .field textarea {
-            font-family: var(--f-body);
+            font-family: 'Outfit', sans-serif;
             font-size: 14px;
-            padding: 10px 12px;
+            padding: 11px 14px;
             background: #fefefe;
-            border: 1px solid var(--ram-border);
+            border: 1.5px solid var(--border);
             border-radius: 12px;
             width: 100%;
             transition: all 0.2s;
         }
-        .field input:focus, .field select:focus { border-color: var(--ram-red); box-shadow: 0 0 0 2px rgba(192,57,43,0.2); }
+        .field input:focus, .field select:focus, .field textarea:focus {
+            border-color: var(--verde-mid);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(56,142,60,0.1);
+        }
 
         /* ESTADO (OK/REG/MAL) */
         .estado-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
-        .estado-item { background: var(--ram-bg); padding: 10px; border-radius: 14px; }
-        .estado-item label { font-weight: 600; font-size: 12px; display: block; margin-bottom: 8px; }
+        .estado-item { background: var(--verde-pale); padding: 12px; border-radius: 14px; border: 1px solid var(--border); }
+        .estado-item label { font-weight: 700; font-size: 12px; display: block; margin-bottom: 8px; color: var(--verde-deep); }
         .estado-btns { display: flex; gap: 8px; }
         .estado-btn {
-            flex: 1; padding: 8px 4px; border: 1px solid var(--ram-border); background: white; border-radius: 40px;
-            font-size: 12px; font-weight: 600; cursor: pointer; text-align: center;
+            flex: 1; padding: 8px 4px; border: 1.5px solid var(--border); background: var(--white); border-radius: 40px;
+            font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.1s;
         }
-        .estado-btn.ok { background: #1e6f3f; color: white; border-color: #1e6f3f; }
-        .estado-btn.reg { background: #c97e00; color: white; border-color: #c97e00; }
-        .estado-btn.mal { background: #b33; color: white; border-color: #b33; }
+        .estado-btn.ok { background: var(--verde-corp); color: white; border-color: var(--verde-corp); }
+        .estado-btn.reg { background: #E65100; color: white; border-color: #E65100; }
+        .estado-btn.mal { background: var(--rojo); color: white; border-color: var(--rojo); }
 
         /* TABLA MANTENIMIENTO */
         .mantto-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px; }
-        .mantto-table th, .mantto-table td { padding: 10px 8px; border: 1px solid var(--ram-border); vertical-align: middle; }
-        .mantto-table th { background: var(--ram-bg); font-size: 11px; text-transform: uppercase; }
+        .mantto-table th, .mantto-table td { padding: 12px 10px; border: 1px solid var(--border); vertical-align: middle; }
+        .mantto-table th { background: var(--verde-pale); font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--verde-corp); }
+        .mantto-table input, .mantto-table select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); font-family: inherit; }
 
         /* FOTOS */
         .foto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 16px; margin-bottom: 24px; }
         .foto-slot {
-            border: 1px dashed var(--ram-border-strong); border-radius: 16px; aspect-ratio: 4/3;
-            overflow: hidden; background: var(--ram-bg); position: relative; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+            border: 2px dashed var(--border); border-radius: 16px; aspect-ratio: 4/3;
+            overflow: hidden; background: var(--verde-pale); position: relative; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
         }
-        .foto-slot:hover { border-color: var(--ram-red); }
+        .foto-slot:hover { border-color: var(--verde-corp); background: #E8F5E9; }
         .foto-slot input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
         .foto-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
-        .foto-slot-label { font-size: 11px; color: var(--ram-hint); text-align: center; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .foto-slot-label { font-size: 11px; color: var(--text-soft); text-align: center; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 6px; }
 
         /* HORARIO FLEXIBLE */
         .horario-flex { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
         /* FOOTER */
-        .footer-bar { background: var(--ram-bg); border-top: 1px solid var(--ram-border); padding: 16px 28px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .btn-primary, .btn-secondary { font-family: var(--f-head); font-size: 13px; font-weight: 700; letter-spacing: 1.5px; padding: 10px 24px; border-radius: 40px; cursor: pointer; border: none; }
-        .btn-primary { background: var(--ram-red); color: white; }
-        .btn-primary:hover { background: var(--ram-red-light); }
-        .btn-secondary { background: transparent; border: 1px solid var(--ram-border-strong); color: var(--ram-muted); }
+        .footer-bar {
+            background: var(--verde-pale);
+            border-top: 1px solid var(--border);
+            padding: 16px 28px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .btn-primary, .btn-secondary {
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: var(--verde-corp); color: white; }
+        .btn-primary:hover { background: var(--verde-deep); transform: translateY(-1px); }
+        .btn-secondary { background: transparent; border: 1.5px solid var(--border); color: var(--text-soft); }
+        .btn-secondary:hover { border-color: var(--verde-corp); color: var(--verde-corp); }
 
-        .info-block { background: #fef7e0; border-left: 4px solid var(--ram-gold); padding: 12px 18px; border-radius: 12px; margin-bottom: 20px; }
+        .info-block { background: #FFF8E1; border-left: 4px solid var(--amarillo); padding: 12px 18px; border-radius: 12px; margin-bottom: 20px; }
         .firma-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; }
-        .firma-box { border: 1px solid var(--ram-border); border-radius: 12px; padding: 16px; text-align: center; }
-        .firma-line { border-top: 1px solid var(--ram-border-strong); margin: 30px 0 6px; }
+        .firma-box { border: 1.5px solid var(--border); border-radius: 16px; padding: 16px; text-align: center; background: var(--verde-pale); }
+        .firma-line { border-top: 2px dashed var(--border); margin: 30px 0 6px; }
 
         .toast {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px);
-            background: var(--ram-dark); color: white; padding: 10px 18px; border-radius: 10px;
-            font-size: 0.8rem; font-weight: 600; z-index: 9999; transition: transform 0.3s;
+            background: var(--verde-deep); color: white; padding: 12px 20px; border-radius: 12px;
+            font-size: 0.85rem; font-weight: 600; z-index: 9999; transition: transform 0.3s;
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
-        .toast.success { background: #2e7d32; }
-        .toast.error { background: #c62828; }
-        .toast.warn { background: #e65100; }
+        .toast.success { background: var(--verde-corp); }
+        .toast.error { background: var(--rojo); }
+        .toast.warn { background: #E65100; }
 
         @media (max-width: 780px) {
             .panel { padding: 16px; }
             .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
             .col-span-2 { grid-column: span 1; }
+            .tabs { overflow-x: auto; flex-wrap: nowrap; }
+            .tab-btn { white-space: nowrap; }
         }
     </style>
 </head>
@@ -257,22 +269,22 @@
     <div id="alertaMantenimiento" class="alert-banner" style="display: none;"></div>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="showTab('vehiculo')">Vehículo</button>
-        <button class="tab-btn" onclick="showTab('responsable')">Responsable</button>
-        <button class="tab-btn" onclick="showTab('estado')">Estado</button>
-        <button class="tab-btn" onclick="showTab('mantto')">Mantenimiento</button>
-        <button class="tab-btn" onclick="showTab('fotos')">Fotos / Notas</button>
+        <button class="tab-btn active" onclick="showTab('vehiculo')"><i class="fas fa-truck"></i> Vehículo</button>
+        <button class="tab-btn" onclick="showTab('responsable')"><i class="fas fa-user-check"></i> Responsable</button>
+        <button class="tab-btn" onclick="showTab('estado')"><i class="fas fa-clipboard-list"></i> Estado</button>
+        <button class="tab-btn" onclick="showTab('mantto')"><i class="fas fa-wrench"></i> Mantenimiento</button>
+        <button class="tab-btn" onclick="showTab('fotos')"><i class="fas fa-camera"></i> Fotos / Notas</button>
     </div>
 
     <!-- ==================== PANEL 1: VEHÍCULO ==================== -->
     <div class="panel active" id="tab-vehiculo">
-        <div style="display: flex; justify-content: space-between; background: #f0f2f5; padding: 12px 18px; border-radius: 16px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
-            <div><strong>Folio:</strong> <span id="folio-display">PRODENI-2026-001</span></div>
-            <div><strong>Fecha inspección:</strong> <input type="date" id="fecha-insp" style="border:none; background:transparent; font-weight:bold;"></div>
-            <div><strong>Próxima inspección:</strong> <input type="date" id="fecha-prox" style="border:none; background:transparent;"></div>
+        <div style="display: flex; justify-content: space-between; background: var(--verde-pale); padding: 12px 18px; border-radius: 16px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+            <div><strong><i class="fas fa-hashtag"></i> Folio:</strong> <span id="folio-display">PRODENI-2026-001</span></div>
+            <div><strong><i class="fas fa-calendar"></i> Fecha inspección:</strong> <input type="date" id="fecha-insp" style="border:none; background:transparent; font-weight:bold;"></div>
+            <div><strong><i class="fas fa-calendar-check"></i> Próxima inspección:</strong> <input type="date" id="fecha-prox" style="border:none; background:transparent;"></div>
         </div>
 
-        <div class="section-title">Identificación del vehículo</div>
+        <div class="section-title"><i class="fas fa-id-card"></i> Identificación del vehículo</div>
         <div class="grid-4">
             <div class="field"><label>Marca</label><select id="marcaSelect"><option>RAM</option><option>Ford</option><option>Chevrolet</option><option>Nissan</option></select></div>
             <div class="field"><label>Modelo</label><select id="modeloSelect" onchange="updateVehiclePreview()"><option value="RAM 700">RAM 700</option><option value="RAM 1200">RAM 1200</option><option value="RAM 1500">RAM 1500</option><option value="RAM 2500">RAM 2500</option><option value="RAM 3500">RAM 3500</option></select></div>
@@ -290,48 +302,54 @@
             <div class="field"><label>Número de motor</label><input type="text" placeholder="ENG-000000"></div>
         </div>
         <div class="grid-3" style="margin-bottom:20px;">
-            <div class="field"><label>Kilometraje actual</label><input type="number" id="kmActual" placeholder="0" onchange="calcularMantenimientoPredictivo()"></div>
+            <div class="field"><label><i class="fas fa-tachometer-alt"></i> Kilometraje actual</label><input type="number" id="kmActual" placeholder="0" onchange="calcularMantenimientoPredictivo()"></div>
             <div class="field"><label>Km último servicio</label><input type="number" id="kmUltimoServ" onchange="calcularMantenimientoPredictivo()"></div>
             <div class="field"><label>Km próximo servicio (meta)</label><input type="number" id="kmProxServ" placeholder="ej. 10000" onchange="calcularMantenimientoPredictivo()"></div>
         </div>
         <div class="grid-3">
-            <div class="field"><label>Promedio km/día (estimado)</label><input type="number" id="kmDiario" placeholder="ej. 80" step="5" onchange="calcularMantenimientoPredictivo()"></div>
-            <div class="field"><label>Días estimados para servicio</label><input type="text" id="diasRestantes" readonly placeholder="--" style="background:#f0f0f0;"></div>
-            <div class="field"><label>Fecha estimada servicio</label><input type="text" id="fechaEstimada" readonly placeholder="--" style="background:#f0f0f0;"></div>
+            <div class="field"><label><i class="fas fa-road"></i> Promedio km/día (estimado)</label><input type="number" id="kmDiario" placeholder="ej. 80" step="5" onchange="calcularMantenimientoPredictivo()"></div>
+            <div class="field"><label>Días estimados para servicio</label><input type="text" id="diasRestantes" readonly placeholder="--" style="background:#E8F5E9;"></div>
+            <div class="field"><label>Fecha estimada servicio</label><input type="text" id="fechaEstimada" readonly placeholder="--" style="background:#E8F5E9;"></div>
         </div>
         <div class="grid-2">
-            <div class="field"><label>Póliza de seguro</label><input type="text" placeholder="No. de póliza"></div>
+            <div class="field"><label><i class="fas fa-file-invoice"></i> Póliza de seguro</label><input type="text" placeholder="No. de póliza"></div>
             <div class="field"><label>Vigencia del seguro</label><input type="date"></div>
         </div>
     </div>
 
     <!-- ==================== PANEL 2: RESPONSABLE ==================== -->
     <div class="panel" id="tab-responsable">
-        <div class="section-title">Datos del responsable asignado</div>
+        <div class="section-title"><i class="fas fa-user-circle"></i> Datos del responsable asignado</div>
         <div class="grid-3"><div class="field col-span-2"><label>Nombre completo</label><input type="text" id="respNombre" placeholder="Apellido Paterno, Apellido Materno, Nombre(s)"></div><div class="field"><label>No. de empleado</label><input type="text" placeholder="EMP-0000"></div></div>
-        <div class="grid-3"><div class="field"><label>Teléfono celular</label><input type="tel" placeholder="+52 (000) 000-0000"></div><div class="field"><label>Teléfono alternativo</label><input type="tel"></div><div class="field"><label>Correo electrónico</label><input type="email" placeholder="nombre@empresa.com"></div></div>
-        <div class="grid-3"><div class="field"><label>Puesto / Cargo</label><input type="text" placeholder="Ej. Supervisor de zona"></div><div class="field"><label>Área / Departamento</label><input type="text" placeholder="Ej. Operaciones"></div><div class="field"><label>No. de licencia</label><input type="text" placeholder="000000000"></div></div>
+        <div class="grid-3"><div class="field"><label><i class="fas fa-phone"></i> Teléfono celular</label><input type="tel" placeholder="+52 (000) 000-0000"></div><div class="field"><label>Teléfono alternativo</label><input type="tel"></div><div class="field"><label><i class="fas fa-envelope"></i> Correo electrónico</label><input type="email" placeholder="nombre@empresa.com"></div></div>
+        <div class="grid-3"><div class="field"><label>Puesto / Cargo</label><input type="text" placeholder="Ej. Supervisor de zona"></div><div class="field"><label>Área / Departamento</label><input type="text" placeholder="Ej. Operaciones"></div><div class="field"><label><i class="fas fa-id-card"></i> No. de licencia</label><input type="text" placeholder="000000000"></div></div>
         <div class="grid-2"><div class="field"><label>Tipo de licencia</label><select><option>A – Particular</option><option>B – Automovilista</option><option>C – Carga federal</option><option>D – Servicio público</option><option>E – Transporte escolar</option></select></div><div class="field"><label>Vigencia de licencia</label><input type="date"></div></div>
 
-        <div class="section-title">Ruta y zona de movilidad</div>
+        <div class="section-title"><i class="fas fa-route"></i> Ruta y zona de movilidad</div>
         <div class="grid-3"><div class="field"><label>Ruta asignada</label><input type="text" id="ruta" placeholder="Ej. Ruta Centro-Occidente"></div><div class="field"><label>Estado principal</label><input type="text" placeholder="Ej. Michoacán"></div><div class="field"><label>Base / Punto de origen</label><input type="text" placeholder="Ej. Pátzcuaro"></div></div>
         <div class="field"><label>Ciudades / municipios donde se moviliza</label><input type="text" placeholder="Ej. Morelia, Uruapan, Zamora, La Piedad..."></div>
         <div class="grid-2">
-            <div class="field"><label>Turno</label><select id="turnoSelect"><option>Matutino (6am–2pm)</option><option>Vespertino (2pm–10pm)</option><option>Nocturno (10pm–6am)</option><option>Completo (6am–6pm)</option><option>OTRO (personalizado)</option></select><input type="text" id="horarioPersonalizado" placeholder="Ej. 9:00 - 18:00" style="margin-top: 8px; display: none;"></div>
-            <div class="field"><label>Tipo de uso</label><select id="tipoUsoSelect" onchange="toggleOtroUso()"><option>Supervisión de campo</option><option>Reparto / Distribución</option><option>Servicio técnico</option><option>Administrativo</option><option>Mixto</option><option value="OTRO_USO">OTRO (especificar)</option></select><input type="text" id="otroUsoTexto" placeholder="Especificar otro uso" style="margin-top: 8px; display: none;"></div>
+            <div class="field"><label><i class="fas fa-clock"></i> Turno / Horario</label>
+                <select id="turnoSelect"><option>Matutino (6am–2pm)</option><option>Vespertino (2pm–10pm)</option><option>Nocturno (10pm–6am)</option><option>Completo (6am–6pm)</option><option>OTRO (personalizado)</option></select>
+                <input type="text" id="horarioPersonalizado" placeholder="Ej. 9:00 - 18:00" style="margin-top: 8px; display: none;">
+            </div>
+            <div class="field"><label><i class="fas fa-tasks"></i> Tipo de uso</label>
+                <select id="tipoUsoSelect" onchange="toggleOtroUso()"><option>Supervisión de campo</option><option>Reparto / Distribución</option><option>Servicio técnico</option><option>Administrativo</option><option>Mixto</option><option value="OTRO_USO">OTRO (especificar)</option></select>
+                <input type="text" id="otroUsoTexto" placeholder="Especificar otro uso" style="margin-top: 8px; display: none;">
+            </div>
         </div>
-        <div class="firma-row"><div class="firma-box"><label>Firma del responsable del vehículo</label><div class="firma-line"></div><p class="firma-sub">Nombre y firma</p></div><div class="firma-box"><label>Firma del supervisor / inspector</label><div class="firma-line"></div><p class="firma-sub">Nombre y firma</p></div></div>
+        <div class="firma-row"><div class="firma-box"><label><i class="fas fa-signature"></i> Firma del responsable</label><div class="firma-line"></div><p class="firma-sub">Nombre y firma</p></div><div class="firma-box"><label><i class="fas fa-user-check"></i> Firma del supervisor</label><div class="firma-line"></div><p class="firma-sub">Nombre y firma</p></div></div>
     </div>
 
     <!-- ==================== PANEL 3: ESTADO (COMPLETO) ==================== -->
     <div class="panel" id="tab-estado">
-        <div class="info-block"><p>Selecciona el estado de cada componente: <strong style="color:#1e6f3f">OK</strong> = Bueno · <strong style="color:#c97e00">REG</strong> = Regular · <strong style="color:#b33">MAL</strong> = Requiere atención</p></div>
-        <div class="section-title">Carrocería y exterior</div><div id="estadoCarroceria" class="estado-grid"></div>
-        <div class="section-title">Llantas</div><div id="estadoLlantas" class="estado-grid"></div>
-        <div class="section-title">Motor y mecánica</div><div id="estadoMotor" class="estado-grid"></div>
-        <div class="section-title">Interior y cabina</div><div id="estadoInterior" class="estado-grid"></div>
+        <div class="info-block"><i class="fas fa-info-circle"></i> Selecciona el estado de cada componente: <strong style="color:#2E7D32">OK</strong> = Bueno · <strong style="color:#E65100">REG</strong> = Regular · <strong style="color:#C62828">MAL</strong> = Requiere atención</div>
+        <div class="section-title"><i class="fas fa-car"></i> Carrocería y exterior</div><div id="estadoCarroceria" class="estado-grid"></div>
+        <div class="section-title"><i class="fas fa-tire"></i> Llantas</div><div id="estadoLlantas" class="estado-grid"></div>
+        <div class="section-title"><i class="fas fa-engine"></i> Motor y mecánica</div><div id="estadoMotor" class="estado-grid"></div>
+        <div class="section-title"><i class="fas fa-couch"></i> Interior y cabina</div><div id="estadoInterior" class="estado-grid"></div>
         <div class="grid-3"><div class="field"><label>Marca de llantas</label><input type="text" placeholder="Ej. Continental, Bridgestone..."></div><div class="field"><label>Medida</label><input type="text" placeholder="Ej. 245/70R17"></div><div class="field"><label>Presión recomendada</label><input type="text" placeholder="Ej. 35 PSI"></div></div>
-        <div class="section-title">Estado general del vehículo</div>
+        <div class="section-title"><i class="fas fa-chart-line"></i> Estado general del vehículo</div>
         <div class="grid-3">
             <div class="field"><label>Dictamen general</label><select><option>Apto para operación</option><option>Apto con observaciones</option><option>Requiere servicio</option><option>No apto – fuera de servicio</option></select></div>
             <div class="field"><label>Nivel de urgencia</label><select><option>Sin urgencia</option><option>Mantenimiento programado</option><option>Atención en 7 días</option><option>Atención inmediata</option></select></div>
@@ -341,32 +359,32 @@
 
     <!-- ==================== PANEL 4: MANTENIMIENTO ==================== -->
     <div class="panel" id="tab-mantto">
-        <div class="section-title">Mantenimiento preventivo</div>
+        <div class="section-title"><i class="fas fa-calendar-check"></i> Mantenimiento preventivo</div>
         <table class="mantto-table"><thead><tr><th>Servicio</th><th>Realizado</th><th>Fecha</th><th>KM realizado</th><th>KM próximo</th><th>Observación</th></tr></thead><tbody id="mantto-body"></tbody></table>
-        <div class="section-title">Mantenimiento correctivo</div>
+        <div class="section-title"><i class="fas fa-tools"></i> Mantenimiento correctivo</div>
         <div class="grid-2"><div class="field"><label>Descripción de la falla</label><textarea rows="2" placeholder="Describe detalladamente la falla o problema detectado..."></textarea></div><div class="field"><label>Acción correctiva realizada</label><textarea rows="2" placeholder="Trabajo realizado, piezas reemplazadas..."></textarea></div></div>
         <div class="grid-4"><div class="field"><label>Taller / Proveedor</label><input type="text" placeholder="Nombre del taller"></div><div class="field"><label>Fecha de ingreso</label><input type="date"></div><div class="field"><label>Fecha de entrega</label><input type="date"></div><div class="field"><label>Costo total</label><input type="text" placeholder="$ 0.00"></div></div>
         <div class="grid-2"><div class="field"><label>Piezas reemplazadas</label><textarea rows="2" placeholder="Lista de piezas nuevas instaladas..."></textarea></div><div class="field"><label>Piezas reparadas</label><textarea rows="2" placeholder="Lista de piezas que fueron reparadas..."></textarea></div></div>
         <div class="grid-2"><div class="field"><label>No. de orden de trabajo / factura</label><input type="text" placeholder="OT-000000"></div><div class="field"><label>Autorizado por</label><input type="text" placeholder="Nombre del autorizador"></div></div>
-        <div class="section-title">Desgaste de componentes</div>
+        <div class="section-title"><i class="fas fa-chart-simple"></i> Desgaste de componentes</div>
         <div class="grid-2"><div class="field"><label>Bandas / Correas</label><input type="text" placeholder="Estado y km cambio"></div><div class="field"><label>Bomba de agua</label><input type="text" placeholder="Estado"></div></div>
         <div class="grid-2"><div class="field"><label>Aceite motor / Filtros</label><input type="text" placeholder="Próximo cambio"></div><div class="field"><label>Pastillas de freno / Balatas</label><input type="text" placeholder="% desgaste"></div></div>
     </div>
 
     <!-- ==================== PANEL 5: FOTOS / NOTAS ==================== -->
     <div class="panel" id="tab-fotos">
-        <div class="section-title">Fotografías del vehículo</div>
+        <div class="section-title"><i class="fas fa-camera-retro"></i> Fotografías del vehículo</div>
         <div class="foto-grid" id="fotoGridPrincipal"></div>
-        <div class="section-title">Fotografías de daños o anomalías</div>
+        <div class="section-title"><i class="fas fa-exclamation-triangle"></i> Fotografías de daños o anomalías</div>
         <div class="foto-grid" id="fotoDanios"></div>
-        <div class="section-title">Observaciones y comentarios generales</div>
+        <div class="section-title"><i class="fas fa-pen-alt"></i> Observaciones y comentarios generales</div>
         <div class="field"><label>Comentarios del inspector</label><textarea id="obsGenerales" rows="3" placeholder="Detalla aquí cualquier observación relevante sobre el estado del vehículo, incidentes reportados, recomendaciones de uso..."></textarea></div>
         <div class="grid-2"><div class="field"><label>Reporte de incidentes previos</label><textarea rows="2" placeholder="Accidentes, robo parcial, multas, remolques..."></textarea></div><div class="field"><label>Equipamiento especial / accesorios</label><textarea rows="2" placeholder="GPS, herramienta, carga especial, lonas, estacas..."></textarea></div></div>
     </div>
 
     <div class="footer-bar">
-        <span>Prodeni Fleet - Mantenimiento predictivo | <span id="syncStatus">✅ Sincronizado</span></span>
-        <div><button class="btn-secondary" onclick="guardarRespaldoLocal()">💾 Guardar respaldo</button><button class="btn-primary" onclick="exportarWord()">📄 Exportar Word</button></div>
+        <span><i class="fas fa-leaf"></i> Prodeni Fleet - Mantenimiento predictivo | <span id="syncStatus">✅ Sincronizado</span></span>
+        <div><button class="btn-secondary" onclick="guardarRespaldoLocal()"><i class="fas fa-database"></i> Guardar respaldo</button><button class="btn-primary" onclick="exportarWord()"><i class="fas fa-file-word"></i> Exportar Word</button></div>
     </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -456,7 +474,7 @@ function cargarMantenimientoTabla() {
     tbody.innerHTML = '';
     serviciosMantto.forEach(s => {
         let tr = document.createElement('tr');
-        tr.innerHTML = `<td style="font-weight:500;">${s}</td><td class="chk-cell"><input type="checkbox"></td><td><input type="date"></td><td><input type="number" placeholder="km"></td><td><input type="number" placeholder="km"></td><td><input type="text" placeholder="obs"></td>`;
+        tr.innerHTML = `<td style="font-weight:500;">${s}<\/td><td class="chk-cell"><input type="checkbox"><\/td><td><input type="date"><\/td><td><input type="number" placeholder="km"><\/td><td><input type="number" placeholder="km"><\/td><td><input type="text" placeholder="obs"><\/td>`;
         tbody.appendChild(tr);
     });
 }
@@ -470,7 +488,7 @@ function crearSlots(arr, contId) {
     arr.forEach(nombre => {
         let slot = document.createElement('div'); slot.className = 'foto-slot';
         slot.onclick = () => slot.querySelector('input').click();
-        slot.innerHTML = `<input type="file" accept="image/*" onchange="previewFoto(this)"><img><div class="foto-slot-label"><i class="fas fa-camera"></i> ${nombre}</div>`;
+        slot.innerHTML = `<input type="file" accept="image/*" onchange="previewFoto(this)"><img><div class="foto-slot-label"><i class="fas fa-image"></i> ${nombre}</div>`;
         container.appendChild(slot);
     });
 }
@@ -527,12 +545,12 @@ window.calcularMantenimientoPredictivo = function() {
         document.getElementById('fechaEstimada').value = fechaEst.toLocaleDateString();
         if(dias <= 7) {
             alertDiv.style.display = 'flex';
-            alertDiv.innerHTML = `<div class="alert-text"><strong>⚠️ ALERTA DE MANTENIMIENTO</strong> · Faltan ${dias} días para el servicio (${kmRestantes} km restantes). Programar revisión.</div><button onclick="toast('Notificación enviada al ingeniero', 'info')" style="background:#c0392b; color:white; border:none; padding:5px 12px; border-radius:20px;">Notificar</button>`;
+            alertDiv.innerHTML = `<div class="alert-text"><strong><i class="fas fa-exclamation-triangle"></i> ALERTA DE MANTENIMIENTO</strong> · Faltan ${dias} días para el servicio (${kmRestantes} km restantes). Programar revisión.</div><button onclick="toast('Notificación enviada al ingeniero', 'info')" style="background:#E65100; color:white; border:none; padding:5px 12px; border-radius:20px; cursor:pointer;"><i class="fas fa-bell"></i> Notificar</button>`;
             alertDiv.className = dias <= 3 ? 'alert-banner critical' : 'alert-banner warning';
         } else alertDiv.style.display = 'none';
     } else if(kmRestantes <= 500 && kmRestantes > 0) {
         alertDiv.style.display = 'flex';
-        alertDiv.innerHTML = `<div class="alert-text"><strong>🔧 Próximo mantenimiento</strong> · Solo ${kmRestantes} km restantes. Revisar pronto.</div>`;
+        alertDiv.innerHTML = `<div class="alert-text"><strong><i class="fas fa-tools"></i> Próximo mantenimiento</strong> · Solo ${kmRestantes} km restantes. Revisar pronto.</div>`;
     } else alertDiv.style.display = 'none';
 };
 
@@ -546,7 +564,7 @@ window.toggleOtroUso = function() {
 };
 
 // ============================================================
-// GUARDAR INSPECCIÓN (OFFLINE + ONLINE)
+// GUARDAR INSPECCIÓN
 // ============================================================
 function obtenerDatosFormulario() {
     return {
@@ -556,7 +574,7 @@ function obtenerDatosFormulario() {
         fechaProx: document.getElementById('fecha-prox').value,
         marca: document.getElementById('marcaSelect').value,
         modelo: document.getElementById('modeloSelect').value,
-        version: document.querySelector('#tab-vehiculo .grid-4 select:first-of-type')?.value || '',
+        version: document.querySelector('#tab-vehiculo .grid-4 select:nth-of-type(3)')?.value || '',
         anio: document.getElementById('anioVehiculo').value,
         color: document.getElementById('colorSelect').value,
         placas: document.getElementById('placas').value,
@@ -628,11 +646,11 @@ function cargarPendientes() {
     const pendientes = JSON.parse(localStorage.getItem('inspecciones_pendientes') || '[]');
     const syncStatus = document.getElementById('syncStatus');
     if(pendientes.length > 0) {
-        syncStatus.innerHTML = `⏳ ${pendientes.length} pendiente(s)`;
-        syncStatus.style.color = '#e67e22';
+        syncStatus.innerHTML = `<i class="fas fa-clock"></i> ${pendientes.length} pendiente(s)`;
+        syncStatus.style.color = '#E65100';
     } else {
-        syncStatus.innerHTML = '✅ Sincronizado';
-        syncStatus.style.color = '#2e7d32';
+        syncStatus.innerHTML = '<i class="fas fa-check-circle"></i> Sincronizado';
+        syncStatus.style.color = '#2E7D32';
     }
 }
 
@@ -662,9 +680,9 @@ async function sincronizarTodo() {
 function actualizarSyncStatus() {
     const pendientes = JSON.parse(localStorage.getItem('inspecciones_pendientes') || '[]');
     const syncStatus = document.getElementById('syncStatus');
-    if(!navigator.onLine) syncStatus.innerHTML = '📡 Sin conexión';
-    else if(pendientes.length > 0) syncStatus.innerHTML = `⏳ ${pendientes.length} pendiente(s)`;
-    else syncStatus.innerHTML = '✅ Sincronizado';
+    if(!navigator.onLine) syncStatus.innerHTML = '<i class="fas fa-wifi-slash"></i> Sin conexión';
+    else if(pendientes.length > 0) syncStatus.innerHTML = `<i class="fas fa-clock"></i> ${pendientes.length} pendiente(s)`;
+    else syncStatus.innerHTML = '<i class="fas fa-check-circle"></i> Sincronizado';
 }
 
 // ============================================================
@@ -708,8 +726,6 @@ function toast(msg, tipo) {
     clearTimeout(t._timer);
     t._timer = setTimeout(() => t.classList.remove('show'), 3000);
 }
-
-document.getElementById('formInspeccion')?.addEventListener('submit', e => { e.preventDefault(); guardarInspeccion(); });
 </script>
 </body>
 </html>
