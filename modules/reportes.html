@@ -1,0 +1,219 @@
+<!-- modules/reportes.html -->
+<style>
+.rep-header{margin-bottom:28px}
+.rep-header h2{font-size:1.4rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:10px}
+.rep-header h2 i{color:var(--g3)}
+.rep-header p{font-size:.76rem;color:var(--text3);margin-top:3px}
+.rep-filters{background:var(--surface);border-radius:var(--radius-lg);padding:20px;margin-bottom:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border)}
+.rep-filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:16px}
+.rep-field{display:flex;flex-direction:column;gap:5px}
+.rep-field label{font-size:.66rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
+.rep-field input{padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:.83rem;color:var(--text);outline:none;transition:.18s;background:var(--surface)}
+.rep-field input:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(76,175,80,.1)}
+.rep-filter-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.rep-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:20px}
+.rep-stat{background:var(--surface);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow-sm);border:1px solid var(--border);transition:.2s;position:relative;overflow:hidden}
+.rep-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.rep-stat.green::before{background:var(--g3)}
+.rep-stat.blue::before{background:#42A5F5}
+.rep-stat.orange::before{background:#FFA726}
+.rep-stat.red::before{background:var(--red)}
+.rep-stat:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.rep-stat-num{font-size:1.8rem;font-weight:800;line-height:1;letter-spacing:-1px}
+.rep-stat-lbl{font-size:.67rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:5px}
+.rep-stat-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:1.6rem;opacity:.08}
+.panel{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm)}
+.panel-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;background:var(--surface2)}
+.panel-title{font-size:.85rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.panel-title i{color:var(--g2)}
+.count-pill{font-size:.7rem;background:var(--g5);color:var(--g2);padding:3px 10px;border-radius:20px;font-weight:700}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;padding:10px 14px;font-size:.67rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;background:var(--surface2);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody td{padding:12px 14px;font-size:.8rem;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:.15s}
+tbody tr:hover{background:var(--surface2)}
+.rep-empty{text-align:center;padding:60px 20px;color:var(--text3)}
+.rep-empty i{font-size:2.5rem;opacity:.2;display:block;margin-bottom:12px}
+.rep-empty p{font-size:.83rem;font-weight:600}
+.export-row{display:flex;gap:10px;flex-wrap:wrap}
+</style>
+
+<div style="max-width:1400px;margin:0 auto">
+  <div class="rep-header">
+    <h2><i class="fas fa-chart-bar"></i> Reportes y Estadísticas</h2>
+    <p>Análisis de datos y exportación de inspecciones</p>
+  </div>
+
+  <div class="rep-filters">
+    <div class="rep-filter-grid">
+      <div class="rep-field"><label>Fecha desde</label><input type="date" id="reporteFechaDesde"></div>
+      <div class="rep-field"><label>Fecha hasta</label><input type="date" id="reporteFechaHasta"></div>
+      <div class="rep-field"><label>Placas</label><input type="text" id="reportePlacas" placeholder="Todas"></div>
+      <div class="rep-field"><label>Técnico</label><input type="text" id="reporteTecnico" placeholder="Todos"></div>
+    </div>
+    <div class="rep-filter-actions">
+      <button class="btn-secondary" onclick="aplicarFiltros()"><i class="fas fa-filter"></i> Aplicar filtros</button>
+      <div class="export-row">
+        <button class="btn-primary" onclick="exportarReportePDF()" style="background:linear-gradient(135deg,#C62828,#B71C1C)"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+        <button class="btn-secondary" onclick="exportarReporteCSV()"><i class="fas fa-file-csv"></i> Exportar CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="rep-stats">
+    <div class="rep-stat green"><div class="rep-stat-num" id="statTotal">—</div><div class="rep-stat-lbl">Total inspecciones</div><i class="fas fa-clipboard-check rep-stat-icon"></i></div>
+    <div class="rep-stat blue"><div class="rep-stat-num" id="statVehiculos">—</div><div class="rep-stat-lbl">Vehículos únicos</div><i class="fas fa-truck rep-stat-icon"></i></div>
+    <div class="rep-stat orange"><div class="rep-stat-num" id="statFallas">—</div><div class="rep-stat-lbl">Con fallas</div><i class="fas fa-triangle-exclamation rep-stat-icon"></i></div>
+    <div class="rep-stat red"><div class="rep-stat-num" id="statKmTotal">—</div><div class="rep-stat-lbl">Km acumulados</div><i class="fas fa-tachometer-alt rep-stat-icon"></i></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><span class="panel-title"><i class="fas fa-table-list"></i> Registros</span><span class="count-pill" id="totalFiltrados">0 registros</span></div>
+    <div class="tw"><table><thead><tr><th>Fecha</th><th>Folio</th><th>Técnico</th><th>Vehículo</th><th>Placas</th><th>Km</th><th>Conductor</th><th>Dictamen</th></tr></thead><tbody id="reportesTable"><tr><td colspan="8" style="text-align:center;padding:40px"><i class="fas fa-spinner fa-spin"></i> Cargando datos…</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<script>
+(function(){
+let todasInspecciones = [];
+let reportesFiltrados = [];
+
+window.cargarReportes = async function() {
+  const tb = document.getElementById('reportesTable');
+  tb.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px"><i class="fas fa-spinner fa-spin"></i> Cargando datos…</td></tr>';
+  if (!navigator.onLine) {
+    const cache = localStorage.getItem('prodeni_inspecciones_cache');
+    if (cache) { todasInspecciones = JSON.parse(cache); aplicarFiltros(); }
+    else tb.innerHTML = '<tr><td colspan="8"><div class="rep-empty"><i class="fas fa-wifi-slash"></i><p>Sin conexión a internet</p></div></td></tr>';
+    return;
+  }
+  try {
+    const r = await fetch(`${window.SCRIPT_URL}?action=getInspecciones`);
+    const d = await r.json();
+    if (d.success && d.rows) {
+      todasInspecciones = d.rows;
+      localStorage.setItem('prodeni_inspecciones_cache', JSON.stringify(todasInspecciones));
+      aplicarFiltros();
+    } else {
+      tb.innerHTML = '<tr><td colspan="8"><div class="rep-empty"><i class="fas fa-clipboard-list"></i><p>No hay inspecciones registradas</p></div></td></tr>';
+    }
+  } catch(e) {
+    tb.innerHTML = '<tr><td colspan="8"><div class="rep-empty"><i class="fas fa-triangle-exclamation"></i><p>Error al cargar datos</p></div></td></tr>';
+  }
+};
+
+window.aplicarFiltros = function() {
+  const desde = document.getElementById('reporteFechaDesde').value;
+  const hasta = document.getElementById('reporteFechaHasta').value;
+  const placas = document.getElementById('reportePlacas').value.trim().toUpperCase();
+  const tec = document.getElementById('reporteTecnico').value.trim().toLowerCase();
+  reportesFiltrados = todasInspecciones.filter(r => {
+    if (desde && r.fecha < desde) return false;
+    if (hasta && r.fecha > hasta) return false;
+    if (placas && !(r.placas || '').toUpperCase().includes(placas)) return false;
+    if (tec && !(r.usuario || '').toLowerCase().includes(tec)) return false;
+    return true;
+  });
+  renderReportes();
+  actualizarEstadisticas();
+};
+
+function renderReportes() {
+  const tb = document.getElementById('reportesTable');
+  document.getElementById('totalFiltrados').textContent = `${reportesFiltrados.length} registro${reportesFiltrados.length !== 1 ? 's' : ''}`;
+  if (!reportesFiltrados.length) {
+    tb.innerHTML = '<tr><td colspan="8"><div class="rep-empty"><i class="fas fa-magnifying-glass"></i><p>Sin datos con los filtros seleccionados</p></div></td></tr>';
+    return;
+  }
+  tb.innerHTML = [...reportesFiltrados].reverse().map(r => {
+    const bad = r.dictamen?.includes('No apto');
+    const warn = r.dictamen?.includes('observaciones');
+    const bc = bad ? 'badge-danger' : warn ? 'badge-warning' : 'badge-success';
+    return `<tr><td style="white-space:nowrap">${r.fecha || '—'}</td><td><strong style="font-size:.75rem">${r.folio || '—'}</strong></td><td>${r.usuario || '—'}</td><td>${[r.marca, r.modelo].filter(Boolean).join(' ') || '—'}</td><td><strong>${r.placas || r.economico || '—'}</strong></td><td>${r.kmActual ? r.kmActual + ' km' : '—'}</td><td>${r.conductor || '—'}</td><td><span class="badge ${bc}" style="font-size:.67rem;padding:3px 8px">${r.dictamen || '—'}</span></td></tr>`;
+  }).join('');
+}
+
+function actualizarEstadisticas() {
+  const uv = new Set(reportesFiltrados.map(r => r.placas || r.economico)).size;
+  const cf = reportesFiltrados.filter(r => r.fallaDetectada && r.fallaDetectada !== '').length;
+  const km = reportesFiltrados.reduce((s, r) => s + (parseInt(r.kmActual) || 0), 0);
+  document.getElementById('statTotal').textContent = reportesFiltrados.length;
+  document.getElementById('statVehiculos').textContent = uv;
+  document.getElementById('statFallas').textContent = cf;
+  document.getElementById('statKmTotal').textContent = km > 999 ? `${(km / 1000).toFixed(1)}k` : km;
+}
+
+window.exportarReporteCSV = function() {
+  if (!reportesFiltrados.length) { window.toast('No hay datos para exportar', 'warn'); return; }
+  const h = ['Fecha', 'Folio', 'Técnico', 'Marca', 'Modelo', 'Placas', 'Económico', 'Km', 'Conductor', 'Ruta', 'Dictamen', 'Falla'];
+  const rows = reportesFiltrados.map(r => [r.fecha, r.folio, r.usuario, r.marca, r.modelo, r.placas, r.economico, r.kmActual, r.conductor, r.ruta, r.dictamen, r.fallaDetectada].map(c => `"${String(c || '').replace(/"/g, '""')}"`).join(','));
+  const csv = '\uFEFF' + h.join(',') + '\n' + rows.join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+  a.download = `Reporte_PRODENI_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  window.toast('CSV exportado ✓', 'success');
+};
+
+window.exportarReportePDF = async function() {
+  if (!reportesFiltrados.length) { window.toast('No hay datos para exportar', 'warn'); return; }
+  window.toast('Generando PDF…', 'info');
+  
+  // Cargar librerías
+  if (typeof window.jspdf === 'undefined') {
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+  }
+  
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:absolute;left:-9999px;width:1200px';
+  document.body.appendChild(iframe);
+  
+  const doc = iframe.contentDocument;
+  doc.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&display=swap" rel="stylesheet"><style>body{font-family:'Outfit',Arial,sans-serif;padding:32px;font-size:12px}h1{color:#1B5E20;margin:0;font-size:20px}h2{color:#2E7D32;font-size:14px;margin:4px 0}table{width:100%;border-collapse:collapse;margin-top:16px}th{background:#2E7D32;color:white;padding:8px;text-align:left;font-size:11px}td{padding:8px;border-bottom:1px solid #eee;font-size:11px}.badge{padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700}.ok{background:#E8F5E9;color:#1B5E20}.warn{background:#FFF8E1;color:#E65100}.bad{background:#FFEBEE;color:#C62828}</style></head><body>
+  <div style="display:flex;align-items:center;gap:12px;border-bottom:3px solid #D4AF37;padding-bottom:12px;margin-bottom:16px"><div style="width:48px;height:48px;background:linear-gradient(135deg,#2E7D32,#1B5E20);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;color:#D4AF37">🚜</div><div><h1>PRODENI Fleet</h1><h2>Reporte de Inspecciones · ${new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}</h2></div></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px"><div style="background:#E8F5E9;padding:10px;border-radius:8px"><strong style="font-size:18px;color:#1B5E20">${reportesFiltrados.length}</strong><br>Inspecciones</div><div style="background:#E3F2FD;padding:10px;border-radius:8px"><strong style="font-size:18px;color:#1565C0">${new Set(reportesFiltrados.map(r => r.placas)).size}</strong><br>Vehículos</div><div style="background:#FFF8E1;padding:10px;border-radius:8px"><strong style="font-size:18px;color:#E65100">${reportesFiltrados.filter(r => r.fallaDetectada).length}</strong><br>Con fallas</div><div style="background:#FFEBEE;padding:10px;border-radius:8px"><strong style="font-size:18px;color:#C62828">${reportesFiltrados.filter(r => r.dictamen?.includes('No apto')).length}</strong><br>No aptos</div></div>
+  <table><thead><tr><th>Fecha</th><th>Folio</th><th>Técnico</th><th>Vehículo</th><th>Placas</th><th>Km</th><th>Conductor</th><th>Dictamen</th></tr></thead><tbody>${[...reportesFiltrados].reverse().map(r => { const bad = r.dictamen?.includes('No apto'); const warn = r.dictamen?.includes('observaciones'); const bc = bad ? 'bad' : warn ? 'warn' : 'ok'; return `<tr><td>${r.fecha || '—'}</td><td>${r.folio || '—'}</td><td>${r.usuario || '—'}</td><td>${[r.marca, r.modelo].filter(Boolean).join(' ') || '—'}</td><td><strong>${r.placas || r.economico || '—'}</strong></td><td>${r.kmActual || '—'}</td><td>${r.conductor || '—'}</td><td><span class="badge ${bc}">${r.dictamen || '—'}</span></td></tr>`; }).join('')}</tbody></table>
+  <p style="margin-top:24px;text-align:center;color:#aaa;font-size:10px">Generado por PRODENI Fleet Management System · ${new Date().toLocaleString('es-MX')}</p>
+  </body></html>`);
+  doc.close();
+  
+  setTimeout(async () => {
+    try {
+      const canvas = await html2canvas(doc.body, { scale: 1.5, useCORS: true });
+      const imgData = canvas.toDataURL('image/png');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('l', 'mm', 'a4');
+      const w = 297;
+      const h = (canvas.height * w) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, w, h);
+      pdf.save(`Reporte_PRODENI_${new Date().toISOString().slice(0, 10)}.pdf`);
+      window.toast('PDF generado ✓', 'success');
+    } catch(e) {
+      window.toast('Error al generar PDF: ' + e.message, 'error');
+    }
+    document.body.removeChild(iframe);
+  }, 600);
+};
+
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = res;
+    s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+
+// Inicializar
+const hoy = new Date();
+const h30 = new Date();
+h30.setDate(hoy.getDate() - 30);
+document.getElementById('reporteFechaDesde').value = h30.toISOString().slice(0, 10);
+document.getElementById('reporteFechaHasta').value = hoy.toISOString().slice(0, 10);
+window.cargarReportes();
+})();
+</script>

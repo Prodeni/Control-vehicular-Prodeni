@@ -1,0 +1,460 @@
+<!-- modules/checklist.html -->
+<style>
+.ck-wrap{max-width:800px;margin:0 auto}
+.ck-header{margin-bottom:20px}
+.ck-header h2{font-size:1.35rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:10px}
+.ck-header h2 i{color:var(--g3)}
+.ck-header p{font-size:.74rem;color:var(--text3);margin-top:3px}
+/* Selector de vehículo */
+.ck-vehicle-card{background:var(--surface);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:18px;border:1.5px solid var(--border);box-shadow:var(--shadow-sm)}
+.ck-vehicle-info{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.ck-veh-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--g3),var(--g2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:white;flex-shrink:0}
+.ck-veh-placas{font-size:1.2rem;font-weight:900;color:var(--g1)}
+.ck-veh-model{font-size:.78rem;color:var(--text3);margin-top:2px}
+.ck-grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.ck-field{display:flex;flex-direction:column;gap:4px}
+.ck-field label{font-size:.63rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px}
+.ck-field input,.ck-field select{padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:.84rem;color:var(--text);outline:none;background:var(--surface);transition:.18s}
+.ck-field input:focus,.ck-field select:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(76,175,80,.1)}
+/* Checklist items */
+.ck-section{background:var(--surface);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:14px;border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.ck-section-title{font-size:.8rem;font-weight:800;color:var(--g1);margin-bottom:14px;display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.ck-section-title i{color:var(--g3)}
+.ck-items{display:flex;flex-direction:column;gap:6px}
+.ck-item{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--surface2);border-radius:var(--radius-sm);border:1.5px solid var(--border);transition:.18s;flex-wrap:wrap;gap:8px}
+.ck-item.status-ok{border-color:#A5D6A7;background:#F1F8E9}
+.ck-item.status-warn{border-color:#FFE082;background:#FFFDE7}
+.ck-item.status-mal{border-color:#FFCDD2;background:#FFEBEE}
+.ck-item-left{display:flex;align-items:center;gap:10px}
+.ck-item-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;background:var(--border)}
+.ck-item-name{font-size:.84rem;font-weight:600;color:var(--text)}
+.ck-item-desc{font-size:.68rem;color:var(--text3);margin-top:1px}
+.ck-btns{display:flex;gap:5px}
+.ck-btn{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);font-size:.68rem;font-weight:800;cursor:pointer;background:var(--surface);color:var(--text3);transition:.18s;font-family:inherit;white-space:nowrap}
+.ck-btn.ok.active{background:var(--g2);color:white;border-color:var(--g2)}
+.ck-btn.warn.active{background:#F9A825;color:white;border-color:#F9A825}
+.ck-btn.mal.active{background:var(--red);color:white;border-color:var(--red)}
+/* Progreso */
+.ck-progress-bar-wrap{background:var(--surface);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:14px;border:1px solid var(--border);display:flex;align-items:center;gap:14px}
+.ck-progress-circle{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;flex-shrink:0}
+.ck-progress-text{flex:1}
+.ck-progress-label{font-size:.82rem;font-weight:700;color:var(--text)}
+.ck-progress-sub{font-size:.7rem;color:var(--text3);margin-top:2px}
+.ck-bar{height:7px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:8px}
+.ck-bar-fill{height:100%;border-radius:4px;transition:width .4s ease}
+/* Observaciones y firma */
+.ck-obs{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:.84rem;color:var(--text);outline:none;resize:vertical;min-height:72px;background:var(--surface);transition:.18s}
+.ck-obs:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(76,175,80,.1)}
+.firma-wrap{background:var(--surface);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:14px;border:1px solid var(--border)}
+.firma-label{font-size:.8rem;font-weight:800;color:var(--g1);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.firma-label i{color:var(--g3)}
+.firma-input{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}
+.firma-field{display:flex;flex-direction:column;gap:4px}
+.firma-field label{font-size:.63rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px}
+.firma-field input{padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:.84rem;color:var(--text);outline:none;background:var(--surface);transition:.18s}
+.firma-field input:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(76,175,80,.1)}
+/* Historial */
+.ck-hist-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);align-items:center;font-size:.8rem}
+.ck-hist-row:last-child{border-bottom:none}
+.ck-hist-row:hover{background:var(--surface2)}
+/* Dictamen */
+.ck-dictamen{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.ck-dict-opt{flex:1;min-width:140px;padding:12px;border-radius:var(--radius-md);border:2px solid var(--border);cursor:pointer;text-align:center;transition:.2s;font-family:inherit}
+.ck-dict-opt.selected-apto{border-color:var(--g3);background:var(--g5)}
+.ck-dict-opt.selected-observaciones{border-color:#F9A825;background:#FFF8E1}
+.ck-dict-opt.selected-no-apto{border-color:var(--red);background:#FFEBEE}
+.ck-dict-icon{font-size:1.4rem;display:block;margin-bottom:4px}
+.ck-dict-label{font-size:.78rem;font-weight:700;color:var(--text)}
+</style>
+
+<div class="ck-wrap">
+  <div class="ck-header">
+    <h2><i class="fas fa-clipboard-check"></i> Checklist Diario</h2>
+    <p>Revisión de operatividad antes de salir a ruta · Obligatorio por turno</p>
+  </div>
+
+  <!-- Vehículo -->
+  <div class="ck-vehicle-card">
+    <div class="ck-vehicle-info">
+      <div class="ck-veh-icon">🚛</div>
+      <div>
+        <div class="ck-veh-placas" id="ckPlacasText">Sin vehículo asignado</div>
+        <div class="ck-veh-model" id="ckModeloText">Selecciona un vehículo abajo</div>
+      </div>
+    </div>
+    <div class="ck-grid3">
+      <div class="ck-field">
+        <label>Vehículo</label>
+        <select id="ckVehiculoSel" onchange="seleccionarVehiculo()">
+          <option value="">— Selecciona —</option>
+        </select>
+      </div>
+      <div class="ck-field">
+        <label>Km actual *</label>
+        <input type="number" id="ckKm" placeholder="45000">
+      </div>
+      <div class="ck-field">
+        <label>Turno</label>
+        <select id="ckTurno">
+          <option value="mañana">🌅 Mañana</option>
+          <option value="tarde">☀️ Tarde</option>
+          <option value="noche">🌙 Noche</option>
+          <option value="guardia">🔄 Guardia completa</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progreso -->
+  <div class="ck-progress-bar-wrap" id="ckProgressWrap">
+    <div class="ck-progress-circle" id="ckProgressCircle" style="background:var(--g5);color:var(--g2)">0%</div>
+    <div class="ck-progress-text">
+      <div class="ck-progress-label" id="ckProgressLabel">Completa el checklist</div>
+      <div class="ck-progress-sub" id="ckProgressSub">0 de 0 puntos revisados</div>
+      <div class="ck-bar"><div class="ck-bar-fill" id="ckBarFill" style="width:0%;background:var(--g3)"></div></div>
+    </div>
+  </div>
+
+  <!-- Items del checklist generados dinámicamente -->
+  <div id="ckItems"></div>
+
+  <!-- Dictamen -->
+  <div class="ck-section">
+    <div class="ck-section-title"><i class="fas fa-gavel"></i> Dictamen de operatividad</div>
+    <div class="ck-dictamen">
+      <button class="ck-dict-opt" id="dict-apto" onclick="setDictamen('Apto para circular')">
+        <span class="ck-dict-icon">✅</span>
+        <span class="ck-dict-label">Apto para circular</span>
+      </button>
+      <button class="ck-dict-opt" id="dict-obs" onclick="setDictamen('Apto con observaciones')">
+        <span class="ck-dict-icon">⚠️</span>
+        <span class="ck-dict-label">Apto con observaciones</span>
+      </button>
+      <button class="ck-dict-opt" id="dict-no" onclick="setDictamen('No apto — requiere atención')">
+        <span class="ck-dict-icon">❌</span>
+        <span class="ck-dict-label">No apto — requiere atención</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Observaciones -->
+  <div class="ck-section">
+    <div class="ck-section-title"><i class="fas fa-note-sticky"></i> Observaciones del turno</div>
+    <textarea class="ck-obs" id="ckObservaciones" placeholder="Anota cualquier anomalía, condición del vehículo, situación en ruta…"></textarea>
+  </div>
+
+  <!-- Firma -->
+  <div class="firma-wrap">
+    <div class="firma-label"><i class="fas fa-signature"></i> Confirmación del conductor</div>
+    <div class="firma-input">
+      <div class="firma-field">
+        <label>Nombre del conductor *</label>
+        <input type="text" id="ckFirma" placeholder="Nombre completo para confirmar">
+      </div>
+      <button class="btn-primary" onclick="guardarChecklist()" style="height:42px">
+        <i class="fas fa-check-circle"></i> Confirmar y guardar
+      </button>
+    </div>
+    <p style="font-size:.68rem;color:var(--text3);margin-top:8px">
+      <i class="fas fa-info-circle"></i> Al confirmar, el checklist queda registrado con timestamp y sincronizado con el módulo de mantenimiento.
+    </p>
+  </div>
+
+  <!-- Historial reciente -->
+  <div class="ck-section" id="ckHistorialSection" style="display:none">
+    <div class="ck-section-title"><i class="fas fa-clock-rotate-left"></i> Mis últimos checklists</div>
+    <div id="ckHistorialList"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+
+const CK_GRUPOS = {
+  'Motor y fluidos': {
+    icon: '🔧',
+    items: [
+      { id: 'aceite',        nombre: 'Nivel de aceite',         desc: 'Entre mín y máx en la varilla',    critico: true  },
+      { id: 'agua',          nombre: 'Agua/anticongelante',      desc: 'Depósito entre mín y máx',         critico: true  },
+      { id: 'combustible',   nombre: 'Nivel de combustible',     desc: 'Suficiente para la ruta',           critico: true  },
+      { id: 'fugas',         nombre: 'Sin fugas visibles',       desc: 'Aceite, agua, combustible',         critico: true  },
+      { id: 'correas',       nombre: 'Correas en buen estado',   desc: 'Sin grietas ni desgaste',           critico: false },
+    ]
+  },
+  'Frenos y llantas': {
+    icon: '🛞',
+    items: [
+      { id: 'frenos',        nombre: 'Frenos efectivos',         desc: 'Respuesta al pisar el pedal',       critico: true  },
+      { id: 'freno_mano',    nombre: 'Freno de mano',            desc: 'Funcional y bien ajustado',         critico: true  },
+      { id: 'llantas_del',   nombre: 'Llantas delanteras',       desc: 'Presión y desgaste correctos',      critico: true  },
+      { id: 'llantas_tras',  nombre: 'Llantas traseras',         desc: 'Presión y desgaste correctos',      critico: true  },
+      { id: 'refaccion',     nombre: 'Llanta de refacción',      desc: 'Inflada y accesible',               critico: false },
+    ]
+  },
+  'Luces y eléctrico': {
+    icon: '💡',
+    items: [
+      { id: 'faros',         nombre: 'Faros delanteros',         desc: 'Altas, bajas y direccionales',      critico: true  },
+      { id: 'luces_tras',    nombre: 'Luces traseras',           desc: 'Stop, reversa, cuartos',            critico: true  },
+      { id: 'luces_trabajo', nombre: 'Luces de trabajo',         desc: 'Para maniobras nocturnas',           critico: false },
+      { id: 'bateria',       nombre: 'Batería',                  desc: 'Sin corrosión, bien sujeta',        critico: false },
+      { id: 'claxon',        nombre: 'Claxon',                   desc: 'Funcional',                         critico: true  },
+    ]
+  },
+  'Seguridad y documentos': {
+    icon: '🛡️',
+    items: [
+      { id: 'cinturon',      nombre: 'Cinturones de seguridad',  desc: 'Todos funcionando',                 critico: true  },
+      { id: 'espejos',       nombre: 'Espejos laterales',        desc: 'Limpios y bien ajustados',          critico: true  },
+      { id: 'limpiabrisas',  nombre: 'Limpiabrisas',             desc: 'Funcionales, sin rayaduras',        critico: false },
+      { id: 'extinguidor',   nombre: 'Extinguidor',              desc: 'Vigente, accesible, cargado',       critico: true  },
+      { id: 'triangulos',    nombre: 'Triángulos reflejantes',   desc: 'Al menos 2 en buen estado',         critico: true  },
+      { id: 'tarjeta',       nombre: 'Tarjeta de circulación',   desc: 'Vigente y a la mano',               critico: true  },
+      { id: 'seguro',        nombre: 'Póliza de seguro',         desc: 'Vigente y a la mano',               critico: true  },
+      { id: 'licencia',      nombre: 'Licencia del conductor',   desc: 'Vigente y tipo correcto',           critico: true  },
+    ]
+  },
+  'Carrocería y cabina': {
+    icon: '🚛',
+    items: [
+      { id: 'parabrisas',    nombre: 'Parabrisas',               desc: 'Sin grietas que afecten visibilidad', critico: true },
+      { id: 'puertas',       nombre: 'Puertas y seguros',        desc: 'Cierran correctamente',             critico: true  },
+      { id: 'gato',          nombre: 'Gato hidráulico',          desc: 'Presente y funcional',              critico: false },
+      { id: 'carga',         nombre: 'Carga bien asegurada',     desc: 'Sin riesgo de desplazamiento',      critico: true  },
+    ]
+  }
+};
+
+let ckEstados    = {};
+let ckDictamen   = '';
+let ckVehActual  = '';
+let vehiculosGlobal = [];
+let currentUser  = (window.currentUser || JSON.parse(localStorage.getItem('prodeni_session') || '{}')).username || '';
+
+// ── Cargar vehículos en el selector ───────────────────────
+async function cargarVehiculos() {
+  vehiculosGlobal = JSON.parse(localStorage.getItem('prodeni_vehiculos_cache') || '[]');
+  const session   = JSON.parse(localStorage.getItem('prodeni_session') || '{}');
+
+  if (navigator.onLine) {
+    try {
+      const r = await fetch(`${window.SCRIPT_URL}?action=getVehiculos`);
+      const d = await r.json();
+      if (d.success) { vehiculosGlobal = d.vehiculos; localStorage.setItem('prodeni_vehiculos_cache', JSON.stringify(vehiculosGlobal)); }
+    } catch(e) {}
+  }
+
+  const sel = document.getElementById('ckVehiculoSel');
+  vehiculosGlobal.filter(v => (v.activo || 'SI') === 'SI').forEach(v => {
+    const o = document.createElement('option');
+    o.value = v.placas;
+    o.textContent = `${v.placas}${v.economico ? ' · ' + v.economico : ''} — ${[v.marca, v.modelo].filter(Boolean).join(' ')}`;
+    sel.appendChild(o);
+  });
+
+  // Auto-seleccionar vehículo asignado
+  if (session.vehiculoAsignado) {
+    sel.value = session.vehiculoAsignado;
+    seleccionarVehiculo();
+  }
+}
+
+window.seleccionarVehiculo = function() {
+  const placas = document.getElementById('ckVehiculoSel').value;
+  ckVehActual = placas;
+  const v = vehiculosGlobal.find(x => x.placas === placas);
+  if (v) {
+    document.getElementById('ckPlacasText').textContent = v.placas;
+    document.getElementById('ckModeloText').textContent = [v.marca, v.modelo, v.version, v.anio].filter(Boolean).join(' · ');
+  }
+  cargarHistorialChecklist();
+};
+
+// ── Renderizar items del checklist ─────────────────────────
+function renderChecklist() {
+  const cont = document.getElementById('ckItems');
+  cont.innerHTML = Object.entries(CK_GRUPOS).map(([grupo, data]) => `
+    <div class="ck-section">
+      <div class="ck-section-title"><span style="font-size:1rem">${data.icon}</span> ${grupo}</div>
+      <div class="ck-items">
+        ${data.items.map(item => `
+          <div class="ck-item" id="ckItem_${item.id}">
+            <div class="ck-item-left">
+              <div class="ck-item-icon" id="ckIcon_${item.id}" style="${item.critico ? 'background:#FFF8E1' : ''}">
+                ${item.critico ? '⚠️' : '📋'}
+              </div>
+              <div>
+                <div class="ck-item-name">${item.nombre} ${item.critico ? '<span style="color:var(--red);font-size:.65rem">CRÍTICO</span>' : ''}</div>
+                <div class="ck-item-desc">${item.desc}</div>
+              </div>
+            </div>
+            <div class="ck-btns">
+              <button class="ck-btn ok"   onclick="setCkEstado('${item.id}','ok')">  ✓ OK</button>
+              <button class="ck-btn warn" onclick="setCkEstado('${item.id}','warn')">⚠ Atención</button>
+              <button class="ck-btn mal"  onclick="setCkEstado('${item.id}','mal')"> ✕ Mal</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+window.setCkEstado = function(id, val) {
+  ckEstados[id] = val;
+  const itemEl = document.getElementById(`ckItem_${id}`);
+  const iconEl = document.getElementById(`ckIcon_${id}`);
+  if (itemEl) { itemEl.className = `ck-item status-${val}`; }
+  // Actualizar botones activos
+  if (itemEl) {
+    itemEl.querySelectorAll('.ck-btn').forEach(b => b.classList.remove('active'));
+    itemEl.querySelector(`.ck-btn.${val}`)?.classList.add('active');
+  }
+  // Ícono
+  if (iconEl) iconEl.textContent = val === 'ok' ? '✅' : val === 'warn' ? '⚠️' : '❌';
+  updateProgress();
+  autoDictamen();
+};
+
+function updateProgress() {
+  const total    = Object.values(CK_GRUPOS).reduce((s, g) => s + g.items.length, 0);
+  const done     = Object.keys(ckEstados).length;
+  const pct      = total ? Math.round(done / total * 100) : 0;
+  const circle   = document.getElementById('ckProgressCircle');
+  const bar      = document.getElementById('ckBarFill');
+  const label    = document.getElementById('ckProgressLabel');
+  const sub      = document.getElementById('ckProgressSub');
+
+  if (circle) { circle.textContent = pct + '%'; circle.style.background = pct === 100 ? '#E8F5E9' : 'var(--g5)'; circle.style.color = pct === 100 ? 'var(--g2)' : 'var(--text3)'; }
+  if (bar)    { bar.style.width = pct + '%'; bar.style.background = pct === 100 ? 'var(--g3)' : pct > 60 ? '#F9A825' : 'var(--red)'; }
+  if (label)  label.textContent = pct === 100 ? '✅ Checklist completo' : `${pct}% completado`;
+  if (sub)    sub.textContent   = `${done} de ${total} puntos revisados`;
+}
+
+function autoDictamen() {
+  const vals = Object.values(ckEstados);
+  if (vals.includes('mal')) setDictamen('No apto — requiere atención');
+  else if (vals.includes('warn')) setDictamen('Apto con observaciones');
+  else if (vals.length > 0) setDictamen('Apto para circular');
+}
+
+window.setDictamen = function(dict) {
+  ckDictamen = dict;
+  document.getElementById('dict-apto').className = 'ck-dict-opt' + (dict === 'Apto para circular' ? ' selected-apto' : '');
+  document.getElementById('dict-obs').className  = 'ck-dict-opt' + (dict === 'Apto con observaciones' ? ' selected-observaciones' : '');
+  document.getElementById('dict-no').className   = 'ck-dict-opt' + (dict === 'No apto — requiere atención' ? ' selected-no-apto' : '');
+};
+
+// ── Guardar ───────────────────────────────────────────────
+window.guardarChecklist = async function() {
+  const placas = ckVehActual || document.getElementById('ckVehiculoSel').value;
+  const km     = document.getElementById('ckKm').value;
+  const firma  = document.getElementById('ckFirma').value.trim();
+  const turno  = document.getElementById('ckTurno').value;
+  const obs    = document.getElementById('ckObservaciones').value;
+
+  if (!placas) { window.toast('Selecciona un vehículo', 'error'); return; }
+  if (!km)     { window.toast('El kilometraje es obligatorio', 'error'); return; }
+  if (!firma)  { window.toast('El conductor debe confirmar con su nombre', 'error'); return; }
+
+  const total  = Object.values(CK_GRUPOS).reduce((s, g) => s + g.items.length, 0);
+  const done   = Object.keys(ckEstados).length;
+  if (done < total * 0.7) {
+    if (!confirm(`Solo has completado ${done} de ${total} puntos. ¿Guardar de todas formas?`)) return;
+  }
+  if (!ckDictamen) { window.toast('Selecciona un dictamen de operatividad', 'error'); return; }
+
+  const reg = {
+    action: 'saveChecklist',
+    fecha:  new Date().toISOString().slice(0,10),
+    usuario: currentUser,
+    placas:  placas,
+    km:      km,
+    turno:   turno,
+    items:   ckEstados,
+    observaciones: obs,
+    firma:   firma,
+    dictamen: ckDictamen,
+    timestamp: Date.now()
+  };
+
+  // Cache local
+  const key    = `prodeni_checklist_${placas}`;
+  const cklist = JSON.parse(localStorage.getItem(key) || '[]');
+  cklist.push(reg);
+  localStorage.setItem(key, JSON.stringify(cklist));
+  window.toast('Checklist guardado localmente ✓', 'success');
+
+  if (navigator.onLine) {
+    try {
+      await fetch(window.SCRIPT_URL, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reg)
+      });
+      window.toast('Sincronizado con el sistema ✓', 'success');
+    } catch(e) {}
+  }
+
+  // Si no está apto, notificar
+  if (ckDictamen.includes('No apto') || ckDictamen.includes('observaciones')) {
+    window.toast('⚠️ Se notificó al administrador del estado del vehículo', 'warn');
+  }
+
+  cargarHistorialChecklist();
+  // Limpiar para nueva revisión
+  setTimeout(() => {
+    if (confirm('¿Iniciar un nuevo checklist?')) {
+      ckEstados = {}; ckDictamen = '';
+      renderChecklist(); updateProgress();
+      document.getElementById('ckKm').value = '';
+      document.getElementById('ckFirma').value = '';
+      document.getElementById('ckObservaciones').value = '';
+    }
+  }, 800);
+};
+
+// ── Historial ──────────────────────────────────────────────
+async function cargarHistorialChecklist() {
+  const sec  = document.getElementById('ckHistorialSection');
+  const list = document.getElementById('ckHistorialList');
+  const placas = ckVehActual;
+  if (!placas || !sec || !list) return;
+
+  let rows = JSON.parse(localStorage.getItem(`prodeni_checklist_${placas}`) || '[]').reverse().slice(0, 10);
+
+  if (navigator.onLine) {
+    try {
+      const r = await fetch(`${window.SCRIPT_URL}?action=getChecklist&placas=${encodeURIComponent(placas)}`);
+      const d = await r.json();
+      if (d.success && d.rows.length) rows = d.rows.slice(0, 10);
+    } catch(e) {}
+  }
+
+  if (!rows.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+
+  list.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;padding:8px 16px;font-size:.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid var(--border)">
+      <div>Fecha</div><div>Turno</div><div>Dictamen</div><div>Conductor</div>
+    </div>
+    ${rows.map(r => {
+      const bad  = r.dictamen?.includes('No apto');
+      const warn = r.dictamen?.includes('observaciones');
+      const cls  = bad ? 'badge-danger' : warn ? 'badge-warning' : 'badge-success';
+      return `<div class="ck-hist-row">
+        <div style="font-weight:600">${r.fecha || '—'}</div>
+        <div style="color:var(--text3)">${r.turno || '—'}</div>
+        <div><span class="badge ${cls}" style="font-size:.65rem">${r.dictamen || '—'}</span></div>
+        <div style="font-size:.75rem;color:var(--text3)">${r.firma || r.usuario || '—'}</div>
+      </div>`;
+    }).join('')}
+  `;
+}
+
+// ── Init ───────────────────────────────────────────────────
+renderChecklist();
+updateProgress();
+cargarVehiculos();
+
+})();
+</script>

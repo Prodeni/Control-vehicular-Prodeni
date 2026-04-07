@@ -1,0 +1,291 @@
+<!-- modules/vehiculos.html -->
+<style>
+.veh-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;margin-bottom:28px}
+.veh-header h2{font-size:1.4rem;font-weight:800;color:var(--text);letter-spacing:-.3px;display:flex;align-items:center;gap:10px}
+.veh-header h2 i{color:var(--g3);font-size:1.1rem}
+.veh-header p{font-size:.76rem;color:var(--text3);margin-top:3px}
+.search-panel{background:var(--surface);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.search-panel input{flex:1;min-width:220px;padding:10px 16px 10px 40px;border:1.5px solid var(--border);border-radius:40px;font-family:inherit;font-size:.83rem;color:var(--text);outline:none;transition:.2s;background:var(--bg)}
+.search-panel input:focus{border-color:var(--g3);background:var(--surface);box-shadow:0 0 0 3px rgba(76,175,80,.12)}
+.toolbar-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.toolbar-row{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;background:var(--surface2)}
+.toolbar-title{font-size:.85rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.toolbar-title i{color:var(--g2)}
+.count-pill{font-size:.7rem;background:var(--g5);color:var(--g2);padding:3px 10px;border-radius:20px;font-weight:700}
+.veh-cards-wrap{padding:16px}
+.veh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.veh-card{background:var(--surface);border-radius:var(--radius-lg);border:1.5px solid var(--border);padding:20px;transition:.22s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.veh-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--g3),var(--g2));opacity:0;transition:.2s}
+.veh-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--g4)}
+.veh-card:hover::before{opacity:1}
+.veh-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.veh-plates{font-size:1.25rem;font-weight:900;color:var(--g1);letter-spacing:1px}
+.veh-eco{font-size:.68rem;background:var(--g5);color:var(--g2);padding:3px 9px;border-radius:20px;font-weight:700;margin-top:3px;display:inline-block}
+.veh-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.veh-dot.on{background:#69F0AE;box-shadow:0 0 6px #69F0AE66}
+.veh-dot.off{background:#EF9A9A}
+.veh-model{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:3px}
+.veh-sub{font-size:.73rem;color:var(--text3)}
+.veh-sep{height:1px;background:var(--border);margin:13px 0}
+.veh-driver{display:flex;align-items:center;gap:10px}
+.veh-avatar{width:30px;height:30px;background:linear-gradient(135deg,var(--g3),var(--g2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:white;flex-shrink:0}
+.veh-driver-name{font-size:.8rem;font-weight:600;color:var(--text)}
+.veh-driver-route{font-size:.69rem;color:var(--text3)}
+.veh-actions{display:flex;gap:6px;margin-top:14px}
+.veh-btn{flex:1;padding:8px 6px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);font-family:inherit;font-size:.72rem;font-weight:700;cursor:pointer;transition:.18s;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--text2)}
+.veh-btn:hover{background:var(--g5);border-color:var(--g3);color:var(--g2)}
+.veh-btn.danger:hover{background:#FFEBEE;border-color:#EF9A9A;color:var(--red)}
+.veh-btn i{font-size:.72rem}
+.veh-empty{text-align:center;padding:60px 20px;color:var(--text3);grid-column:1/-1}
+.veh-empty i{font-size:2.5rem;opacity:.25;display:block;margin-bottom:12px}
+.veh-empty p{font-size:.83rem;font-weight:600}
+.m-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:20px}
+.m-overlay.open{display:flex;animation:mFadeIn .2s ease both}
+@keyframes mFadeIn{from{opacity:0}to{opacity:1}}
+.m-box{background:var(--surface);border-radius:var(--radius-xl);width:100%;max-width:800px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.18);animation:mUp .3s cubic-bezier(.34,1.3,.64,1) both}
+@keyframes mUp{from{transform:scale(.93) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.m-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);z-index:1}
+.m-head h3{font-size:1rem;font-weight:800;color:var(--g1);display:flex;align-items:center;gap:8px}
+.m-head h3 i{color:var(--g3)}
+.m-close{width:32px;height:32px;background:var(--bg);border:none;border-radius:50%;cursor:pointer;font-size:1rem;color:var(--text3);transition:.18s;display:flex;align-items:center;justify-content:center}
+.m-close:hover{background:#FFEBEE;color:var(--red)}
+.m-body{padding:24px}
+.m-section{margin-bottom:20px}
+.m-section-lbl{font-size:.63rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--g2);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--g5)}
+.m-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:520px){.m-grid{grid-template-columns:1fr}}
+.m-field{display:flex;flex-direction:column;gap:5px}
+.m-field label{font-size:.66rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
+.m-field input,.m-field select{padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:.85rem;color:var(--text);outline:none;background:var(--surface);transition:.18s}
+.m-field input:focus,.m-field select:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(76,175,80,.1)}
+.m-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+@keyframes vSpin{to{transform:rotate(360deg)}}
+.vspin{animation:vSpin .9s linear infinite;display:inline-block}
+</style>
+
+<div style="max-width:1400px;margin:0 auto">
+  <div class="veh-header">
+    <div>
+      <h2><i class="fas fa-truck"></i> Flota Vehicular</h2>
+      <p>Catálogo completo de unidades registradas</p>
+    </div>
+    <button class="btn-primary" onclick="abrirModalVehiculo()">
+      <i class="fas fa-plus"></i> Nueva unidad
+    </button>
+  </div>
+
+  <div class="search-panel">
+    <input type="text" id="searchVehiculo" placeholder="Buscar por placas, económico, conductor, marca…" oninput="filtrarVehiculos()" style="background-image:url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'15\' height=\'15\' fill=\'%237A9A7C\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.099zM6.5 12a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z\'/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:14px center">
+    <button class="btn-secondary" onclick="cargarVehiculos()"><i class="fas fa-rotate-right"></i> Actualizar</button>
+  </div>
+
+  <div class="toolbar-panel">
+    <div class="toolbar-row">
+      <span class="toolbar-title"><i class="fas fa-list"></i> Unidades registradas</span>
+      <span class="count-pill" id="totalVehiculos">0 vehículos</span>
+    </div>
+    <div class="veh-cards-wrap">
+      <div class="veh-grid" id="vehiculosGrid">
+        <div class="veh-empty"><i class="fas fa-truck vspin"></i><p>Cargando flota…</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalVehiculo" class="m-overlay">
+  <div class="m-box">
+    <div class="m-head">
+      <h3 id="modalTitle"><i class="fas fa-truck"></i> Nueva unidad</h3>
+      <button class="m-close" onclick="cerrarModalVehiculo()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <div class="m-section">
+        <div class="m-section-lbl">Identificación del vehículo</div>
+        <div class="m-grid">
+          <div class="m-field"><label>Placas *</label><input type="text" id="vehPlacas" placeholder="ABC-123" style="text-transform:uppercase"></div>
+          <div class="m-field"><label>No. Económico</label><input type="text" id="vehEconomico" placeholder="U-001"></div>
+          <div class="m-field"><label>Marca</label><input type="text" id="vehMarca" placeholder="RAM, Ford…"></div>
+          <div class="m-field"><label>Modelo</label><input type="text" id="vehModelo" placeholder="RAM 700"></div>
+          <div class="m-field"><label>Versión / Trim</label><input type="text" id="vehVersion" placeholder="Work, ST…"></div>
+          <div class="m-field"><label>Año</label><input type="number" id="vehAnio" placeholder="2024"></div>
+          <div class="m-field"><label>Color</label><input type="text" id="vehColor" placeholder="Blanco"></div>
+          <div class="m-field"><label>NIV / VIN</label><input type="text" id="vehVin" maxlength="17" placeholder="17 caracteres"></div>
+          <div class="m-field"><label>Número de motor</label><input type="text" id="vehNumMotor" placeholder="ENG-000000"></div>
+          <div class="m-field"><label>Estado</label><select id="vehActivo"><option value="SI">Activo</option><option value="NO">Inactivo</option></select></div>
+        </div>
+      </div>
+      <div class="m-section">
+        <div class="m-section-lbl">Conductor y operación</div>
+        <div class="m-grid">
+          <div class="m-field"><label>Conductor responsable</label><input type="text" id="vehConductor" placeholder="Nombre completo"></div>
+          <div class="m-field"><label>Teléfono celular</label><input type="tel" id="vehTelefono" placeholder="+52 000 000 0000"></div>
+          <div class="m-field"><label>Correo electrónico</label><input type="email" id="vehEmail" placeholder="correo@prodeni.com"></div>
+          <div class="m-field"><label>Ruta asignada</label><input type="text" id="vehRuta" placeholder="Ruta Centro"></div>
+          <div class="m-field"><label>Base / Origen</label><input type="text" id="vehBaseOrigen" placeholder="Pátzcuaro"></div>
+        </div>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn-secondary" onclick="cerrarModalVehiculo()">Cancelar</button>
+      <button class="btn-primary" onclick="guardarVehiculo()"><i class="fas fa-save"></i> Guardar unidad</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+let vehiculosGlobal = [];
+let editandoPlacas = null;
+
+window.cargarVehiculos = async function() {
+  const g = document.getElementById('vehiculosGrid');
+  g.innerHTML = '<div class="veh-empty"><i class="fas fa-truck vspin"></i><p>Cargando flota…</p></div>';
+  if (!navigator.onLine) {
+    const l = localStorage.getItem('prodeni_vehiculos_cache');
+    if (l) { vehiculosGlobal = JSON.parse(l); window.renderVehiculos(vehiculosGlobal); }
+    else g.innerHTML = '<div class="veh-empty"><i class="fas fa-wifi-slash"></i><p>Sin conexión y sin datos locales</p></div>';
+    return;
+  }
+  try {
+    const r = await fetch(`${window.SCRIPT_URL}?action=getVehiculos`);
+    const d = await r.json();
+    if (d.success && d.vehiculos) {
+      vehiculosGlobal = d.vehiculos;
+      localStorage.setItem('prodeni_vehiculos_cache', JSON.stringify(vehiculosGlobal));
+      window.renderVehiculos(vehiculosGlobal);
+    } else {
+      g.innerHTML = '<div class="veh-empty"><i class="fas fa-truck-ramp-box"></i><p>No hay vehículos registrados</p></div>';
+    }
+  } catch(e) {
+    g.innerHTML = '<div class="veh-empty"><i class="fas fa-triangle-exclamation"></i><p>Error al cargar. Intenta de nuevo.</p></div>';
+  }
+};
+
+window.renderVehiculos = function(lista) {
+  const g = document.getElementById('vehiculosGrid');
+  document.getElementById('totalVehiculos').textContent = `${lista.length} vehículo${lista.length !== 1 ? 's' : ''}`;
+  if (!lista.length) {
+    g.innerHTML = '<div class="veh-empty"><i class="fas fa-magnifying-glass"></i><p>Sin resultados</p></div>';
+    return;
+  }
+  g.innerHTML = lista.map(v => {
+    const ini = (v.conductor || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    const on = (v.activo || 'SI') === 'SI';
+    // Icono de marca para mostrar en la tarjeta
+    const marcaIcono = {
+      'RAM': '🐏', 'Nissan': '🇯🇵', 'Chevrolet': '🏁', 'Ford': '🛻', 'Freightliner': '🚛'
+    }[v.marca] || '🚗';
+    return `<div class="veh-card">
+      <div class="veh-card-top"><div><div class="veh-plates">${marcaIcono} ${v.placas || '—'}</div>${v.economico ? `<span class="veh-eco">${v.economico}</span>` : ''}</div><div class="veh-dot ${on ? 'on' : 'off'}" title="${on ? 'Activo' : 'Inactivo'}"></div></div>
+      <div class="veh-model">${[v.marca, v.modelo, v.version].filter(Boolean).join(' ') || 'Sin especificar'}</div>
+      <div class="veh-sub">${v.anio || ''}${v.color ? ' · ' + v.color : ''}${v.vin ? ' · VIN …' + v.vin.slice(-4) : ''}</div>
+      <div class="veh-sep"></div>
+      <div class="veh-driver"><div class="veh-avatar">${ini}</div><div><div class="veh-driver-name">${v.conductor || 'Sin conductor'}</div><div class="veh-driver-route">${v.ruta || v.baseOrigen || 'Sin ruta'}</div></div></div>
+      <div class="veh-actions">
+        <button class="veh-btn" onclick="window.editarVehiculo('${v.placas}')"><i class="fas fa-pen"></i> Editar</button>
+        <button class="veh-btn" onclick="window.cargarModulo && window.cargarModulo('bitacora')"><i class="fas fa-history"></i> Historial</button>
+        <button class="veh-btn danger" onclick="window.eliminarVehiculo('${v.placas}')"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.filtrarVehiculos = function() {
+  const q = document.getElementById('searchVehiculo').value.toLowerCase();
+  if (!q) { window.renderVehiculos(vehiculosGlobal); return; }
+  window.renderVehiculos(vehiculosGlobal.filter(v => ['placas', 'economico', 'conductor', 'marca', 'modelo', 'ruta'].some(k => (v[k] || '').toLowerCase().includes(q))));
+};
+
+window.abrirModalVehiculo = function(v = null) {
+  const t = document.getElementById('modalTitle');
+  if (v) {
+    t.innerHTML = '<i class="fas fa-pen"></i> Editar unidad';
+    editandoPlacas = v.placas;
+    [{ id: 'vehPlacas', k: 'placas' }, { id: 'vehEconomico', k: 'economico' }, { id: 'vehMarca', k: 'marca' }, { id: 'vehModelo', k: 'modelo' }, { id: 'vehVersion', k: 'version' }, { id: 'vehAnio', k: 'anio' }, { id: 'vehColor', k: 'color' }, { id: 'vehVin', k: 'vin' }, { id: 'vehNumMotor', k: 'numMotor' }, { id: 'vehConductor', k: 'conductor' }, { id: 'vehTelefono', k: 'telefono' }, { id: 'vehEmail', k: 'email' }, { id: 'vehRuta', k: 'ruta' }, { id: 'vehBaseOrigen', k: 'baseOrigen' }, { id: 'vehActivo', k: 'activo' }].forEach(({ id, k }) => { const el = document.getElementById(id); if (el) el.value = v[k] || ''; });
+  } else {
+    t.innerHTML = '<i class="fas fa-plus"></i> Nueva unidad';
+    editandoPlacas = null;
+    document.querySelectorAll('#modalVehiculo input').forEach(i => i.value = '');
+    document.getElementById('vehActivo').value = 'SI';
+  }
+  document.getElementById('modalVehiculo').classList.add('open');
+};
+
+window.cerrarModalVehiculo = function() {
+  document.getElementById('modalVehiculo').classList.remove('open');
+  editandoPlacas = null;
+};
+
+window.guardarVehiculo = async function() {
+  const placas = document.getElementById('vehPlacas').value.trim().toUpperCase();
+  if (!placas) { window.toast('Las placas son obligatorias', 'error'); return; }
+  const vehiculo = {
+    placas: placas,
+    economico: document.getElementById('vehEconomico').value.trim().toUpperCase(),
+    marca: document.getElementById('vehMarca').value,
+    modelo: document.getElementById('vehModelo').value,
+    version: document.getElementById('vehVersion').value,
+    anio: document.getElementById('vehAnio').value,
+    color: document.getElementById('vehColor').value,
+    vin: document.getElementById('vehVin').value.toUpperCase(),
+    numMotor: document.getElementById('vehNumMotor').value,
+    conductor: document.getElementById('vehConductor').value,
+    telefono: document.getElementById('vehTelefono').value,
+    email: document.getElementById('vehEmail').value,
+    ruta: document.getElementById('vehRuta').value,
+    baseOrigen: document.getElementById('vehBaseOrigen').value,
+    activo: document.getElementById('vehActivo').value
+  };
+  
+  // Guardar localmente primero
+  if (editandoPlacas) vehiculosGlobal = vehiculosGlobal.filter(x => x.placas !== editandoPlacas);
+  vehiculosGlobal.push(vehiculo);
+  localStorage.setItem('prodeni_vehiculos_cache', JSON.stringify(vehiculosGlobal));
+  window.renderVehiculos(vehiculosGlobal);
+  window.toast(editandoPlacas ? 'Vehículo actualizado localmente' : 'Vehículo creado localmente', 'success');
+  
+  // Sincronizar con servidor
+  if (navigator.onLine) {
+    try {
+      const response = await fetch(window.SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'saveVehiculo', vehiculo: vehiculo, oldPlacas: editandoPlacas })
+      });
+      const result = await response.json();
+      if (result.success) {
+        window.toast('Sincronizado con la nube ✓', 'success');
+      } else {
+        window.toast('Error en servidor: ' + (result.message || ''), 'warn');
+      }
+    } catch(e) {
+      window.toast('Error de conexión. Se guardó localmente.', 'warn');
+    }
+  }
+  window.cerrarModalVehiculo();
+};
+
+window.eliminarVehiculo = async function(placas) {
+  if (!confirm(`¿Eliminar el vehículo ${placas}?`)) return;
+  vehiculosGlobal = vehiculosGlobal.filter(v => v.placas !== placas);
+  localStorage.setItem('prodeni_vehiculos_cache', JSON.stringify(vehiculosGlobal));
+  window.renderVehiculos(vehiculosGlobal);
+  if (navigator.onLine) {
+    try {
+      await fetch(`${window.SCRIPT_URL}?action=deleteVehiculo&placas=${encodeURIComponent(placas)}`);
+    } catch(e) {}
+  }
+  window.toast('Vehículo eliminado', 'success');
+};
+
+window.editarVehiculo = function(p) {
+  const v = vehiculosGlobal.find(x => x.placas === p);
+  if (v) window.abrirModalVehiculo(v);
+};
+
+document.getElementById('modalVehiculo').addEventListener('click', e => { if (e.target === e.currentTarget) window.cerrarModalVehiculo(); });
+document.getElementById('searchVehiculo')?.addEventListener('keypress', e => { if (e.key === 'Enter') window.filtrarVehiculos(); });
+
+window.cargarVehiculos();
+})();
+</script>

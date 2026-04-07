@@ -1,0 +1,340 @@
+<!-- modules/chat.html -->
+<style>
+.chat-wrap{max-width:900px;margin:0 auto;height:calc(100vh - 180px);display:flex;flex-direction:column;gap:14px}
+.chat-header{margin-bottom:0}
+.chat-header h2{font-size:1.35rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:10px}
+.chat-header h2 i{color:var(--g3)}
+.chat-header p{font-size:.74rem;color:var(--text3);margin-top:3px}
+/* Panel de contactos */
+.chat-layout{display:grid;grid-template-columns:220px 1fr;gap:14px;flex:1;min-height:0}
+@media(max-width:680px){.chat-layout{grid-template-columns:1fr}}
+.contacts-panel{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column}
+.contacts-header{padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.contacts-title{font-size:.78rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:7px}
+.contacts-title i{color:var(--g2)}
+.contact-list{flex:1;overflow-y:auto;padding:8px}
+.contact-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:.15s;position:relative}
+.contact-item:hover{background:var(--g5)}
+.contact-item.active{background:var(--g5);border:1.5px solid #C8E6C9}
+.contact-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;flex-shrink:0}
+.avatar-admin{background:linear-gradient(135deg,#F9A825,#E65100);color:white}
+.avatar-tecnico{background:linear-gradient(135deg,var(--g3),var(--g2));color:white}
+.contact-info{flex:1;min-width:0}
+.contact-name{font-size:.8rem;font-weight:700;color:var(--text)}
+.contact-role{font-size:.66rem;color:var(--text3)}
+.contact-badge{min-width:18px;height:18px;background:var(--red);color:white;border-radius:50%;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px}
+/* Panel de chat */
+.chat-main{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.chat-top{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;gap:10px}
+.chat-contact-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem}
+.chat-contact-name{font-size:.9rem;font-weight:800;color:var(--text)}
+.chat-contact-status{font-size:.68rem;color:var(--text3)}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.msg-row{display:flex;align-items:flex-end;gap:8px}
+.msg-row.mine{flex-direction:row-reverse}
+.msg-avatar{width:28px;height:28px;border-radius:50%;background:var(--g5);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:var(--g2);flex-shrink:0}
+.msg-bubble{max-width:72%;padding:10px 13px;border-radius:16px;position:relative;word-wrap:break-word}
+.msg-bubble.received{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px}
+.msg-bubble.sent{background:linear-gradient(135deg,var(--g2),var(--g1));color:white;border-bottom-right-radius:4px}
+.msg-text{font-size:.82rem;line-height:1.4}
+.msg-time{font-size:.6rem;margin-top:4px;opacity:.65}
+.msg-time.sent{text-align:right}
+.msg-ref{font-size:.68rem;background:rgba(0,0,0,.07);border-radius:6px;padding:3px 8px;margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.msg-ref.sent{background:rgba(255,255,255,.15)}
+.chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);text-align:center;padding:40px}
+.chat-empty i{font-size:2.4rem;opacity:.18;margin-bottom:10px}
+.chat-empty p{font-size:.82rem;font-weight:600}
+/* Input */
+.chat-input-area{padding:12px 16px;border-top:1px solid var(--border);background:var(--surface);display:flex;gap:8px;align-items:flex-end}
+.chat-input-wrap{flex:1;position:relative}
+.chat-input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:20px;font-family:inherit;font-size:.84rem;color:var(--text);outline:none;resize:none;max-height:100px;overflow-y:auto;background:var(--bg);transition:.18s;line-height:1.4}
+.chat-input:focus{border-color:var(--g3);background:var(--surface);box-shadow:0 0 0 3px rgba(76,175,80,.1)}
+.btn-send{width:40px;height:40px;background:linear-gradient(135deg,var(--g2),var(--g1));border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white;font-size:.9rem;transition:.18s;flex-shrink:0}
+.btn-send:hover{transform:scale(1.08);box-shadow:0 4px 12px rgba(46,125,50,.4)}
+.btn-send:disabled{background:var(--border);cursor:not-allowed}
+.no-contact-selected{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);gap:10px}
+.no-contact-selected i{font-size:2.5rem;opacity:.15}
+.no-contact-selected p{font-size:.83rem;font-weight:600}
+/* Broadcast badge */
+.broadcast-item{background:linear-gradient(135deg,var(--g5),#DCEDC8);border:1.5px solid #AED581;border-radius:var(--radius-sm);padding:9px 10px;margin-bottom:8px;cursor:pointer}
+.broadcast-item .contact-name{color:var(--g1)}
+</style>
+
+<div class="chat-wrap">
+  <div class="chat-header">
+    <h2><i class="fas fa-comments"></i> Mensajes internos</h2>
+    <p>Chat privado entre usuarios del sistema · Los administradores son notificados por correo</p>
+  </div>
+
+  <div class="chat-layout">
+    <!-- Panel de contactos -->
+    <div class="contacts-panel">
+      <div class="contacts-header">
+        <div class="contacts-title"><i class="fas fa-users"></i> Conversaciones</div>
+      </div>
+      <div class="contact-list" id="contactList">
+        <div style="text-align:center;padding:20px;color:var(--text3);font-size:.78rem">
+          <i class="fas fa-spinner fa-spin"></i> Cargando…
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de mensajes -->
+    <div class="chat-main" id="chatMain">
+      <div class="no-contact-selected">
+        <i class="fas fa-comment-dots"></i>
+        <p>Selecciona una conversación</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+let usuariosLista  = [];
+let mensajesCache  = [];
+let contactoActual = null;
+let currentUsername = (window.currentUser || JSON.parse(localStorage.getItem('prodeni_session') || '{}')).username || '';
+let currentRole     = (window.currentUser || JSON.parse(localStorage.getItem('prodeni_session') || '{}')).role || 'tecnico';
+let pollInterval    = null;
+
+// ── Cargar usuarios ────────────────────────────────────────
+async function cargarContactos() {
+  // Desde cache primero
+  const cached = JSON.parse(localStorage.getItem('prodeni_usuarios_cache') || '[]');
+  usuariosLista = cached.filter(u => u.username !== currentUsername);
+  renderContactos();
+
+  if (navigator.onLine) {
+    try {
+      const r = await fetch(`${window.SCRIPT_URL}?action=getUsers`);
+      const d = await r.json();
+      if (d.success) {
+        usuariosLista = d.users.filter(u => u.username !== currentUsername);
+        localStorage.setItem('prodeni_usuarios_cache', JSON.stringify(d.users));
+        renderContactos();
+      }
+    } catch(e) {}
+  }
+}
+
+function renderContactos() {
+  const list = document.getElementById('contactList');
+  const unreadMap = getUnreadMap();
+
+  let html = '';
+  // Botón de "Todos (broadcast)" solo para admins
+  if (currentRole === 'admin') {
+    html += `<div class="contact-item broadcast-item" onclick="seleccionarContacto('todos','📢 Broadcast','admin')">
+      <div class="contact-avatar avatar-admin">📢</div>
+      <div class="contact-info"><div class="contact-name">Mensaje a todos</div><div class="contact-role">Broadcast</div></div>
+    </div>`;
+  }
+
+  usuariosLista.forEach(u => {
+    const ini    = (u.username || '?')[0].toUpperCase();
+    const isAdmin = u.role === 'admin';
+    const unread  = unreadMap[u.username] || 0;
+    const active  = contactoActual === u.username ? 'active' : '';
+    html += `<div class="contact-item ${active}" id="contact_${u.username}" onclick="seleccionarContacto('${u.username}','${u.username}','${u.role}')">
+      <div class="contact-avatar ${isAdmin ? 'avatar-admin' : 'avatar-tecnico'}">${ini}</div>
+      <div class="contact-info">
+        <div class="contact-name">${u.username}</div>
+        <div class="contact-role">${isAdmin ? 'Administrador' : 'Técnico de campo'}</div>
+      </div>
+      ${unread ? `<div class="contact-badge">${unread}</div>` : ''}
+    </div>`;
+  });
+
+  if (!html) html = '<div style="text-align:center;padding:20px;color:var(--text3);font-size:.78rem">No hay otros usuarios</div>';
+  list.innerHTML = html;
+}
+
+function getUnreadMap() {
+  const map = {};
+  const locales = JSON.parse(localStorage.getItem(`prodeni_msgs_${currentUsername}`) || '[]');
+  locales.filter(m => m.para === currentUsername && m.leido === 'no').forEach(m => {
+    map[m.de] = (map[m.de] || 0) + 1;
+  });
+  return map;
+}
+
+// ── Seleccionar contacto ───────────────────────────────────
+window.seleccionarContacto = function(username, displayName, role) {
+  contactoActual = username;
+  // Actualizar estado activo
+  document.querySelectorAll('.contact-item').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById(`contact_${username}`);
+  if (el) el.classList.add('active');
+  renderChatPanel(displayName, role);
+  cargarMensajes();
+};
+
+function renderChatPanel(name, role) {
+  const isAdmin = role === 'admin';
+  const ini     = name[0]?.toUpperCase() || '?';
+  document.getElementById('chatMain').innerHTML = `
+    <div class="chat-top">
+      <div class="chat-contact-avatar ${isAdmin ? 'avatar-admin' : 'avatar-tecnico'}">${ini}</div>
+      <div>
+        <div class="chat-contact-name">${name}</div>
+        <div class="chat-contact-status">${isAdmin ? 'Administrador' : 'Técnico de campo'}</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-empty"><i class="fas fa-comments"></i><p>Cargando mensajes…</p></div>
+    </div>
+    <div class="chat-input-area">
+      <div class="chat-input-wrap">
+        <div class="chat-input" id="chatInput" contenteditable="true" 
+          data-placeholder="Escribe un mensaje…"
+          style="min-height:40px;display:flex;align-items:center"
+          onkeydown="onChatKey(event)"></div>
+      </div>
+      <button class="btn-send" onclick="enviarMensaje()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  `;
+  // Placeholder visual para contenteditable
+  const inp = document.getElementById('chatInput');
+  if (inp) {
+    inp.addEventListener('focus', () => inp.style.opacity = '1');
+    inp.style.color = 'var(--text3)';
+    inp.textContent = 'Escribe un mensaje…';
+    inp.addEventListener('focus', function() {
+      if (this.textContent === 'Escribe un mensaje…') { this.textContent = ''; this.style.color = 'var(--text)'; }
+    });
+    inp.addEventListener('blur', function() {
+      if (!this.textContent.trim()) { this.textContent = 'Escribe un mensaje…'; this.style.color = 'var(--text3)'; }
+    });
+  }
+}
+
+// ── Cargar mensajes ────────────────────────────────────────
+async function cargarMensajes() {
+  if (!contactoActual) return;
+
+  // Mostrar desde cache primero
+  const local = JSON.parse(localStorage.getItem(`prodeni_msgs_${currentUsername}`) || '[]');
+  if (local.length) renderMensajes(filtrarConversacion(local));
+
+  if (!navigator.onLine) return;
+  try {
+    const r = await fetch(`${window.SCRIPT_URL}?action=getMessages&usuario=${encodeURIComponent(currentUsername)}&role=${currentRole}`);
+    const d = await r.json();
+    if (d.success) {
+      mensajesCache = d.messages || [];
+      localStorage.setItem(`prodeni_msgs_${currentUsername}`, JSON.stringify(mensajesCache));
+      renderMensajes(filtrarConversacion(mensajesCache));
+      renderContactos(); // actualizar badges
+    }
+  } catch(e) {}
+}
+
+function filtrarConversacion(msgs) {
+  if (!contactoActual) return [];
+  if (contactoActual === 'todos') {
+    return msgs.filter(m => m.para === 'todos');
+  }
+  return msgs.filter(m =>
+    (m.de === currentUsername && m.para === contactoActual) ||
+    (m.de === contactoActual  && m.para === currentUsername) ||
+    (currentRole === 'admin' && m.para === 'admin' && m.de === contactoActual)
+  );
+}
+
+function renderMensajes(msgs) {
+  const cont = document.getElementById('chatMessages');
+  if (!cont) return;
+  if (!msgs.length) {
+    cont.innerHTML = '<div class="chat-empty"><i class="fas fa-comments"></i><p>Sé el primero en escribir</p></div>';
+    return;
+  }
+  cont.innerHTML = msgs.map(m => {
+    const isMine = m.de === currentUsername;
+    const ini    = (m.de || '?')[0].toUpperCase();
+    const hora   = formatHora(m.timestamp);
+    return `<div class="msg-row ${isMine ? 'mine' : ''}">
+      ${!isMine ? `<div class="msg-avatar">${ini}</div>` : ''}
+      <div class="msg-bubble ${isMine ? 'sent' : 'received'}">
+        ${m.folioRef ? `<div class="msg-ref ${isMine ? 'sent' : ''}"><i class="fas fa-file-lines"></i> Ref: ${m.folioRef}</div>` : ''}
+        <div class="msg-text">${escapeHTML(m.mensaje || '')}</div>
+        <div class="msg-time ${isMine ? 'sent' : ''}">${!isMine ? m.de + ' · ' : ''}${hora}</div>
+      </div>
+      ${isMine ? `<div class="msg-avatar" style="background:var(--g5)">${ini}</div>` : ''}
+    </div>`;
+  }).join('');
+  // Auto-scroll al final
+  cont.scrollTop = cont.scrollHeight;
+}
+
+function escapeHTML(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatHora(ts) {
+  if (!ts) return '';
+  try {
+    const d = new Date(ts);
+    const ahora = new Date();
+    const mismodia = d.toDateString() === ahora.toDateString();
+    if (mismodia) return d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+    return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'}) + ' ' + d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+  } catch(e) { return ''; }
+}
+
+// ── Enviar mensaje ─────────────────────────────────────────
+window.enviarMensaje = async function() {
+  if (!contactoActual) return;
+  const inp = document.getElementById('chatInput');
+  if (!inp) return;
+  const texto = inp.textContent.trim();
+  if (!texto || texto === 'Escribe un mensaje…') return;
+
+  // Limpiar input
+  inp.textContent = '';
+  inp.style.color  = 'var(--text3)';
+  inp.textContent  = 'Escribe un mensaje…';
+
+  const msg = {
+    de: currentUsername,
+    para: contactoActual,
+    mensaje: texto,
+    timestamp: new Date().toISOString(),
+    leido: 'no',
+    folioRef: ''
+  };
+
+  // Guardar localmente de inmediato
+  mensajesCache.push(msg);
+  localStorage.setItem(`prodeni_msgs_${currentUsername}`, JSON.stringify(mensajesCache));
+  renderMensajes(filtrarConversacion(mensajesCache));
+
+  // Enviar al servidor
+  if (navigator.onLine) {
+    try {
+      await fetch(window.SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'sendMessage', ...msg })
+      });
+    } catch(e) {}
+  }
+};
+
+window.onChatKey = function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarMensaje(); }
+};
+
+// ── Polling de nuevos mensajes ─────────────────────────────
+function startPolling() {
+  if (pollInterval) clearInterval(pollInterval);
+  pollInterval = setInterval(() => {
+    if (navigator.onLine && contactoActual) cargarMensajes();
+  }, 12000); // cada 12 segundos
+}
+
+// ── Init ───────────────────────────────────────────────────
+cargarContactos();
+startPolling();
+})();
+</script>

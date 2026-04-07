@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>PRODENI · Control Vehicular</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1B5E20">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --g0: #0A2E0C;
+      --g1: #1B5E20;
+      --g2: #2E7D32;
+      --g3: #4CAF50;
+      --g4: #81C784;
+      --g5: #E8F5E9;
+      --gold: #D4AF37;
+      --gold-l: #F9E47B;
+      --red: #C62828;
+      --red-l: #FFEBEE;
+      --orange: #E65100;
+      --bg: #F0F4F1;
+      --surface: #FFFFFF;
+      --surface2: #F7FAF7;
+      --border: #DCE8DC;
+      --text: #0F2410;
+      --text2: #3D5E3F;
+      --text3: #7A9A7C;
+      --shadow-sm: 0 2px 8px rgba(15,36,16,0.07);
+      --shadow-md: 0 6px 24px rgba(15,36,16,0.10);
+      --shadow-lg: 0 16px 48px rgba(15,36,16,0.14);
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+      --nav-w: 220px;
+      --header-h: 64px;
+      --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100svh;
+      display: grid;
+      grid-template-rows: var(--header-h) 1fr;
+      grid-template-columns: var(--nav-w) 1fr;
+      grid-template-areas: "header header" "nav main";
+    }
+    @media (max-width: 768px) {
+      body { grid-template-columns: 1fr; grid-template-areas: "header" "main"; }
+    }
+    .header {
+      grid-area: header;
+      background: var(--g1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.6;
+    }
+    .logo-wrap { display: flex; align-items: center; gap: 12px; }
+    .logo-icon {
+      width: 38px; height: 38px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .logo-icon i { color: var(--gold); font-size: 1.1rem; }
+    .logo-text h1 { font-size: 1.1rem; font-weight: 800; color: white; letter-spacing: -0.3px; line-height: 1; }
+    .logo-text span { font-size: 0.6rem; font-weight: 500; color: rgba(255,255,255,0.55); letter-spacing: 2px; text-transform: uppercase; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .conn-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 5px 12px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+    }
+    .conn-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+    }
+    .conn-dot.online { background: #69F0AE; box-shadow: 0 0 6px #69F0AE; animation: blink 2.4s ease-in-out infinite; }
+    .conn-dot.offline { background: #EF9A9A; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 4px 14px 4px 4px;
+      border-radius: 30px;
+      cursor: default;
+    }
+    .user-avatar {
+      width: 28px; height: 28px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      font-size: 0.75rem;
+      color: var(--g0);
+    }
+    .user-pill-name { font-size: 0.8rem; font-weight: 600; color: white; }
+    .btn-exit {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.75);
+      padding: 7px 14px;
+      border-radius: 30px;
+      font-family: inherit;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .btn-exit:hover { background: rgba(198,40,40,0.25); color: white; border-color: rgba(198,40,40,0.4); }
+    .sidebar {
+      grid-area: nav;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 20px 12px;
+      overflow-y: auto;
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100svh - var(--header-h));
+    }
+    @media (max-width: 768px) { .sidebar { display: none; } }
+    .nav-section-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 0 12px;
+      margin: 16px 0 6px;
+    }
+    .nav-section-label:first-child { margin-top: 0; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text2);
+      text-align: left;
+      transition: var(--transition);
+      position: relative;
+    }
+    .nav-item .nav-icon {
+      width: 32px; height: 32px;
+      border-radius: 9px;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.85rem;
+      color: var(--text3);
+    }
+    .nav-item:hover { background: var(--g5); color: var(--g2); }
+    .nav-item:hover .nav-icon { background: #C8E6C9; color: var(--g2); }
+    .nav-item.active { background: linear-gradient(135deg, #E8F5E9, #C8E6C9); color: var(--g1); }
+    .nav-item.active .nav-icon { background: var(--g2); color: white; }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 20%; bottom: 20%;
+      width: 3px;
+      background: var(--g2);
+      border-radius: 0 4px 4px 0;
+    }
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 8px 4px env(safe-area-inset-bottom);
+      z-index: 150;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+    }
+    @media (max-width: 768px) { .mobile-nav { display: flex; } }
+    .mob-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.58rem;
+      font-weight: 600;
+      color: var(--text3);
+      border-radius: var(--radius-sm);
+    }
+    .mob-btn i { font-size: 1.1rem; }
+    .mob-btn.active { color: var(--g2); }
+    .mob-btn.active i { color: var(--g2); }
+    .main {
+      grid-area: main;
+      padding: 28px;
+      overflow-y: auto;
+      min-height: 0;
+    }
+    @media (max-width: 768px) { .main { padding: 16px 16px 90px; } }
+    .module-enter {
+      animation: moduleIn 0.3s cubic-bezier(0.34,1.3,0.64,1) both;
+    }
+    @keyframes moduleIn {
+      from { opacity: 0; transform: translateY(18px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .skeleton-loader { display: grid; gap: 16px; }
+    .skel {
+      background: linear-gradient(90deg, #e8f0e8 25%, #d8ecd8 50%, #e8f0e8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s ease-in-out infinite;
+      border-radius: var(--radius-md);
+    }
+    .skel-header { height: 44px; width: 60%; }
+    .skel-cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 14px; }
+    .skel-card { height: 110px; }
+    .skel-table { height: 240px; }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--g3), var(--g2));
+      opacity: 0;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .stat-card:hover::before { opacity: 1; }
+    .stat-icon {
+      width: 40px; height: 40px;
+      background: var(--g5);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+      font-size: 1rem;
+      color: var(--g2);
+    }
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+    .stat-lbl {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 6px;
+    }
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .quick-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .quick-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--g5), transparent);
+      opacity: 0;
+    }
+    .quick-card:hover { transform: translateY(-4px); border-color: var(--g4); box-shadow: var(--shadow-md); }
+    .quick-card:hover::after { opacity: 1; }
+    .quick-card:active { transform: scale(0.97); }
+    .quick-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--g2), var(--g1));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      color: var(--gold);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+    }
+    .quick-card:hover .quick-icon { transform: scale(1.08) rotate(-4deg); }
+    .quick-info { position: relative; z-index: 1; }
+    .quick-info h3 { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .quick-info p { font-size: 0.7rem; color: var(--text3); margin-top: 2px; }
+    .quick-arrow {
+      margin-left: auto;
+      color: var(--text3);
+      font-size: 0.75rem;
+      position: relative;
+      z-index: 1;
+    }
+    .quick-card:hover .quick-arrow { color: var(--g2); transform: translateX(4px); }
+    .panel {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .panel-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: var(--surface2);
+    }
+    .panel-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel-title i { color: var(--g2); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    tbody td {
+      padding: 13px 16px;
+      font-size: 0.8rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr { transition: var(--transition); cursor: pointer; }
+    tbody tr:hover { background: var(--surface2); }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+    .badge-success { background: #E8F5E9; color: #1B5E20; }
+    .badge-warning { background: #FFF8E1; color: #E65100; }
+    .badge-danger  { background: #FFEBEE; color: #C62828; }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--g2), var(--g1));
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 14px rgba(46,125,50,0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46,125,50,0.4); }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      color: var(--text2);
+      border: 1.5px solid var(--border);
+      padding: 9px 18px;
+      border-radius: 40px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-secondary:hover { border-color: var(--g3); color: var(--g2); background: var(--g5); }
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--g0);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      z-index: 9999;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 90vw;
+      box-shadow: var(--shadow-lg);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.success { background: var(--g1); }
+    .toast.error   { background: var(--red); }
+    .toast.warn    { background: #E65100; }
+    .toast.info    { background: #1565C0; }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo-wrap">
+    <div class="logo-icon"><i class="fas fa-tractor"></i></div>
+    <div class="logo-text">
+      <h1>PRODENI</h1>
+      <span>Control Vehicular</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="conn-pill" id="connPill">
+      <div class="conn-dot online" id="connDot"></div>
+      <span id="connTxt">Online</span>
+    </div>
+    <div class="user-pill">
+      <div class="user-avatar" id="userAvatar">A</div>
+      <span class="user-pill-name" id="userName">Admin</span>
+    </div>
+    <button class="btn-exit" onclick="cerrarSesion()">
+      <i class="fas fa-sign-out-alt"></i>
+      <span class="hide-xs">Salir</span>
+    </button>
+  </div>
+</header>
+
+<nav class="sidebar" id="sidebar"></nav>
+<main class="main" id="main"></main>
+<nav class="mobile-nav" id="mobileNav"></nav>
+<div class="toast" id="toast"></div>
+
+<script>
+// ================================================================
+// PRODENI FLEET — dashboard.html v5.0 CORREGIDO
+// ================================================================
+
+window.SCRIPT_URL = localStorage.getItem('prodeni_script_url') ||
+  'https://script.google.com/macros/s/AKfycbzGKkNNv7QHHrdfaSLmaSCeYl0ZghshplY7nYw5j7BY3h0Oqs3iseE2Oi18UXuOsfUj/exec';
+
+window.toast = function(msg, tipo = '') {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.className = `toast show ${tipo}`;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3500);
+};
+
+let currentUser = null;
+let currentRole = 'tecnico';
+let activeModule = 'dashboard';
+
+function getSession() {
+  try {
+    const raw = localStorage.getItem('prodeni_session');
+    if (!raw) { window.location.href = 'index.html'; return null; }
+    const s = JSON.parse(raw);
+    if (s.expiresAt && Date.now() > s.expiresAt) {
+      localStorage.removeItem('prodeni_session');
+      window.location.href = 'index.html';
+      return null;
+    }
+    return s;
+  } catch(e) { window.location.href = 'index.html'; return null; }
+}
+
+function cerrarSesion() {
+  localStorage.removeItem('prodeni_session');
+  window.location.href = 'index.html';
+}
+
+const NAV_MODULES = {
+  tecnico: [
+    { id: 'dashboard',    name: 'Dashboard',        icon: 'fas fa-chart-line',       section: 'PRINCIPAL' },
+    { id: 'checklist',    name: 'Checklist Diario', icon: 'fas fa-clipboard-check',  section: 'OPERACIONES' },
+    { id: 'inspeccion',   name: 'Inspección',       icon: 'fas fa-clipboard-list',   section: 'OPERACIONES' },
+    { id: 'bitacora',     name: 'Bitácora',         icon: 'fas fa-history',          section: 'OPERACIONES' },
+    { id: 'mantenimiento',name: 'Mantenimiento',    icon: 'fas fa-wrench',           section: 'OPERACIONES' },
+    { id: 'chat',         name: 'Mensajes',         icon: 'fas fa-comments',         section: 'COMUNICACIÓN' },
+  ],
+  admin: [
+    { id: 'dashboard',    name: 'Dashboard',        icon: 'fas fa-chart-line',       section: 'PRINCIPAL' },
+    { id: 'checklist',    name: 'Checklist Diario', icon: 'fas fa-clipboard-check',  section: 'OPERACIONES' },
+    { id: 'inspeccion',   name: 'Inspección',       icon: 'fas fa-clipboard-list',   section: 'OPERACIONES' },
+    { id: 'vehiculos',    name: 'Flota',            icon: 'fas fa-truck',            section: 'OPERACIONES' },
+    { id: 'bitacora',     name: 'Bitácora',         icon: 'fas fa-history',          section: 'OPERACIONES' },
+    { id: 'mantenimiento',name: 'Mantenimiento',    icon: 'fas fa-wrench',           section: 'OPERACIONES' },
+    { id: 'reportes',     name: 'Reportes',         icon: 'fas fa-chart-bar',        section: 'ADMINISTRACIÓN' },
+    { id: 'usuarios',     name: 'Usuarios',         icon: 'fas fa-users',            section: 'ADMINISTRACIÓN' },
+    { id: 'chat',         name: 'Mensajes',         icon: 'fas fa-comments',         section: 'COMUNICACIÓN' },
+  ]
+};
+
+function buildNavigation() {
+  const mods = NAV_MODULES[currentRole] || NAV_MODULES.tecnico;
+  const sidebar = document.getElementById('sidebar');
+  const mobileNav = document.getElementById('mobileNav');
+  let lastSection = '';
+  let sidebarHTML = '';
+  mods.forEach(m => {
+    if (m.section !== lastSection) {
+      sidebarHTML += `<div class="nav-section-label">${m.section}</div>`;
+      lastSection = m.section;
+    }
+    sidebarHTML += `<button class="nav-item" id="nav-${m.id}" data-module="${m.id}" onclick="cargarModulo('${m.id}')">
+      <div class="nav-icon"><i class="${m.icon}"></i></div>
+      ${m.name}
+    </button>`;
+  });
+  sidebar.innerHTML = sidebarHTML;
+  const mobMods = mods.slice(0, 5);
+  mobileNav.innerHTML = mobMods.map(m => `<button class="mob-btn" id="mob-${m.id}" data-module="${m.id}" onclick="cargarModulo('${m.id}')">
+    <i class="${m.icon}"></i><span>${m.name.split(' ')[0]}</span>
+  </button>`).join('');
+}
+
+function setActiveNav(moduleId) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.module === moduleId));
+  document.querySelectorAll('.mob-btn').forEach(el => el.classList.toggle('active', el.dataset.module === moduleId));
+}
+
+// Limpiar variables globales de módulos anteriores
+const GLOBAL_VARS_TO_CLEAN = ['editandoPlacas', 'vehiculosGlobal', 'reportesFiltrados', 'todasInspecciones', 'usuariosGlobal', 'editandoUsername', 'historialActual', 'detalleFolioActual', 'currentFolio', 'gpsData', 'fotosData', 'mntVehiculoActual', 'mntHistorial', 'mntVehiculos'];
+
+async function cargarModulo(moduleName) {
+  activeModule = moduleName;
+  setActiveNav(moduleName);
+  const main = document.getElementById('main');
+  
+  // Limpiar variables globales anteriores
+  GLOBAL_VARS_TO_CLEAN.forEach(v => { if (window[v] !== undefined) delete window[v]; });
+  
+  if (moduleName === 'dashboard') {
+    loadDashboard();
+    return;
+  }
+  
+  main.innerHTML = `<div class="skeleton-loader"><div class="skel skel-header"></div><div class="skel-cards"><div class="skel skel-card"></div><div class="skel skel-card"></div><div class="skel skel-card"></div></div><div class="skel skel-table"></div></div>`;
+  
+  try {
+    const response = await fetch(`modules/${moduleName}.html`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    let html = await response.text();
+    
+    // Envolver scripts en IIFE para evitar redeclaraciones
+    const scriptRegex = /<script>([\s\S]*?)<\/script>/gi;
+    html = html.replace(scriptRegex, (match, scriptContent) => {
+      const wrappedScript = `<script>(function(){\n${scriptContent}\n})();<\/script>`;
+      return wrappedScript;
+    });
+    
+    main.innerHTML = `<div class="module-enter">${html}</div>`;
+    
+    // Ejecutar scripts
+    const container = main.querySelector('.module-enter');
+    const scripts = Array.from(container.querySelectorAll('script'));
+    for (const oldScript of scripts) {
+      const newScript = document.createElement('script');
+      if (oldScript.src) {
+        newScript.src = oldScript.src;
+        newScript.async = false;
+      } else {
+        newScript.textContent = oldScript.textContent;
+      }
+      document.body.appendChild(newScript);
+      oldScript.remove();
+    }
+    
+    // Llamar a funciones init después de delay
+    setTimeout(() => {
+    const initFns = {
+        vehiculos:     () => typeof cargarVehiculos === 'function'          && cargarVehiculos(),
+        bitacora:      () => typeof cargarVehiculosSelector === 'function'  && cargarVehiculosSelector(),
+        usuarios:      () => typeof cargarUsuarios === 'function'           && cargarUsuarios(),
+        reportes:      () => typeof cargarReportes === 'function'           && cargarReportes(),
+        inspeccion:    () => { if (typeof cargarFormulario === 'function') cargarFormulario(); if (typeof generarFolio === 'function') generarFolio(); },
+        mantenimiento: () => { if (typeof cargarVehiculosSelectorMnt === 'function') cargarVehiculosSelectorMnt(); },
+        checklist:     () => {},
+        chat:          () => {}
+      };
+      if (initFns[moduleName]) { try { initFns[moduleName](); } catch(e) { console.warn(e); } }
+    }, 100);
+    
+  } catch(err) {
+    console.error('Error cargando módulo:', err);
+    main.innerHTML = `<div style="text-align:center;padding:80px 20px;"><div style="width:64px;height:64px;background:var(--red-l);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;color:var(--red);"><i class="fas fa-exclamation-triangle"></i></div><h3 style="color:var(--red);margin-bottom:8px;">Error al cargar módulo</h3><p style="color:var(--text3);font-size:0.8rem;">No se encontró: <code>modules/${moduleName}.html</code></p><button class="btn-primary" style="margin-top:20px;" onclick="cargarModulo('dashboard')"><i class="fas fa-home"></i> Volver al Dashboard</button></div>`;
+  }
+}
+
+function loadDashboard() {
+  const main = document.getElementById('main');
+  const isAdmin = currentRole === 'admin';
+  const quickCards = isAdmin ? [
+    { icon: 'fas fa-clipboard-check', title: 'Checklist Diario', desc: 'Revisión antes de salir a ruta',  mod: 'checklist',    color: '#2E7D32' },
+    { icon: 'fas fa-plus-circle',     title: 'Nueva Inspección', desc: 'Registrar estado de unidad',       mod: 'inspeccion',   color: '#1565C0' },
+    { icon: 'fas fa-truck',           title: 'Flota',            desc: 'Gestionar vehículos',              mod: 'vehiculos',    color: '#6A1B9A' },
+    { icon: 'fas fa-chart-bar',       title: 'Reportes',         desc: 'Exportar y analizar datos',        mod: 'reportes',     color: '#E65100' },
+    { icon: 'fas fa-comments',        title: 'Mensajes',         desc: 'Chat interno del equipo',          mod: 'chat',         color: '#00838F' }
+  ] : [
+    { icon: 'fas fa-clipboard-check', title: 'Checklist Diario', desc: 'Revisión antes de salir a ruta',  mod: 'checklist',    color: '#2E7D32' },
+    { icon: 'fas fa-plus-circle',     title: 'Nueva Inspección', desc: 'Registrar estado de unidad',       mod: 'inspeccion',   color: '#1565C0' },
+    { icon: 'fas fa-history',         title: 'Bitácora',         desc: 'Historial por unidad',             mod: 'bitacora',     color: '#6A1B9A' },
+    { icon: 'fas fa-wrench',          title: 'Mantenimiento',    desc: 'Control de componentes',           mod: 'mantenimiento',color: '#F9A825' },
+    { icon: 'fas fa-comments',        title: 'Mensajes',         desc: 'Comunícate con el equipo',         mod: 'chat',         color: '#00838F' }
+  ];
+  main.innerHTML = `<div class="module-enter"><div class="section-header"><div><h2>Bienvenido, ${currentUser?.username || 'usuario'} 👋</h2><p>${new Date().toLocaleDateString('es-MX', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p></div></div>
+    <div class="stat-grid" id="statGrid">${[0,1,2,3].map(() => `<div class="skel" style="height:110px;border-radius:18px;"></div>`).join('')}</div>
+    <div class="quick-grid" id="quickGrid">${quickCards.map(c => `<div class="quick-card" onclick="cargarModulo('${c.mod}')"><div class="quick-icon" style="background:linear-gradient(135deg,${c.color},${c.color}cc)"><i class="${c.icon}"></i></div><div class="quick-info"><h3>${c.title}</h3><p>${c.desc}</p></div><div class="quick-arrow"><i class="fas fa-chevron-right"></i></div></div>`).join('')}</div>
+    <div class="panel"><div class="panel-header"><span class="panel-title"><i class="fas fa-clock"></i> Últimas inspecciones</span><button class="btn-primary" onclick="cargarModulo('${isAdmin ? 'reportes' : 'bitacora'}')" style="padding:7px 16px;font-size:0.75rem;">Ver todos <i class="fas fa-arrow-right"></i></button></div><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Vehículo</th><th>Placas</th><th>Km</th><th>Dictamen</th><th>Inspector</th></tr></thead><tbody id="tablaRecientes"><tr><td colspan="6" style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-spin"></i> Cargando...</td></tr></tbody></table></div></div></div>`;
+  loadDashboardData();
+}
+
+async function loadDashboardData() {
+  if (!navigator.onLine) {
+    document.getElementById('statGrid').innerHTML = `<div class="stat-card"><div class="stat-icon"><i class="fas fa-wifi-slash"></i></div><div class="stat-num">—</div><div class="stat-lbl">Sin conexión</div></div>`;
+    document.getElementById('tablaRecientes').innerHTML = '<tr><td colspan="6" style="text-align:center;">⚠️ Sin conexión</td></tr>';
+    return;
+  }
+  try {
+    const res = await fetch(`${window.SCRIPT_URL}?action=getInspecciones`);
+    const data = await res.json();
+    const rows = data.rows || [];
+    const hoyCount = rows.filter(r => new Date(r.fecha).toDateString() === new Date().toDateString()).length;
+    const vehiculosUnicos = new Set(rows.map(r => r.placas || r.economico)).size;
+    const noAptos = rows.filter(r => (r.dictamen || '').includes('No apto')).length;
+    const ultimas = rows.slice(-10).reverse();
+    document.getElementById('statGrid').innerHTML = `<div class="stat-card"><div class="stat-icon"><i class="fas fa-clipboard-check"></i></div><div class="stat-num">${hoyCount}</div><div class="stat-lbl">Inspecciones hoy</div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-database"></i></div><div class="stat-num">${rows.length}</div><div class="stat-lbl">Total registros</div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-truck"></i></div><div class="stat-num">${vehiculosUnicos}</div><div class="stat-lbl">Vehículos únicos</div></div><div class="stat-card"><div class="stat-icon" style="background:#FFEBEE;color:var(--red);"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-num" style="color:var(--red);">${noAptos}</div><div class="stat-lbl">No aptos</div></div>`;
+    if (!ultimas.length) { document.getElementById('tablaRecientes').innerHTML = '<tr><td colspan="6">No hay inspecciones</td></tr>'; return; }
+    document.getElementById('tablaRecientes').innerHTML = ultimas.map(r => {
+      const badgeCls = r.dictamen?.includes('No apto') ? 'badge-danger' : r.dictamen?.includes('observaciones') ? 'badge-warning' : 'badge-success';
+      return `<tr onclick="verInspeccion('${r.folio}')"><td>${r.fecha || '—'}</td><td>${r.marca || ''} ${r.modelo || ''}</td><td><strong>${r.placas || r.economico || '—'}</strong></td><td>${r.kmActual ? r.kmActual+' km' : '—'}</td><td><span class="badge ${badgeCls}">${r.dictamen || '—'}</span></td><td class="text-muted">${r.usuario || r.inspector || '—'}</td></tr>`;
+    }).join('');
+  } catch(e) { console.error(e); }
+}
+
+window.verInspeccion = function(folio) { sessionStorage.setItem('editarFolio', folio); cargarModulo('inspeccion'); };
+
+function updateConn() {
+  const online = navigator.onLine;
+  const dot = document.getElementById('connDot');
+  const txt = document.getElementById('connTxt');
+  if (dot && txt) {
+    dot.className = `conn-dot ${online ? 'online' : 'offline'}`;
+    txt.textContent = online ? 'Online' : 'Offline';
+  }
+}
+
+async function sincronizarPendientes() {
+  const pendientes = JSON.parse(localStorage.getItem('prodeni_pendientes') || '[]');
+  if (!pendientes.length) return;
+  let ok = 0;
+  for (const item of pendientes) {
+    try {
+      const response = await fetch(window.SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item.data)
+      });
+      const result = await response.json();
+      if (result.success) ok++;
+    } catch(e) {}
+  }
+  if (ok > 0) {
+    localStorage.removeItem('prodeni_pendientes');
+    window.toast(`${ok} registro(s) sincronizados ✓`, 'success');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const session = getSession();
+  if (!session) return;
+  currentUser = session;
+  window.currentUser = session;
+  currentRole = session.role || 'tecnico';
+  const avatar = document.getElementById('userAvatar');
+  const name = document.getElementById('userName');
+  if (avatar) avatar.textContent = (session.username || 'U')[0].toUpperCase();
+  if (name) name.textContent = session.username || 'Usuario';
+  buildNavigation();
+  loadDashboard();
+  setActiveNav('dashboard');
+  window.addEventListener('online', updateConn);
+  window.addEventListener('offline', updateConn);
+  updateConn();
+  window.addEventListener('online', sincronizarPendientes);
+});
+
+window.cargarModulo = cargarModulo;
+</script>
+</body>
+</html>

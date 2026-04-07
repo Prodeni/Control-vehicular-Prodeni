@@ -1,0 +1,608 @@
+<!-- modules/mantenimiento.html -->
+<style>
+.mnt-header{margin-bottom:24px}
+.mnt-header h2{font-size:1.4rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:10px}
+.mnt-header h2 i{color:var(--g3)}
+.mnt-header p{font-size:.76rem;color:var(--text3);margin-top:3px}
+.mnt-selector{background:var(--surface);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.mnt-sel-field{display:flex;flex-direction:column;gap:5px;flex:2;min-width:200px}
+.mnt-sel-field label{font-size:.66rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
+.mnt-sel-field select{padding:11px 14px;border:1.5px solid var(--border);border-radius:40px;font-family:inherit;font-size:.85rem;color:var(--text);outline:none;background:var(--surface);transition:.18s}
+.mnt-sel-field select:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(76,175,80,.1)}
+.alert-banner{display:none;background:linear-gradient(135deg,#FFF8E1,#FFF3CD);border:1.5px solid #FFE082;border-radius:var(--radius-md);padding:14px 18px;margin-bottom:16px;animation:alertIn .3s ease both}
+@keyframes alertIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.alert-banner.show{display:flex;align-items:flex-start;gap:12px}
+.alert-banner.critical{background:linear-gradient(135deg,#FFEBEE,#FFE0E0);border-color:#EF9A9A}
+.alert-icon{font-size:1.3rem;flex-shrink:0;margin-top:1px}
+.alert-title{font-size:.83rem;font-weight:800;color:var(--text);margin-bottom:3px}
+.alert-list{font-size:.75rem;color:var(--text2);line-height:1.7}
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:24px}
+.comp-card{background:var(--surface);border-radius:var(--radius-lg);border:1.5px solid var(--border);overflow:hidden;transition:.2s}
+.comp-card:hover{box-shadow:var(--shadow-md);border-color:var(--g4)}
+.comp-card-head{padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.comp-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.comp-name{font-size:.85rem;font-weight:700;color:var(--text);flex:1}
+.comp-status-badge{font-size:.65rem;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.status-ok{background:#E8F5E9;color:#1B5E20}
+.status-warn{background:#FFF8E1;color:#E65100}
+.status-due{background:#FFEBEE;color:#C62828}
+.status-unknown{background:var(--bg);color:var(--text3)}
+.comp-body{padding:14px 16px}
+.comp-progress-label{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text3);margin-bottom:5px}
+.comp-bar{height:6px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px}
+.comp-bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.bar-ok{background:var(--g3)}
+.bar-warn{background:#FFA726}
+.bar-due{background:var(--red)}
+.comp-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.comp-meta-item{font-size:.72rem}
+.comp-meta-item .lbl{color:var(--text3);display:block;margin-bottom:1px}
+.comp-meta-item .val{font-weight:700;color:var(--text)}
+.comp-actions{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:8px}
+.comp-btn{flex:1;padding:7px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);font-family:inherit;font-size:.72rem;font-weight:700;cursor:pointer;transition:.18s;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--text2)}
+.comp-btn:hover{background:var(--g5);border-color:var(--g3);color:var(--g2)}
+.comp-btn i{font-size:.7rem}
+.panel{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:20px}
+.panel-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;background:var(--surface2)}
+.panel-title{font-size:.85rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.panel-title i{color:var(--g2)}
+.count-pill{font-size:.7rem;background:var(--g5);color:var(--g2);padding:3px 10px;border-radius:20px;font-weight:700}
+.mnt-row{display:flex;gap:12px;padding:13px 20px;border-bottom:1px solid var(--border);align-items:center;transition:.15s;flex-wrap:wrap}
+.mnt-row:last-child{border-bottom:none}
+.mnt-row:hover{background:var(--surface2)}
+.mnt-row-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.mnt-row-body{flex:1;min-width:0}
+.mnt-row-title{font-size:.82rem;font-weight:700;color:var(--text)}
+.mnt-row-sub{font-size:.72rem;color:var(--text3);margin-top:2px}
+.mnt-row-right{text-align:right;flex-shrink:0}
+.mnt-row-km{font-size:.78rem;font-weight:700;color:var(--text2)}
+.mnt-row-date{font-size:.68rem;color:var(--text3)}
+.mnt-row-type{font-size:.65rem;padding:2px 8px;border-radius:20px;font-weight:700}
+.type-preventivo{background:#E3F2FD;color:#1565C0}
+.type-correctivo{background:#FFEBEE;color:#C62828}
+.type-mayor{background:var(--g5);color:var(--g2)}
+.type-llanta{background:#F3E5F5;color:#6A1B9A}
+.empty-state{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-state i{font-size:2.2rem;opacity:.2;display:block;margin-bottom:10px}
+.empty-state p{font-size:.82rem;font-weight:600}
+.m-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:20px}
+.m-overlay.open{display:flex;animation:mntFade .2s ease both}
+@keyframes mntFade{from{opacity:0}to{opacity:1}}
+.m-box{background:var(--surface);border-radius:var(--radius-xl);width:100%;max-width:680px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.18);animation:mntUp .3s cubic-bezier(.34,1.3,.64,1) both}
+@keyframes mntUp{from{transform:scale(.93) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.m-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);z-index:1}
+.m-head h3{font-size:1rem;font-weight:800;color:var(--g1);display:flex;align-items:center;gap:8px}
+.m-head h3 i{color:var(--g3)}
+.m-close{width:32px;height:32px;background:var(--bg);border:none;border-radius:50%;cursor:pointer;font-size:1rem;color:var(--text3);transition:.18s;display:flex;align-items:center;justify-content:center}
+.m-close:hover{background:#FFEBEE;color:var(--red)}
+.m-body{padding:24px}
+.m-sec{margin-bottom:18px}
+.m-sec-lbl{font-size:.64rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--g2);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--g5)}
+.m-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:520px){.m-grid{grid-template-columns:1fr}}
+.m-field{display:flex;flex-direction:column;gap:5px}
+.m-field label{font-size:.66rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
+.m-field input,.m-field select,.m-field textarea{padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:.85rem;color:var(--text);outline:none;background:var(--surface);transition:.18s}
+.m-field input:focus,.m-field select:focus,.m-field textarea:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(76,175,80,.1)}
+.m-field textarea{resize:vertical;min-height:70px}
+.m-field.span-2{grid-column:span 2}
+@media(max-width:520px){.m-field.span-2{grid-column:span 1}}
+.m-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+.mnt-tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:5px;margin-bottom:20px;overflow-x:auto}
+.mnt-tab{padding:8px 16px;border-radius:40px;background:none;border:none;font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer;color:var(--text3);white-space:nowrap;transition:.2s;display:flex;align-items:center;gap:6px}
+.mnt-tab:hover{background:var(--g5);color:var(--g2)}
+.mnt-tab.active{background:linear-gradient(135deg,var(--g2),var(--g1));color:white;box-shadow:0 4px 12px rgba(46,125,50,.3)}
+.tab-section{display:none}
+.tab-section.active{display:block}
+</style>
+
+<div style="max-width:1400px;margin:0 auto">
+  <div class="mnt-header">
+    <h2><i class="fas fa-wrench"></i> Control de Mantenimiento</h2>
+    <p>Vida útil de componentes · Historial preventivo, correctivo y mayor por unidad</p>
+  </div>
+
+  <div class="mnt-selector">
+    <div class="mnt-sel-field">
+      <label>Seleccionar vehículo</label>
+      <select id="mntVehiculoSelector">
+        <option value="">— Selecciona una unidad —</option>
+      </select>
+    </div>
+    <button class="btn-primary" onclick="abrirModalNuevoMantto()">
+      <i class="fas fa-plus"></i> Registrar mantenimiento
+    </button>
+  </div>
+
+  <div id="alertaBanner" class="alert-banner">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <div class="alert-title">Componentes requieren atención</div>
+      <div class="alert-list" id="alertaLista"></div>
+    </div>
+  </div>
+
+  <div class="mnt-tabs">
+    <button class="mnt-tab active" data-mnt-tab="componentes"><i class="fas fa-gauge-high"></i> Vida útil</button>
+    <button class="mnt-tab" data-mnt-tab="historial"><i class="fas fa-clock-rotate-left"></i> Historial</button>
+    <button class="mnt-tab" data-mnt-tab="llantas"><i class="fas fa-tire"></i> Llantas</button>
+    <button class="mnt-tab" data-mnt-tab="costos"><i class="fas fa-receipt"></i> Costos</button>
+  </div>
+
+  <div class="tab-section active" id="mnt-tab-componentes">
+    <div class="comp-grid" id="componentesGrid">
+      <div class="empty-state" style="grid-column:1/-1">
+        <i class="fas fa-truck-clock"></i>
+        <p>Selecciona un vehículo para ver el estado de sus componentes</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-section" id="mnt-tab-historial">
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title"><i class="fas fa-clock-rotate-left"></i> Historial de mantenimientos</span>
+        <span class="count-pill" id="mntTotalHistorial">0 registros</span>
+      </div>
+      <div id="historialManttoList">
+        <div class="empty-state"><i class="fas fa-clipboard-list"></i><p>Selecciona un vehículo</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-section" id="mnt-tab-llantas">
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title"><i class="fas fa-tire"></i> Control de llantas</span>
+        <button class="btn-secondary" onclick="abrirModalNuevoMantto('llanta')" style="padding:6px 14px;font-size:.75rem"><i class="fas fa-plus"></i> Registrar</button>
+      </div>
+      <div id="llantasGrid" style="padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+        <div class="empty-state" style="grid-column:1/-1"><i class="fas fa-tire"></i><p>Sin datos de llantas</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-section" id="mnt-tab-costos">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px" id="costosStats">
+      <div class="empty-state" style="grid-column:1/-1"><i class="fas fa-receipt"></i><p>Selecciona un vehículo</p></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><span class="panel-title"><i class="fas fa-table"></i> Detalle de costos</span></div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr>
+            <th style="text-align:left;padding:10px 14px;font-size:.67rem;font-weight:700;color:var(--text3);text-transform:uppercase;background:var(--surface2);border-bottom:1px solid var(--border)">Fecha</th>
+            <th style="text-align:left;padding:10px 14px;font-size:.67rem;font-weight:700;color:var(--text3);text-transform:uppercase;background:var(--surface2);border-bottom:1px solid var(--border)">Componente</th>
+            <th style="text-align:left;padding:10px 14px;font-size:.67rem;font-weight:700;color:var(--text3);text-transform:uppercase;background:var(--surface2);border-bottom:1px solid var(--border)">Tipo pieza</th>
+            <th style="text-align:left;padding:10px 14px;font-size:.67rem;font-weight:700;color:var(--text3);text-transform:uppercase;background:var(--surface2);border-bottom:1px solid var(--border)">Proveedor</th>
+            <th style="text-align:right;padding:10px 14px;font-size:.67rem;font-weight:700;color:var(--text3);text-transform:uppercase;background:var(--surface2);border-bottom:1px solid var(--border)">Costo</th>
+            <th style="text-align:right;padding:10px 14px;font-size:.67rem;font-weight:700;color:var(--text3);text-transform:uppercase;background:var(--surface2);border-bottom:1px solid var(--border)">Km rendidos</th>
+          </tr></thead>
+          <tbody id="costosTable"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text3)">Sin datos</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalNuevoMantto" class="m-overlay">
+  <div class="m-box">
+    <div class="m-head">
+      <h3 id="modalMntTitle"><i class="fas fa-wrench"></i> Registrar mantenimiento</h3>
+      <button class="m-close" onclick="cerrarModalMantto()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body">
+      <div class="m-sec">
+        <div class="m-sec-lbl">Tipo y componente</div>
+        <div class="m-grid">
+          <div class="m-field"><label>Tipo de mantenimiento</label>
+            <select id="mntTipo">
+              <option value="preventivo">Preventivo</option>
+              <option value="correctivo">Correctivo</option>
+              <option value="mayor">Mayor</option>
+              <option value="llanta">Llanta / Neumático</option>
+            </select>
+          </div>
+          <div class="m-field"><label>Componente / Sistema</label>
+            <select id="mntComponente" onchange="autoFillVidaUtil()">
+              <optgroup label="Motor y fluidos">
+                <option value="Aceite motor">Aceite motor</option>
+                <option value="Filtro aceite">Filtro aceite</option>
+                <option value="Filtro aire">Filtro aire</option>
+                <option value="Filtro gasolina">Filtro gasolina</option>
+                <option value="Bujías">Bujías</option>
+                <option value="Banda de tiempo">Banda de tiempo</option>
+                <option value="Cadena de distribución">Cadena de distribución</option>
+                <option value="Bomba de agua">Bomba de agua</option>
+                <option value="Termostato">Termostato</option>
+                <option value="Correa de accesorios">Correa de accesorios</option>
+                <option value="Bomba de combustible">Bomba de combustible</option>
+              </optgroup>
+              <optgroup label="Frenos y suspensión">
+                <option value="Balatas delanteras">Balatas delanteras</option>
+                <option value="Balatas traseras">Balatas traseras</option>
+                <option value="Discos de freno">Discos de freno</option>
+                <option value="Líquido de frenos">Líquido de frenos</option>
+                <option value="Amortiguadores delanteros">Amortiguadores delanteros</option>
+                <option value="Amortiguadores traseros">Amortiguadores traseros</option>
+                <option value="Rotulas y terminales">Rotulas y terminales</option>
+                <option value="Balero de rueda">Balero de rueda</option>
+              </optgroup>
+              <optgroup label="Transmisión">
+                <option value="Aceite transmisión">Aceite transmisión</option>
+                <option value="Embrague">Embrague</option>
+              </optgroup>
+              <optgroup label="Eléctrico">
+                <option value="Batería">Batería</option>
+                <option value="Alternador">Alternador</option>
+                <option value="Marcha / Arrancador">Marcha / Arrancador</option>
+                <option value="Sensor de oxígeno">Sensor de oxígeno</option>
+              </optgroup>
+              <optgroup label="Llantas">
+                <option value="Llanta delantera izquierda">Llanta delantera izquierda</option>
+                <option value="Llanta delantera derecha">Llanta delantera derecha</option>
+                <option value="Llanta trasera izquierda">Llanta trasera izquierda</option>
+                <option value="Llanta trasera derecha">Llanta trasera derecha</option>
+                <option value="Rotación de llantas">Rotación de llantas</option>
+                <option value="Balanceo">Balanceo</option>
+                <option value="Alineación">Alineación</option>
+              </optgroup>
+              <option value="otro">Otro (especificar)</option>
+            </select>
+          </div>
+          <div class="m-field" id="componenteOtroWrap" style="display:none;grid-column:span 2">
+            <label>Especificar componente</label>
+            <input type="text" id="mntComponenteOtro" placeholder="Describe el componente o trabajo">
+          </div>
+        </div>
+      </div>
+      <div class="m-sec">
+        <div class="m-sec-lbl">Detalle del trabajo</div>
+        <div class="m-grid">
+          <div class="m-field"><label>Fecha de servicio *</label><input type="date" id="mntFecha"></div>
+          <div class="m-field"><label>Km al momento del servicio *</label><input type="number" id="mntKm" placeholder="125000"></div>
+          <div class="m-field span-2"><label>Descripción del trabajo</label>
+            <textarea id="mntDescripcion" rows="2" placeholder="Describe el trabajo realizado…"></textarea>
+          </div>
+          <div class="m-field"><label>Km de vida útil estimados</label>
+            <input type="number" id="mntVidaUtilKm" placeholder="Ej. 10000">
+          </div>
+          <div class="m-field"><label>Próximo servicio en km</label>
+            <input type="number" id="mntProximoKm" placeholder="Auto-calculado" readonly style="background:var(--surface2)">
+          </div>
+        </div>
+      </div>
+      <div class="m-sec">
+        <div class="m-sec-lbl">Pieza y costo</div>
+        <div class="m-grid">
+          <div class="m-field"><label>Tipo de pieza</label>
+            <select id="mntTipoPieza">
+              <option value="">— No aplica —</option>
+              <option value="original">Original (OEM)</option>
+              <option value="generica">Genérica</option>
+              <option value="remanufacturada">Remanufacturada</option>
+            </select>
+          </div>
+          <div class="m-field"><label>Marca de la pieza</label><input type="text" id="mntMarcaPieza" placeholder="Bosch, Gates, AC Delco…"></div>
+          <div class="m-field"><label>Proveedor / Taller</label><input type="text" id="mntProveedor" placeholder="Taller nombre"></div>
+          <div class="m-field"><label>Costo total ($)</label><input type="number" id="mntCosto" placeholder="0.00" step="0.01"></div>
+          <div class="m-field span-2"><label>Observaciones</label>
+            <textarea id="mntObservaciones" rows="2" placeholder="Falla que generó el servicio, estado del componente, recomendaciones…"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn-secondary" onclick="cerrarModalMantto()">Cancelar</button>
+      <button class="btn-primary" onclick="guardarMantto()"><i class="fas fa-save"></i> Guardar registro</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+const VIDA_UTIL_KM = {
+  'Aceite motor': 5000, 'Filtro aceite': 5000, 'Filtro aire': 20000, 'Filtro gasolina': 30000,
+  'Bujías': 30000, 'Banda de tiempo': 60000, 'Cadena de distribución': 120000, 'Bomba de agua': 80000,
+  'Termostato': 80000, 'Correa de accesorios': 40000, 'Bomba de combustible': 80000,
+  'Balatas delanteras': 25000, 'Balatas traseras': 35000, 'Discos de freno': 50000, 'Líquido de frenos': 20000,
+  'Amortiguadores delanteros': 60000, 'Amortiguadores traseros': 60000, 'Rotulas y terminales': 60000, 'Balero de rueda': 80000,
+  'Aceite transmisión': 40000, 'Embrague': 80000, 'Batería': 40000, 'Alternador': 120000,
+  'Marcha / Arrancador': 120000, 'Sensor de oxígeno': 60000,
+  'Llanta delantera izquierda': 40000, 'Llanta delantera derecha': 40000, 'Llanta trasera izquierda': 40000,
+  'Llanta trasera derecha': 40000, 'Rotación de llantas': 10000, 'Balanceo': 10000, 'Alineación': 15000
+};
+
+const COMPONENTE_ICONS = {
+  'Aceite motor': {icon:'fas fa-oil-can',color:'#FF8F00',bg:'#FFF8E1'},
+  'Batería': {icon:'fas fa-battery-full',color:'#1565C0',bg:'#E3F2FD'},
+  'Balatas': {icon:'fas fa-circle-dot',color:'#C62828',bg:'#FFEBEE'},
+  'Llanta': {icon:'fas fa-tire',color:'#37474F',bg:'#ECEFF1'},
+  'default': {icon:'fas fa-gear',color:'#5A7A5A',bg:'#F0F4F1'},
+};
+
+let mntVehiculoActual = null;
+let mntHistorial = [];
+let mntVehiculos = [];
+
+window.cargarVehiculosSelectorMnt = async function() {
+  const sel = document.getElementById('mntVehiculoSelector');
+  const cache = localStorage.getItem('prodeni_vehiculos_cache');
+  if (cache) {
+    mntVehiculos = JSON.parse(cache);
+  } else if (navigator.onLine) {
+    try {
+      const r = await fetch(`${window.SCRIPT_URL}?action=getVehiculos`);
+      const d = await r.json();
+      if (d.success && d.vehiculos) {
+        mntVehiculos = d.vehiculos;
+        localStorage.setItem('prodeni_vehiculos_cache', JSON.stringify(mntVehiculos));
+      }
+    } catch(e) {}
+  }
+  sel.innerHTML = '<option value="">— Selecciona una unidad —</option>' +
+    mntVehiculos.map(v => `<option value="${v.placas}">${v.placas} · ${[v.marca, v.modelo].filter(Boolean).join(' ')} · ${v.conductor || 'Sin conductor'}</option>`).join('');
+  sel.onchange = () => cargarMantenimientoVehiculo();
+};
+
+async function cargarMantenimientoVehiculo() {
+  const placas = document.getElementById('mntVehiculoSelector').value;
+  if (!placas) return;
+  mntVehiculoActual = placas;
+  
+  const local = localStorage.getItem(`prodeni_mantto_${placas}`);
+  if (local) {
+    mntHistorial = JSON.parse(local);
+    renderTodoMantto();
+  }
+  
+  if (navigator.onLine) {
+    try {
+      const r = await fetch(`${window.SCRIPT_URL}?action=getMantenimientos&placas=${encodeURIComponent(placas)}`);
+      const d = await r.json();
+      if (d.success && d.registros) {
+        mntHistorial = d.registros;
+        localStorage.setItem(`prodeni_mantto_${placas}`, JSON.stringify(mntHistorial));
+        renderTodoMantto();
+      }
+    } catch(e) {}
+  }
+  renderTodoMantto();
+}
+
+function renderTodoMantto() {
+  renderComponentes();
+  renderHistorialMantto();
+  renderLlantas();
+  renderCostos();
+}
+
+function renderComponentes() {
+  const grid = document.getElementById('componentesGrid');
+  const kmActual = 0; // Se podría obtener del vehículo actual
+  const componentesTrackeados = Object.keys(VIDA_UTIL_KM);
+  const alertas = [];
+  
+  grid.innerHTML = componentesTrackeados.map(comp => {
+    const registros = mntHistorial.filter(r => r.componente === comp);
+    const ultimo = registros.sort((a,b) => (b.km||0) - (a.km||0))[0];
+    const vidaUtilKm = (ultimo?.vidaUtilKm || VIDA_UTIL_KM[comp]) || 10000;
+    const kmInstalacion = ultimo?.km || 0;
+    const kmProximo = kmInstalacion + vidaUtilKm;
+    const kmRestantes = kmProximo - kmActual;
+    let porcentajeUsado = kmInstalacion ? Math.min(100, Math.round(((kmActual - kmInstalacion) / vidaUtilKm) * 100)) : 0;
+    if (porcentajeUsado < 0) porcentajeUsado = 0;
+    
+    let estado = 'unknown', estadoTxt = 'Sin registro', barClass = '';
+    if (ultimo) {
+      if (kmRestantes < 0) { estado = 'due'; estadoTxt = `Vencido ${Math.abs(kmRestantes).toLocaleString()} km`; barClass = 'bar-due'; alertas.push({ comp, msg: `VENCIDO ${Math.abs(kmRestantes).toLocaleString()} km`, critical: true }); }
+      else if (kmRestantes < vidaUtilKm * 0.15) { estado = 'warn'; estadoTxt = `${kmRestantes.toLocaleString()} km restantes`; barClass = 'bar-warn'; alertas.push({ comp, msg: `${kmRestantes.toLocaleString()} km restantes`, critical: false }); }
+      else { estado = 'ok'; estadoTxt = `${kmRestantes.toLocaleString()} km restantes`; barClass = 'bar-ok'; }
+    }
+    
+    const iconData = COMPONENTE_ICONS[comp.split(' ')[0]] || COMPONENTE_ICONS.default;
+    const estadoBadge = { ok:'status-ok', warn:'status-warn', due:'status-due', unknown:'status-unknown' }[estado];
+    const estadoBadgeTxt = { ok:'✓ Al día', warn:'⚠ Próximo', due:'⛔ Vencido', unknown:'Sin datos' }[estado];
+    
+    return `<div class="comp-card">
+      <div class="comp-card-head">
+        <div class="comp-icon" style="background:${iconData.bg};color:${iconData.color}"><i class="${iconData.icon}"></i></div>
+        <div class="comp-name">${comp}</div>
+        <span class="comp-status-badge ${estadoBadge}">${estadoBadgeTxt}</span>
+      </div>
+      <div class="comp-body">
+        <div class="comp-progress-label">
+          <span>${ultimo ? `Instalado: ${kmInstalacion.toLocaleString()} km` : 'Sin registro'}</span>
+          <span>${porcentajeUsado}% usado</span>
+        </div>
+        <div class="comp-bar"><div class="comp-bar-fill ${barClass}" style="width:${porcentajeUsado}%"></div></div>
+        <div class="comp-meta">
+          <div class="comp-meta-item"><span class="lbl">Vida útil ref.</span><span class="val">${vidaUtilKm.toLocaleString()} km</span></div>
+          <div class="comp-meta-item"><span class="lbl">Próximo servicio</span><span class="val" style="color:${estado === 'due' ? 'var(--red)' : estado === 'warn' ? '#F9A825' : 'var(--text)'}">${ultimo ? kmProximo.toLocaleString() + ' km' : '—'}</span></div>
+          <div class="comp-meta-item"><span class="lbl">Último servicio</span><span class="val">${ultimo?.fecha || '—'}</span></div>
+        </div>
+      </div>
+      <div class="comp-actions">
+        <button class="comp-btn" onclick="abrirModalNuevoMantto('preventivo','${comp}')"><i class="fas fa-plus"></i> Registrar</button>
+      </div>
+    </div>`;
+  }).join('');
+  
+  const banner = document.getElementById('alertaBanner');
+  const lista = document.getElementById('alertaLista');
+  if (alertas.length) {
+    const hayCritical = alertas.some(a => a.critical);
+    banner.className = `alert-banner show${hayCritical ? ' critical' : ''}`;
+    lista.innerHTML = alertas.map(a => `<div>• <strong>${a.comp}:</strong> ${a.msg}</div>`).join('');
+  } else {
+    banner.className = 'alert-banner';
+  }
+}
+
+function renderHistorialMantto() {
+  const list = document.getElementById('historialManttoList');
+  document.getElementById('mntTotalHistorial').textContent = `${mntHistorial.length} registro${mntHistorial.length !== 1 ? 's' : ''}`;
+  if (!mntHistorial.length) {
+    list.innerHTML = '<div class="empty-state"><i class="fas fa-clipboard-list"></i><p>Sin registros de mantenimiento</p></div>';
+    return;
+  }
+  const sorted = [...mntHistorial].sort((a,b) => (b.km||0) - (a.km||0));
+  const typeColors = { preventivo: '#4CAF50', correctivo: '#C62828', mayor: '#2196F3', llanta: '#9C27B0' };
+  list.innerHTML = sorted.map(r => `
+    <div class="mnt-row">
+      <div class="mnt-row-dot" style="background:${typeColors[r.tipo] || '#9E9E9E'}"></div>
+      <div class="mnt-row-body">
+        <div class="mnt-row-title">${r.componente || '—'}</div>
+        <div class="mnt-row-sub">${r.descripcion || 'Sin descripción'} ${r.proveedor ? '· ' + r.proveedor : ''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <span class="mnt-row-type type-${r.tipo || 'preventivo'}">${r.tipo || 'preventivo'}</span>
+        <div class="mnt-row-right">
+          <div class="mnt-row-km">${r.km ? r.km.toLocaleString() + ' km' : '—'}</div>
+          <div class="mnt-row-date">${r.fecha || '—'} ${r.costo ? '· $' + parseFloat(r.costo).toLocaleString() : ''}</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderLlantas() {
+  const posiciones = ['Delantera izquierda', 'Delantera derecha', 'Trasera izquierda', 'Trasera derecha'];
+  const grid = document.getElementById('llantasGrid');
+  grid.innerHTML = posiciones.map(pos => {
+    const registros = mntHistorial.filter(r => (r.componente || '').toLowerCase().includes(pos.toLowerCase()));
+    const ultimo = registros.sort((a,b) => (b.km||0) - (a.km||0))[0];
+    return `<div style="background:var(--surface2);border-radius:var(--radius-md);padding:14px;border:1.5px solid var(--border)">
+      <div style="font-size:.7rem;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:8px">${pos}</div>
+      <div style="font-size:.85rem;font-weight:700;color:var(--text)">${ultimo?.marcaPieza || 'Sin registro'}</div>
+      <div style="font-size:.72rem;color:var(--text3);margin-top:3px">${ultimo?.km ? 'Instalada: ' + ultimo.km.toLocaleString() + ' km' : '—'}</div>
+      <button class="comp-btn" style="margin-top:10px;width:100%" onclick="abrirModalNuevoMantto('llanta','${pos}')">
+        <i class="fas fa-plus"></i> Registrar
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function renderCostos() {
+  const conCosto = mntHistorial.filter(r => r.costo && parseFloat(r.costo) > 0);
+  const totalCosto = conCosto.reduce((s, r) => s + parseFloat(r.costo || 0), 0);
+  const preventivos = mntHistorial.filter(r => r.tipo === 'preventivo').length;
+  const correctivos = mntHistorial.filter(r => r.tipo === 'correctivo').length;
+  
+  document.getElementById('costosStats').innerHTML = `
+    <div style="background:var(--surface);border-radius:var(--radius-lg);padding:18px;border:1px solid var(--border)">
+      <div style="font-size:1.6rem;font-weight:800;color:var(--g1)">$${totalCosto.toLocaleString()}</div>
+      <div style="font-size:.68rem;font-weight:600;color:var(--text3);text-transform:uppercase;margin-top:4px">Inversión total</div>
+    </div>
+    <div style="background:var(--surface);border-radius:var(--radius-lg);padding:18px;border:1px solid var(--border)">
+      <div style="font-size:1.6rem;font-weight:800;color:#1565C0">${preventivos}</div>
+      <div style="font-size:.68rem;font-weight:600;color:var(--text3);text-transform:uppercase;margin-top:4px">Preventivos</div>
+    </div>
+    <div style="background:var(--surface);border-radius:var(--radius-lg);padding:18px;border:1px solid var(--border)">
+      <div style="font-size:1.6rem;font-weight:800;color:var(--red)">${correctivos}</div>
+      <div style="font-size:.68rem;font-weight:600;color:var(--text3);text-transform:uppercase;margin-top:4px">Correctivos</div>
+    </div>`;
+  
+  const tb = document.getElementById('costosTable');
+  if (!conCosto.length) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text3)">Sin registros con costo</td></tr>'; return; }
+  tb.innerHTML = [...conCosto].sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).map(r => `
+    <tr><td style="padding:12px 14px">${r.fecha || '—'}</td>
+    <td style="padding:12px 14px"><strong>${r.componente || '—'}</strong></td>
+    <td style="padding:12px 14px">${r.tipoPieza || '—'} ${r.marcaPieza ? '· ' + r.marcaPieza : ''}</td>
+    <td style="padding:12px 14px">${r.proveedor || '—'}</td>
+    <td style="padding:12px 14px;text-align:right;font-weight:700">$${parseFloat(r.costo).toLocaleString()}</td>
+    <td style="padding:12px 14px;text-align:right">${r.vidaUtilKm ? r.vidaUtilKm.toLocaleString() + ' km' : '—'}</td></tr>
+  `).join('');
+}
+
+window.abrirModalNuevoMantto = function(tipo = 'preventivo', componente = '') {
+  if (!mntVehiculoActual) { window.toast('Selecciona un vehículo primero', 'warn'); return; }
+  document.getElementById('mntTipo').value = tipo;
+  if (componente) {
+    const sel = document.getElementById('mntComponente');
+    const opt = Array.from(sel.options).find(o => o.value === componente);
+    if (opt) sel.value = componente;
+    else { sel.value = 'otro'; document.getElementById('mntComponenteOtro').value = componente; document.getElementById('componenteOtroWrap').style.display = 'grid'; }
+    autoFillVidaUtil();
+  }
+  document.getElementById('mntFecha').value = new Date().toISOString().slice(0,10);
+  document.getElementById('modalNuevoMantto').classList.add('open');
+};
+
+window.cerrarModalMantto = function() { document.getElementById('modalNuevoMantto').classList.remove('open'); };
+
+window.autoFillVidaUtil = function() {
+  const comp = document.getElementById('mntComponente').value;
+  const isOtro = comp === 'otro';
+  document.getElementById('componenteOtroWrap').style.display = isOtro ? 'grid' : 'none';
+  if (!isOtro && VIDA_UTIL_KM[comp]) {
+    document.getElementById('mntVidaUtilKm').value = VIDA_UTIL_KM[comp];
+    calcProximoKm();
+  }
+};
+
+function calcProximoKm() {
+  const km = parseInt(document.getElementById('mntKm').value) || 0;
+  const vida = parseInt(document.getElementById('mntVidaUtilKm').value) || 0;
+  if (km && vida) document.getElementById('mntProximoKm').value = km + vida;
+}
+
+window.guardarMantto = async function() {
+  const comp = document.getElementById('mntComponente').value;
+  const componente = comp === 'otro' ? document.getElementById('mntComponenteOtro').value : comp;
+  const km = parseInt(document.getElementById('mntKm').value);
+  const fecha = document.getElementById('mntFecha').value;
+  if (!componente || !km || !fecha) { window.toast('Componente, km y fecha son obligatorios', 'error'); return; }
+  
+  const reg = {
+    action: 'saveMantto',
+    placas: mntVehiculoActual,
+    tipo: document.getElementById('mntTipo').value,
+    componente: componente,
+    fecha: fecha,
+    km: km,
+    descripcion: document.getElementById('mntDescripcion').value,
+    vidaUtilKm: parseInt(document.getElementById('mntVidaUtilKm').value) || VIDA_UTIL_KM[componente] || 0,
+    proximoKm: parseInt(document.getElementById('mntProximoKm').value) || 0,
+    tipoPieza: document.getElementById('mntTipoPieza').value,
+    marcaPieza: document.getElementById('mntMarcaPieza').value,
+    proveedor: document.getElementById('mntProveedor').value,
+    costo: parseFloat(document.getElementById('mntCosto').value) || 0,
+    observaciones: document.getElementById('mntObservaciones').value,
+    usuario: (window.currentUser || {}).username || 'tecnico',
+    timestamp: Date.now()
+  };
+  
+  mntHistorial.push(reg);
+  localStorage.setItem(`prodeni_mantto_${mntVehiculoActual}`, JSON.stringify(mntHistorial));
+  renderTodoMantto();
+  window.toast('Mantenimiento registrado localmente ✓', 'success');
+  
+  if (navigator.onLine) {
+    try {
+      await fetch(window.SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reg)
+      });
+      window.toast('Sincronizado con la nube ✓', 'success');
+    } catch(e) {}
+  }
+  cerrarModalMantto();
+};
+
+document.querySelectorAll('.mnt-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mnt-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(`mnt-tab-${btn.dataset.mntTab}`).classList.add('active');
+  });
+});
+
+document.getElementById('mntKm')?.addEventListener('input', calcProximoKm);
+document.getElementById('mntVidaUtilKm')?.addEventListener('input', calcProximoKm);
+document.getElementById('modalNuevoMantto').addEventListener('click', e => { if (e.target === e.currentTarget) cerrarModalMantto(); });
+
+window.cargarVehiculosSelectorMnt();
+})();
+</script>

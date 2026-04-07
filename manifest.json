@@ -1,0 +1,17 @@
+{
+  "name": "PRODENI Fleet",
+  "short_name": "PRODENI",
+  "description": "Control Vehicular",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1B5E20",
+  "theme_color": "#1B5E20",
+  "icons": [
+    {
+      "src": "envio.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

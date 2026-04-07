@@ -1,0 +1,267 @@
+<!-- modules/bitacora.html -->
+<style>
+.bit-header{margin-bottom:28px}
+.bit-header h2{font-size:1.4rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:10px}
+.bit-header h2 i{color:var(--g3)}
+.bit-header p{font-size:.76rem;color:var(--text3);margin-top:3px}
+.bit-selector{background:var(--surface);border-radius:var(--radius-lg);padding:20px;margin-bottom:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border)}
+.bit-selector-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.bit-sel-field{flex:2;min-width:200px;display:flex;flex-direction:column;gap:5px}
+.bit-sel-field label{font-size:.66rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
+.bit-sel-field select{padding:11px 14px;border:1.5px solid var(--border);border-radius:40px;font-family:inherit;font-size:.85rem;color:var(--text);outline:none;background:var(--surface);transition:.18s}
+.bit-sel-field select:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(76,175,80,.1)}
+.bit-resumen{background:linear-gradient(135deg,var(--g1),var(--g2));border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:20px;color:white;display:none;animation:bitIn .3s ease both}
+@keyframes bitIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.bit-res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px}
+.bit-res-val{font-size:1.5rem;font-weight:800;line-height:1}
+.bit-res-lbl{font-size:.68rem;opacity:.7;margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
+.bit-timeline{display:flex;flex-direction:column;gap:0}
+.bit-row{display:flex;gap:0;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:.18s;position:relative}
+.bit-row:last-child{border-bottom:none}
+.bit-row:hover{background:var(--surface2)}
+.bit-row:hover .bit-row-arrow{opacity:1;transform:translateX(0)}
+.bit-timeline-dot{width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding-top:2px}
+.bit-dot{width:12px;height:12px;border-radius:50%;border:2.5px solid var(--border);background:var(--surface);flex-shrink:0}
+.bit-dot.ok{border-color:var(--g3);background:var(--g3)}
+.bit-dot.warn{border-color:#F9A825;background:#F9A825}
+.bit-dot.bad{border-color:var(--red);background:var(--red)}
+.bit-dot-line{flex:1;width:2px;background:var(--border);margin-top:3px}
+.bit-row-body{flex:1;min-width:0}
+.bit-row-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:5px}
+.bit-folio{font-size:.78rem;font-weight:800;color:var(--text)}
+.bit-fecha{font-size:.72rem;color:var(--text3)}
+.bit-row-meta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.bit-km{font-size:.78rem;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:4px}
+.bit-km i{color:var(--g3);font-size:.7rem}
+.bit-conductor{font-size:.74rem;color:var(--text3);display:flex;align-items:center;gap:4px}
+.bit-conductor i{font-size:.7rem}
+.bit-servicios-count{font-size:.7rem;background:var(--g5);color:var(--g2);padding:2px 8px;border-radius:20px;font-weight:700}
+.bit-row-arrow{margin-left:auto;color:var(--text3);font-size:.75rem;opacity:0;transform:translateX(-4px);transition:.18s;flex-shrink:0;align-self:center}
+.bit-empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.bit-empty-state i{font-size:2.5rem;opacity:.2;display:block;margin-bottom:12px}
+.bit-empty-state p{font-size:.83rem;font-weight:600}
+.panel{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm)}
+.panel-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--surface2)}
+.panel-title{font-size:.85rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.panel-title i{color:var(--g2)}
+.count-pill{font-size:.7rem;background:var(--g5);color:var(--g2);padding:3px 10px;border-radius:20px;font-weight:700}
+.m-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:20px}
+.m-overlay.open{display:flex;animation:bFadeIn .2s ease both}
+@keyframes bFadeIn{from{opacity:0}to{opacity:1}}
+.m-box{background:var(--surface);border-radius:var(--radius-xl);width:100%;max-width:760px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.18);animation:bUp .3s cubic-bezier(.34,1.3,.64,1) both}
+@keyframes bUp{from{transform:scale(.93) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.m-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);z-index:1}
+.m-head h3{font-size:1rem;font-weight:800;color:var(--g1);display:flex;align-items:center;gap:8px}
+.m-head h3 i{color:var(--g3)}
+.m-close{width:32px;height:32px;background:var(--bg);border:none;border-radius:50%;cursor:pointer;font-size:1rem;color:var(--text3);transition:.18s;display:flex;align-items:center;justify-content:center}
+.m-close:hover{background:#FFEBEE;color:var(--red)}
+.m-body{padding:24px}
+.det-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.det-cell{background:var(--bg);border-radius:var(--radius-sm);padding:12px}
+.det-cell-lbl{font-size:.65rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.det-cell-val{font-size:.85rem;font-weight:700;color:var(--text)}
+.det-section{margin-bottom:18px}
+.det-section-title{font-size:.75rem;font-weight:800;color:var(--g2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--g5)}
+.est-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px}
+.est-item{background:var(--bg);border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-size:.78rem}
+.est-val-ok{color:var(--g2);font-weight:700}
+.est-val-reg{color:#F9A825;font-weight:700}
+.est-val-mal{color:var(--red);font-weight:700}
+.serv-chips{display:flex;flex-wrap:wrap;gap:6px}
+.serv-chip{background:var(--g5);color:var(--g2);padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:600}
+.falla-box{background:#FFEBEE;border:1px solid #FFCDD2;border-radius:var(--radius-sm);padding:14px}
+.falla-box strong{color:var(--red)}
+.obs-box{background:var(--surface2);border-radius:var(--radius-sm);padding:14px;font-size:.82rem;color:var(--text2)}
+.m-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+</style>
+
+<div style="max-width:1400px;margin:0 auto">
+  <div class="bit-header">
+    <h2><i class="fas fa-timeline"></i> Bitácora de Mantenimiento</h2>
+    <p>Historial completo de inspecciones por unidad</p>
+  </div>
+
+  <div class="bit-selector">
+    <div class="bit-selector-row">
+      <div class="bit-sel-field">
+        <label>Seleccionar vehículo</label>
+        <select id="vehiculoSelector">
+          <option value="">— Seleccione una unidad —</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="cargarHistorial()"><i class="fas fa-magnifying-glass"></i> Ver historial</button>
+      <button class="btn-secondary" onclick="exportarHistorialPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+    </div>
+  </div>
+
+  <div id="resumenVehiculo" class="bit-resumen">
+    <div class="bit-res-grid">
+      <div class="bit-res-item"><div class="bit-res-val" id="resPlacas">—</div><div class="bit-res-lbl">Placas</div></div>
+      <div class="bit-res-item"><div class="bit-res-val" id="resKmActual">—</div><div class="bit-res-lbl">Último km</div></div>
+      <div class="bit-res-item"><div class="bit-res-val" id="resUltimaFecha">—</div><div class="bit-res-lbl">Última inspección</div></div>
+      <div class="bit-res-item"><div class="bit-res-val" id="resTotalInspecciones">—</div><div class="bit-res-lbl">Total inspecciones</div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <span class="panel-title"><i class="fas fa-clock-rotate-left"></i> Historial de inspecciones</span>
+      <span class="count-pill" id="totalInspecciones">0 registros</span>
+    </div>
+    <div class="bit-timeline" id="bitTimeline">
+      <div class="bit-empty-state"><i class="fas fa-truck-clock"></i><p>Seleccione un vehículo para ver su historial</p></div>
+    </div>
+  </div>
+</div>
+
+<div id="modalDetalle" class="m-overlay">
+  <div class="m-box">
+    <div class="m-head">
+      <h3 id="detalleTitulo"><i class="fas fa-file-lines"></i> Detalle de inspección</h3>
+      <button class="m-close" onclick="cerrarModalDetalle()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="m-body" id="detalleContenido"></div>
+    <div class="m-foot">
+      <button class="btn-secondary" onclick="cerrarModalDetalle()">Cerrar</button>
+      <button class="btn-primary" id="btnEditarInspeccion" onclick="editarInspeccionDesdeDetalle()"><i class="fas fa-pen"></i> Editar inspección</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+let vehiculosLista = [];
+let historialActual = [];
+let detalleFolioActual = null;
+
+window.cargarVehiculosSelector = async function() {
+  const sel = document.getElementById('vehiculoSelector');
+  const cache = localStorage.getItem('prodeni_vehiculos_cache');
+  if (cache) {
+    vehiculosLista = JSON.parse(cache);
+  } else if (navigator.onLine) {
+    try {
+      const r = await fetch(`${window.SCRIPT_URL}?action=getVehiculos`);
+      const d = await r.json();
+      if (d.success && d.vehiculos) {
+        vehiculosLista = d.vehiculos;
+        localStorage.setItem('prodeni_vehiculos_cache', JSON.stringify(vehiculosLista));
+      }
+    } catch(e) {}
+  }
+  sel.innerHTML = '<option value="">— Seleccione una unidad —</option>' + vehiculosLista.map(v => `<option value="${v.placas}">${v.placas} · ${[v.marca, v.modelo].filter(Boolean).join(' ')} · ${v.conductor || 'Sin conductor'}</option>`).join('');
+};
+
+window.cargarHistorial = async function() {
+  const placas = document.getElementById('vehiculoSelector').value;
+  if (!placas) { window.toast('Seleccione un vehículo', 'warn'); return; }
+  const tl = document.getElementById('bitTimeline');
+  tl.innerHTML = '<div class="bit-empty-state"><i class="fas fa-spinner fa-spin"></i><p>Cargando historial…</p></div>';
+  
+  const local = localStorage.getItem(`prodeni_historial_${placas}`);
+  if (local) {
+    historialActual = JSON.parse(local);
+    renderTimeline(historialActual);
+    actualizarResumen(placas, historialActual);
+  }
+  
+  if (navigator.onLine) {
+    try {
+      const r = await fetch(`${window.SCRIPT_URL}?action=getInspecciones&placas=${encodeURIComponent(placas)}`);
+      const d = await r.json();
+      if (d.success && d.rows) {
+        historialActual = d.rows;
+        localStorage.setItem(`prodeni_historial_${placas}`, JSON.stringify(historialActual));
+        renderTimeline(historialActual);
+        actualizarResumen(placas, historialActual);
+      }
+    } catch(e) {}
+  }
+  if (!historialActual.length) tl.innerHTML = '<div class="bit-empty-state"><i class="fas fa-clipboard-list"></i><p>No hay inspecciones para este vehículo</p></div>';
+};
+
+function renderTimeline(hist) {
+  const tl = document.getElementById('bitTimeline');
+  document.getElementById('totalInspecciones').textContent = `${hist.length} registro${hist.length !== 1 ? 's' : ''}`;
+  if (!hist.length) { tl.innerHTML = '<div class="bit-empty-state"><i class="fas fa-clipboard-list"></i><p>No hay registros</p></div>'; return; }
+  const sorted = [...hist].reverse();
+  tl.innerHTML = sorted.map((h, i) => {
+    const isLast = i === sorted.length - 1;
+    const bad = h.dictamen?.includes('No apto');
+    const warn = h.dictamen?.includes('observaciones');
+    const cls = bad ? 'bad' : warn ? 'warn' : 'ok';
+    const badgeCls = bad ? 'badge-danger' : warn ? 'badge-warning' : 'badge-success';
+    let servicios = [];
+    try { servicios = h.servicios_json ? JSON.parse(h.servicios_json) : []; } catch(e) {}
+    return `<div class="bit-row" onclick="verDetalle('${h.folio}')">
+      <div class="bit-timeline-dot"><div class="bit-dot ${cls}"></div>${!isLast ? '<div class="bit-dot-line"></div>' : ''}</div>
+      <div class="bit-row-body" style="padding-left:12px">
+        <div class="bit-row-top"><span class="bit-folio">${h.folio || '—'}</span><span class="bit-fecha"><i class="fas fa-calendar-days" style="font-size:.65rem"></i> ${h.fecha || '—'}</span><span class="badge ${badgeCls}" style="font-size:.65rem;padding:2px 8px">${h.dictamen || '—'}</span></div>
+        <div class="bit-row-meta"><span class="bit-km"><i class="fas fa-tachometer-alt"></i>${h.kmActual || '—'} km</span><span class="bit-conductor"><i class="fas fa-user"></i>${h.conductor || '—'}</span>${servicios.length ? `<span class="bit-servicios-count">${servicios.length} servicio${servicios.length !== 1 ? 's' : ''}</span>` : ''}${h.fallaDetectada ? `<span style="font-size:.7rem;color:var(--red);font-weight:600"><i class="fas fa-triangle-exclamation"></i> Falla</span>` : ''}</div>
+      </div>
+      <div class="bit-row-arrow"><i class="fas fa-chevron-right"></i></div>
+    </div>`;
+  }).join('');
+}
+
+function actualizarResumen(placas, hist) {
+  const ultima = hist.length ? hist[hist.length - 1] : null;
+  document.getElementById('resumenVehiculo').style.display = 'block';
+  document.getElementById('resPlacas').textContent = placas;
+  document.getElementById('resKmActual').textContent = ultima?.kmActual ? `${ultima.kmActual} km` : '—';
+  document.getElementById('resUltimaFecha').textContent = ultima?.fecha || '—';
+  document.getElementById('resTotalInspecciones').textContent = hist.length;
+}
+
+window.verDetalle = async function(folio) {
+  detalleFolioActual = folio;
+  const contenido = document.getElementById('detalleContenido');
+  contenido.innerHTML = '<div style="text-align:center;padding:40px"><i class="fas fa-spinner fa-spin" style="font-size:1.5rem"></i></div>';
+  document.getElementById('detalleTitulo').innerHTML = `<i class="fas fa-file-lines"></i> Inspección ${folio}`;
+  document.getElementById('modalDetalle').classList.add('open');
+  
+  let ins = historialActual.find(h => h.folio === folio);
+  if (!ins && navigator.onLine) {
+    try {
+      const r = await fetch(`${window.SCRIPT_URL}?action=getInspeccion&folio=${folio}`);
+      const d = await r.json();
+      if (d.success) ins = d.inspeccion;
+    } catch(e) {}
+  }
+  if (!ins) { contenido.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red)">No se pudo cargar el detalle</div>'; return; }
+  
+  let estados = {};
+  let servicios = [];
+  try { estados = typeof ins.estados === 'string' ? JSON.parse(ins.estados) : ins.estados || {}; } catch(e) {}
+  try { servicios = typeof ins.serviciosRealizados === 'string' ? JSON.parse(ins.serviciosRealizados) : ins.serviciosRealizados || []; } catch(e) {}
+  
+  const bad = ins.dictamen?.includes('No apto');
+  const warn = ins.dictamen?.includes('observaciones');
+  const badgeCls = bad ? 'badge-danger' : warn ? 'badge-warning' : 'badge-success';
+  
+  contenido.innerHTML = `
+    <div class="det-grid">
+      <div class="det-cell"><div class="det-cell-lbl">Fecha</div><div class="det-cell-val">${ins.fecha || '—'}</div></div>
+      <div class="det-cell"><div class="det-cell-lbl">Inspector</div><div class="det-cell-val">${ins.usuario || '—'}</div></div>
+      <div class="det-cell"><div class="det-cell-lbl">Vehículo</div><div class="det-cell-val">${[ins.marca, ins.modelo].filter(Boolean).join(' ') || '—'}</div></div>
+      <div class="det-cell"><div class="det-cell-lbl">Placas</div><div class="det-cell-val">${ins.placas || '—'}</div></div>
+      <div class="det-cell"><div class="det-cell-lbl">Km actual</div><div class="det-cell-val">${ins.kmActual ? ins.kmActual + ' km' : '—'}</div></div>
+      <div class="det-cell"><div class="det-cell-lbl">Conductor</div><div class="det-cell-val">${ins.conductor || '—'}</div></div>
+      <div class="det-cell"><div class="det-cell-lbl">Dictamen</div><div class="det-cell-val"><span class="badge ${badgeCls}" style="font-size:.72rem">${ins.dictamen || '—'}</span></div></div>
+    </div>
+    ${Object.keys(estados).length ? `<div class="det-section"><div class="det-section-title"><i class="fas fa-clipboard-check"></i> Estado de componentes</div><div class="est-grid">${Object.entries(estados).map(([k, v]) => `<div class="est-item"><span>${k}</span><span class="est-val-${v.toLowerCase()}">${v}</span></div>`).join('')}</div></div>` : ''}
+    ${servicios.length ? `<div class="det-section"><div class="det-section-title"><i class="fas fa-wrench"></i> Servicios realizados</div><div class="serv-chips">${servicios.map(s => `<span class="serv-chip"><i class="fas fa-check"></i> ${s}</span>`).join('')}</div></div>` : ''}
+    ${ins.fallaDetectada ? `<div class="det-section"><div class="falla-box"><strong><i class="fas fa-triangle-exclamation"></i> Falla detectada:</strong><p style="margin-top:8px">${ins.fallaDetectada}</p>${ins.accionCorrectiva ? `<p style="margin-top:10px"><strong>Acción correctiva:</strong> ${ins.accionCorrectiva}</p>` : ''}</div></div>` : ''}
+    ${ins.obsGenerales ? `<div class="det-section"><div class="det-section-title"><i class="fas fa-note-sticky"></i> Observaciones generales</div><div class="obs-box">${ins.obsGenerales}</div></div>` : ''}
+  `;
+};
+
+window.cerrarModalDetalle = function() { document.getElementById('modalDetalle').classList.remove('open'); detalleFolioActual = null; };
+window.editarInspeccionDesdeDetalle = function() { if (!detalleFolioActual) return; sessionStorage.setItem('editarFolio', detalleFolioActual); cerrarModalDetalle(); window.cargarModulo && window.cargarModulo('inspeccion'); };
+window.exportarHistorialPDF = function() { window.toast('Exportación PDF disponible en el módulo Reportes', 'info'); };
+
+document.getElementById('modalDetalle').addEventListener('click', e => { if (e.target === e.currentTarget) cerrarModalDetalle(); });
+
+window.cargarVehiculosSelector();
+})();
+</script>
