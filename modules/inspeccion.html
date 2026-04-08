@@ -1,175 +1,102 @@
 <!-- modules/inspeccion.html -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-/* ── Layout ───────────────────────────────────────── */
-.ins-wrap{max-width:1100px;margin:0 auto}
-.ins-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:20px}
-.ins-header h2{font-size:1.35rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:10px}
+.ins-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:24px}
+.ins-header h2{font-size:1.4rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:10px}
 .ins-header h2 i{color:var(--g3)}
-.ins-header p{font-size:.74rem;color:var(--text3);margin-top:3px}
-.folio-chip{background:var(--g5);border:1.5px solid #C8E6C9;color:var(--g1);padding:7px 16px;border-radius:30px;font-size:.76rem;font-weight:700;display:flex;align-items:center;gap:6px}
-
-/* ── Selector Vehículo Inteligente ─────────────────── */
-.smart-selector{background:var(--surface);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:18px;border:1.5px solid var(--border);box-shadow:var(--shadow-sm)}
-.smart-selector-title{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--g2);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.smart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
-.smart-field{display:flex;flex-direction:column;gap:4px}
-.smart-field label{font-size:.63rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px}
-.smart-field select,.smart-field input{padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:.83rem;color:var(--text);outline:none;background:var(--surface);transition:.18s}
-.smart-field select:focus,.smart-field input:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(76,175,80,.1)}
-.smart-field select:disabled{background:var(--surface2);color:var(--text3)}
-.assigned-pill{background:linear-gradient(135deg,var(--g5),#DCEDC8);border:1.5px solid #AED581;border-radius:var(--radius-md);padding:10px 16px;margin-bottom:4px;display:none;align-items:center;gap:10px}
-.assigned-pill.show{display:flex}
-.assigned-pill i{color:var(--g2);font-size:1rem}
-.assigned-pill span{font-size:.8rem;font-weight:700;color:var(--g1)}
-.assigned-pill small{font-size:.68rem;color:var(--text3)}
-
-/* ── Tabs ───────────────────────────────────────────── */
-.tab-progress{display:flex;background:var(--surface);border-radius:40px;padding:5px;margin-bottom:18px;box-shadow:var(--shadow-sm);border:1px solid var(--border);overflow-x:auto;gap:3px}
-.tp-btn{flex:1;min-width:fit-content;padding:8px 12px;border-radius:40px;background:none;border:none;font-family:inherit;font-size:.73rem;font-weight:600;cursor:pointer;color:var(--text3);white-space:nowrap;transition:.2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.ins-header p{font-size:.76rem;color:var(--text3);margin-top:3px}
+.folio-chip{background:var(--g5);border:1.5px solid #C8E6C9;color:var(--g1);padding:7px 16px;border-radius:30px;font-size:.78rem;font-weight:700;display:flex;align-items:center;gap:6px}
+.folio-chip i{font-size:.7rem;color:var(--g3)}
+.tab-progress{display:flex;background:var(--surface);border-radius:var(--radius-xl);padding:5px;margin-bottom:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border);overflow-x:auto;gap:3px}
+.tp-btn{flex:1;min-width:fit-content;padding:9px 14px;border-radius:40px;background:none;border:none;font-family:inherit;font-size:.76rem;font-weight:600;cursor:pointer;color:var(--text3);white-space:nowrap;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px;position:relative}
 .tp-btn:hover{background:var(--g5);color:var(--g2)}
 .tp-btn.active{background:linear-gradient(135deg,var(--g2),var(--g1));color:white;box-shadow:0 4px 12px rgba(46,125,50,.3)}
-.tp-btn.done::after{content:'✓';font-size:.6rem;margin-left:2px;opacity:.7}
-.tp-num{width:17px;height:17px;border-radius:50%;background:rgba(255,255,255,.25);font-size:.58rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tp-btn i{font-size:.78rem}
+.tp-num{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.25);font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center}
 .tp-btn:not(.active) .tp-num{background:var(--border);color:var(--text3)}
-.tab-pane{display:none}
-.tab-pane.active{display:block;animation:paneIn .22s ease both}
-@keyframes paneIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-/* ── Secciones formulario ───────────────────────────── */
-.ins-section{background:var(--surface);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:14px;box-shadow:var(--shadow-sm);border:1px solid var(--border)}
-.ins-section-title{font-size:.8rem;font-weight:800;color:var(--g1);margin-bottom:14px;display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--border)}
-.ins-section-title i{color:var(--g3)}
-.f-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.f-grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-.f{display:flex;flex-direction:column;gap:4px}
-.f label{font-size:.63rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px}
-.f input,.f select,.f textarea{padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:.84rem;color:var(--text);outline:none;background:var(--surface);transition:.18s}
+.ins-section{background:var(--surface);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;box-shadow:var(--shadow-sm);border:1px solid var(--border)}
+.ins-section-title{font-size:.83rem;font-weight:800;color:var(--g1);margin-bottom:16px;display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.ins-section-title i{color:var(--g3);font-size:.85rem}
+.f-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.f-grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+.f{display:flex;flex-direction:column;gap:5px}
+.f label{font-size:.65rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
+.f input,.f select,.f textarea{padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:.85rem;color:var(--text);outline:none;background:var(--surface);transition:.18s}
 .f input:focus,.f select:focus,.f textarea:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(76,175,80,.1)}
 .f input[readonly]{background:var(--surface2);color:var(--text3)}
-.f textarea{resize:vertical;min-height:72px}
+.f textarea{resize:vertical;min-height:75px}
 .span-2{grid-column:span 2}
 @media(max-width:600px){.span-2{grid-column:span 1}}
-
-/* ── Estado componentes ─────────────────────────────── */
-.cat-section{margin-bottom:18px}
-.cat-title{font-size:.72rem;font-weight:800;color:var(--g2);text-transform:uppercase;letter-spacing:1px;margin-bottom:9px;padding-left:10px;border-left:3px solid var(--g3);display:flex;align-items:center;gap:6px}
-.est-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:7px}
-.est-item{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;transition:.18s}
+.cat-section{margin-bottom:20px}
+.cat-title{font-size:.73rem;font-weight:800;color:var(--g2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-left:10px;border-left:3px solid var(--g3);display:flex;align-items:center;gap:6px}
+.est-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.est-item{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;transition:.18s}
 .est-item:has(.e-btn.active.ok){border-color:#A5D6A7;background:#F1F8E9}
 .est-item:has(.e-btn.active.reg){border-color:#FFE082;background:#FFFDE7}
 .est-item:has(.e-btn.active.mal){border-color:#EF9A9A;background:#FFF5F5}
-.est-item span{font-size:.76rem;font-weight:500;color:var(--text)}
-.est-btns{display:flex;gap:3px}
-.e-btn{padding:4px 9px;border-radius:20px;border:1.5px solid var(--border);font-size:.65rem;font-weight:800;cursor:pointer;background:var(--surface);color:var(--text3);transition:.18s;font-family:inherit}
+.est-item span{font-size:.78rem;font-weight:500;color:var(--text)}
+.est-btns{display:flex;gap:4px}
+.e-btn{padding:5px 10px;border-radius:20px;border:1.5px solid var(--border);font-size:.67rem;font-weight:800;cursor:pointer;background:var(--surface);color:var(--text3);transition:.18s;font-family:inherit}
+.e-btn:hover{transform:scale(1.06)}
 .e-btn.ok.active{background:var(--g2);color:white;border-color:var(--g2)}
 .e-btn.reg.active{background:#F9A825;color:white;border-color:#F9A825}
 .e-btn.mal.active{background:var(--red);color:white;border-color:var(--red)}
-
-/* ── Foto alerta (cuando hay falla) ────────────────── */
-.foto-alerta-wrap{display:none;margin-top:8px;padding:10px;background:#FFF5F5;border:1.5px solid #FFCDD2;border-radius:var(--radius-sm);animation:paneIn .2s ease}
-.foto-alerta-wrap.show{display:block}
-.foto-alerta-label{font-size:.68rem;color:var(--red);font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:5px}
-.foto-alerta-input{display:flex;gap:8px;align-items:center}
-.foto-alerta-thumb{width:50px;height:50px;border-radius:8px;object-fit:cover;border:1px solid var(--border);display:none}
-
-/* ── Mantenimiento chips ────────────────────────────── */
-.mantto-cat{background:var(--surface2);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:10px;border:1px solid var(--border)}
-.mantto-cat h4{font-size:.7rem;font-weight:800;color:var(--g1);margin-bottom:9px;text-transform:uppercase;letter-spacing:.5px}
-.mantto-items{display:flex;flex-wrap:wrap;gap:7px}
-.mantto-label{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:.74rem;font-weight:600;color:var(--text2);transition:.18s;user-select:none}
+.mantto-cat{background:var(--surface2);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:12px;border:1px solid var(--border)}
+.mantto-cat h4{font-size:.73rem;font-weight:800;color:var(--g1);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.mantto-items{display:flex;flex-wrap:wrap;gap:8px}
+.mantto-label{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:.76rem;font-weight:600;color:var(--text2);transition:.18s;user-select:none}
 .mantto-label:hover{border-color:var(--g3);color:var(--g2);background:var(--g5)}
 .mantto-label input{position:absolute;opacity:0;pointer-events:none}
 .mantto-label:has(input:checked){background:var(--g2);color:white;border-color:var(--g2)}
-
-/* ── Fotos generales ────────────────────────────────── */
-.foto-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}
+.foto-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
 .foto-slot{aspect-ratio:1;background:var(--surface2);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px dashed var(--border);overflow:hidden;position:relative;transition:.2s}
 .foto-slot:hover{border-color:var(--g3);background:var(--g5)}
 .foto-slot.has-photo{border-style:solid;border-color:var(--g3)}
-.foto-preview{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--text3);font-size:.65rem;text-align:center;padding:6px}
-.foto-preview i{font-size:1.3rem}
+.foto-preview{display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--text3);font-size:.67rem;text-align:center;padding:8px}
+.foto-preview i{font-size:1.4rem}
 .foto-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-
-/* ── GPS ────────────────────────────────────────────── */
-.gps-box{background:var(--surface2);border-radius:var(--radius-lg);padding:20px;text-align:center;border:1.5px solid var(--border)}
-.gps-icon{font-size:2.2rem;color:var(--g3);margin-bottom:10px;display:block}
-#gpsCoordsDisplay{font-family:monospace;font-size:.83rem;color:var(--text2);margin:8px 0 16px;font-weight:600}
+.gps-box{background:var(--surface2);border-radius:var(--radius-lg);padding:24px;text-align:center;border:1.5px solid var(--border)}
+.gps-icon{font-size:2.5rem;color:var(--g3);margin-bottom:12px;display:block}
+#gpsCoordsDisplay{font-family:monospace;font-size:.85rem;color:var(--text2);margin:10px 0 18px;font-weight:600}
 .gps-coords-ok{color:var(--g2)!important}
-
-/* ── Action bar ─────────────────────────────────────── */
-.action-bar{position:sticky;bottom:16px;background:var(--surface);border-radius:50px;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;margin-top:18px;box-shadow:0 8px 32px rgba(0,0,0,.15);border:1px solid var(--border);z-index:50}
-.sync-status{font-size:.7rem;color:var(--text3);display:flex;align-items:center;gap:6px}
+.action-bar{position:sticky;bottom:20px;background:var(--surface);border-radius:60px;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;margin-top:20px;box-shadow:0 8px 32px rgba(0,0,0,.14);border:1px solid var(--border);z-index:50}
+.sync-status{font-size:.72rem;color:var(--text3);display:flex;align-items:center;gap:6px}
 .sync-status i{color:var(--g3)}
 .action-btns{display:flex;gap:8px}
+.tab-pane{display:none}
+.tab-pane.active{display:block;animation:paneIn .25s ease both}
+@keyframes paneIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.veh-selector{background:var(--surface);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:20px;border:1px solid var(--border)}
+.veh-selector label{font-size:.7rem;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:5px;display:block}
+.veh-selector select{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:40px;font-family:inherit;font-size:.85rem;background:var(--surface)}
 </style>
 
-<div class="ins-wrap">
-  <!-- Header -->
+<div style="max-width:1200px;margin:0 auto">
   <div class="ins-header">
     <div>
       <h2><i class="fas fa-clipboard-list"></i> Inspección Vehicular</h2>
-      <p>Registro completo del estado de la unidad · PDF y Drive automáticos</p>
+      <p>Complete todos los campos para registrar el estado de la unidad</p>
     </div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
       <div class="folio-chip"><i class="fas fa-hashtag"></i> <span id="folioDisplay">—</span></div>
-      <button class="btn-secondary" onclick="nuevaInspeccion()" style="padding:8px 14px;font-size:.73rem">
+      <button class="btn-secondary" onclick="location.reload()" style="padding:8px 16px;font-size:.76rem">
         <i class="fas fa-plus"></i> Nueva
       </button>
     </div>
   </div>
 
-  <!-- Vehículo asignado automático -->
-  <div class="assigned-pill" id="assignedPill">
-    <i class="fas fa-truck"></i>
-    <div>
-      <span id="assignedPlacasText">—</span>
-      <br><small id="assignedModeloText">Vehículo asignado a tu usuario</small>
-    </div>
-    <button class="btn-secondary" style="padding:5px 12px;font-size:.7rem;margin-left:auto" onclick="usarVehiculoAsignado()">
-      <i class="fas fa-check"></i> Usar este
-    </button>
+  <!-- ============================================ -->
+  <!-- DROPDOWN DE VEHÍCULOS - RESTAURADO           -->
+  <!-- ============================================ -->
+  <div class="veh-selector">
+    <label><i class="fas fa-truck"></i> Seleccionar vehículo del catálogo</label>
+    <select id="vehiculoSelector" onchange="cargarDatosVehiculo()">
+      <option value="">— Seleccione una unidad —</option>
+    </select>
+    <p style="font-size:.7rem;color:var(--text3);margin-top:6px">* Si el vehículo no está en la lista, regístrelo primero en el módulo Vehículos</p>
   </div>
 
-  <!-- Selector inteligente de vehículo -->
-  <div class="smart-selector">
-    <div class="smart-selector-title"><i class="fas fa-sliders"></i> Seleccionar vehículo</div>
-    <div class="smart-grid">
-      <div class="smart-field">
-        <label>Desde catálogo</label>
-        <select id="vehiculoSelector" onchange="cargarDatosVehiculo()">
-          <option value="">— Seleccione unidad —</option>
-        </select>
-      </div>
-      <div class="smart-field">
-        <label>Marca</label>
-        <select id="smMarca" onchange="onMarcaChange()">
-          <option value="">— Marca —</option>
-          <option value="RAM">RAM</option>
-          <option value="Ford">Ford</option>
-          <option value="Chevrolet">Chevrolet</option>
-          <option value="Freightliner">Freightliner</option>
-        </select>
-      </div>
-      <div class="smart-field">
-        <label>Modelo</label>
-        <select id="smModelo" onchange="onModeloChange()" disabled>
-          <option value="">— Modelo —</option>
-        </select>
-      </div>
-      <div class="smart-field">
-        <label>Versión</label>
-        <select id="smVersion" onchange="onVersionChange()" disabled>
-          <option value="">— Versión —</option>
-        </select>
-      </div>
-    </div>
-    <p style="font-size:.67rem;color:var(--text3);margin-top:8px">
-      <i class="fas fa-info-circle"></i> Selecciona desde catálogo o usa el selector por marca/modelo para autocompletar
-    </p>
-  </div>
-
-  <!-- Tabs de progreso -->
-  <div class="tab-progress" id="tabProgress">
+  <div class="tab-progress">
     <button class="tp-btn active" data-tab="vehiculo"><span class="tp-num">1</span><i class="fas fa-truck"></i> Vehículo</button>
     <button class="tp-btn" data-tab="responsable"><span class="tp-num">2</span><i class="fas fa-user"></i> Responsable</button>
     <button class="tp-btn" data-tab="estado"><span class="tp-num">3</span><i class="fas fa-clipboard-check"></i> Estado</button>
@@ -185,964 +112,869 @@
     </div>
   </div>
 
-  <!-- Action bar -->
   <div class="action-bar">
     <div class="sync-status" id="syncStatus"><i class="fas fa-circle-check"></i> Listo para guardar</div>
     <div class="action-btns">
-      <button class="btn-secondary" id="btnPDFPreview" onclick="descargarPDF(false)" style="padding:9px 14px;font-size:.76rem">
-        <i class="fas fa-file-pdf"></i> PDF
-      </button>
-      <button class="btn-primary" id="btnGuardarInspeccion" onclick="guardarInspeccionCompleta()">
-        <i class="fas fa-save"></i> Guardar y subir Drive
-      </button>
+      <button class="btn-secondary" id="btnDescargarPDF" onclick="descargarPDFManual()" style="padding:8px 16px;font-size:.76rem"><i class="fas fa-file-pdf"></i> Descargar PDF</button>
+      <button class="btn-primary" id="btnGuardarInspeccion" onclick="guardarInspeccionCompleta()"><i class="fas fa-save"></i> Guardar inspección</button>
     </div>
   </div>
 </div>
 
-<!-- ======================================================= -->
-<!-- CATÁLOGO DE MODELOS Y VIDAS ÚTILES                      -->
-<!-- ======================================================= -->
 <script>
 (function(){
+let currentFolio = null;
+let editingFolio = sessionStorage.getItem('editarFolio');
+let gpsData = null;
+let fotosData = { principales: [], danios: [] };
+let vehiculosCatalogo = [];
 
-// ── Catálogo de modelos por marca ──────────────────────────
+// ============================================
+// CATÁLOGO DE MARCAS / MODELOS / VERSIONES
+// ============================================
 const CATALOGO_VEHICULOS = {
-  RAM: {
-    '700': {
-      versiones: ['Work 4x2 AT', 'Work 4x2 MT', 'ST 4x2 AT', 'SLT 4x2 AT'],
-      anios: [2019,2020,2021,2022,2023,2024],
-      tipo: 'Doble rodado'
-    },
-    '1200': {
-      versiones: ['Work Doble Rodado', 'ST Doble Rodado', 'Laramie 4x4'],
-      anios: [2020,2021,2022,2023,2024],
-      tipo: 'Camión doble rodado'
-    }
+  'RAM': {
+    '700': { versiones: ['Work', 'ST', 'SLT', 'Club Cab'], anios: [2020,2021,2022,2023,2024,2025] },
+    '1200': { versiones: ['SLT', 'Laramie', 'Doble Rodado'], anios: [2020,2021,2022,2023,2024,2025] },
+    '2500': { versiones: ['SLT', 'Laramie', 'Power Wagon', 'Doble Rodado'], anios: [2020,2021,2022,2023,2024,2025] },
+    '4000': { versiones: ['Work', 'SLT'], anios: [2020,2021,2022,2023,2024,2025] }
   },
-  Ford: {
-    'F-1500': {
-      versiones: ['XL 4x2', 'XLT 4x2', 'XLT 4x4', 'Lariat 4x4', 'King Ranch 4x4'],
-      anios: [2018,2019,2020,2021,2022,2023,2024],
-      tipo: 'Camioneta doble rodado'
-    },
-    'F-250': {
-      versiones: ['XL SD 4x2', 'XLT SD 4x4', 'Lariat SD 4x4'],
-      anios: [2019,2020,2021,2022,2023,2024],
-      tipo: 'Super Duty doble rodado'
-    }
+  'Ford': {
+    'F-150': { versiones: ['XL', 'XLT', 'Lariat', 'King Ranch', 'Platinum'], anios: [2020,2021,2022,2023,2024,2025] },
+    'F-250': { versiones: ['XL', 'XLT', 'Lariat', 'King Ranch'], anios: [2020,2021,2022,2023,2024,2025] },
+    'F-350': { versiones: ['XL', 'XLT', 'Lariat', 'Doble Rodado'], anios: [2020,2021,2022,2023,2024,2025] },
+    'F-450': { versiones: ['XL', 'XLT', 'Lariat', 'Doble Rodado'], anios: [2020,2021,2022,2023,2024,2025] },
+    'Ranger': { versiones: ['XL', 'XLT', 'Lariat', 'Wildtrak'], anios: [2020,2021,2022,2023,2024,2025] }
   },
-  Chevrolet: {
-    'Silverado 2500 HD': {
-      versiones: ['WT 4x2', 'LT 4x2', 'LTZ 4x4', 'High Country 4x4'],
-      anios: [2019,2020,2021,2022,2023,2024],
-      tipo: 'Heavy Duty doble rodado'
-    },
-    'Silverado 3500 HD': {
-      versiones: ['WT DRW 4x2', 'LT DRW 4x4'],
-      anios: [2020,2021,2022,2023,2024],
-      tipo: 'Camión doble rodado'
-    }
+  'Chevrolet': {
+    'Silverado 1500': { versiones: ['WT', 'Custom', 'LT', 'RST', 'LTZ', 'High Country'], anios: [2020,2021,2022,2023,2024,2025] },
+    'Silverado 2500 HD': { versiones: ['WT', 'Custom', 'LT', 'LTZ', 'High Country', 'Doble Rodado'], anios: [2020,2021,2022,2023,2024,2025] },
+    'Silverado 3500 HD': { versiones: ['WT', 'LT', 'LTZ', 'High Country', 'Doble Rodado'], anios: [2020,2021,2022,2023,2024,2025] },
+    'S10': { versiones: ['LS', 'LT', 'LTZ', 'High Country'], anios: [2020,2021,2022,2023,2024,2025] }
   },
-  Freightliner: {
-    'M2 106': {
-      versiones: ['Caja seca', 'Plataforma', 'Volteo'],
-      anios: [2016,2017,2018,2019,2020,2021,2022,2023],
-      tipo: 'Camión mediano'
-    },
-    'Cascadia': {
-      versiones: ['DD13 4x2', 'DD15 4x2', 'DD16 6x4'],
-      anios: [2017,2018,2019,2020,2021,2022,2023,2024],
-      tipo: 'Camión tractor'
-    }
+  'Freightliner': {
+    'M2 106': { versiones: ['Chasis Cabina', 'Caja Seca', 'Volteo'], anios: [2020,2021,2022,2023,2024,2025] },
+    'M2 112': { versiones: ['Chasis Cabina', 'Tracto Camión'], anios: [2020,2021,2022,2023,2024,2025] },
+    'Cascadia': { versiones: ['Day Cab', 'Sleeper 48"', 'Sleeper 72"'], anios: [2020,2021,2022,2023,2024,2025] },
+    'Columbia': { versiones: ['Day Cab', 'Sleeper'], anios: [2020,2021,2022,2023,2024,2025] }
   }
 };
 
-// ── Vida útil de componentes por km ───────────────────────
-const VIDA_UTIL = {
-  'Motor': {
-    'Aceite de motor':        { km: 5000,   critico: true  },
-    'Filtro de aceite':       { km: 5000,   critico: true  },
-    'Filtro de aire':         { km: 15000,  critico: false },
-    'Filtro de combustible':  { km: 20000,  critico: true  },
-    'Bujías (estándar)':      { km: 30000,  critico: false },
-    'Bujías (iridio)':        { km: 80000,  critico: false },
-    'Correa de distribución': { km: 80000,  critico: true  },
-    'Banda serpentina':       { km: 60000,  critico: true  },
-    'Bomba de agua':          { km: 80000,  critico: true  },
-    'Anticongelante':         { km: 40000,  critico: false },
-    'Termostato':             { km: 80000,  critico: false },
-    'Inyectores':             { km: 100000, critico: true  }
-  },
-  'Frenos': {
-    'Pastillas delanteras':   { km: 30000,  critico: true  },
-    'Pastillas traseras':     { km: 40000,  critico: true  },
-    'Discos delanteros':      { km: 60000,  critico: true  },
-    'Discos traseros':        { km: 70000,  critico: true  },
-    'Balatas traseras':       { km: 40000,  critico: true  },
-    'Tambores traseros':      { km: 80000,  critico: false },
-    'Líquido de frenos':      { km: 30000,  critico: true  },
-    'Mangueras de freno':     { km: 60000,  critico: true  },
-    'Bomba de frenos':        { km: 100000, critico: true  }
-  },
-  'Suspensión y dirección': {
-    'Amortiguadores del.':    { km: 60000,  critico: true  },
-    'Amortiguadores tras.':   { km: 60000,  critico: true  },
-    'Resortes delanteros':    { km: 80000,  critico: false },
-    'Rótulas delanteras':     { km: 50000,  critico: true  },
-    'Terminales de dirección':{ km: 50000,  critico: true  },
-    'Bujes de barra estab.':  { km: 40000,  critico: false },
-    'Cremallera de dirección':{ km: 100000, critico: true  },
-    'Bomba de dirección':     { km: 80000,  critico: false },
-    'Líquido de dirección':   { km: 40000,  critico: false }
-  },
-  'Llantas': {
-    'Rotación de llantas':    { km: 10000,  critico: true  },
-    'Alineación':             { km: 10000,  critico: true  },
-    'Balanceo':               { km: 10000,  critico: false },
-    'Reemplazo llantas del.': { km: 50000,  critico: true  },
-    'Reemplazo llantas tras.':{ km: 60000,  critico: true  },
-    'Revisión presión':       { km: 2000,   critico: true  }
-  },
-  'Transmisión': {
-    'Aceite caja automática': { km: 60000,  critico: true  },
-    'Aceite caja manual':     { km: 40000,  critico: true  },
-    'Aceite diferencial':     { km: 40000,  critico: true  },
-    'Filtro transmisión':     { km: 60000,  critico: false },
-    'Clutch':                 { km: 80000,  critico: true  }
-  },
-  'Sistema eléctrico': {
-    'Batería':                { km: 50000,  critico: true  },
-    'Alternador':             { km: 100000, critico: true  },
-    'Starter/Arrancador':     { km: 100000, critico: false },
-    'Fusibles principales':   { km: 50000,  critico: false },
-    'Faros delanteros':       { km: 30000,  critico: true  },
-    'Luces traseras':         { km: 40000,  critico: true  },
-    'Luces de trabajo':       { km: 20000,  critico: false },
-    'Cableado general':       { km: 80000,  critico: false }
-  },
-  'Carrocería y seguridad': {
-    'Extinguidor':            { km: 10000,  critico: true  },
-    'Triángulos reflejantes': { km: 30000,  critico: true  },
-    'Limpiabrisas':           { km: 15000,  critico: false },
-    'Líquido limpiabrisas':   { km: 5000,   critico: false },
-    'Espejos laterales':      { km: 50000,  critico: true  },
-    'Cristales/parabrisas':   { km: 100000, critico: true  },
-    'Cinturón de seguridad':  { km: 80000,  critico: true  },
-    'Bocina':                 { km: 50000,  critico: false },
-    'Gato hidráulico':        { km: 30000,  critico: true  },
-    'Llanta de refacción':    { km: 30000,  critico: true  }
-  }
+const CATEGORIAS_ESTADO = {
+  'Carrocería y Exterior': ['Capó', 'Parabrisas frontal', 'Puertas', 'Defensas', 'Pintura general', 'Espejos', 'Luces', 'Caja de carga'],
+  'Llantas': ['Delantera izquierda', 'Delantera derecha', 'Trasera izquierda', 'Trasera derecha', 'Refacción'],
+  'Motor y Mecánica': ['Aceite motor', 'Refrigerante', 'Batería', 'Frenos', 'Suspensión', 'Dirección', 'Embrague', 'Escape'],
+  'Interior y Cabina': ['Tablero', 'Asientos', 'Cinturones', 'Aire acondicionado', 'Radio/GPS', 'Limpiabrisas']
 };
 
-// ── Estado global ──────────────────────────────────────────
-let currentFolio   = null;
-let gpsData        = null;
-let fotosData      = { principales: [], danios: [] };
-let fotosAlertas   = {}; // componente → base64
-let activeTab      = 'vehiculo';
-let editingFolio   = sessionStorage.getItem('editarFolio');
-let vehiculosGlobal = [];
-let vehAsignado    = null;
-
-// ── Verificar vehículo asignado ────────────────────────────
-function checkVehiculoAsignado() {
-  const session = window.currentUser || JSON.parse(localStorage.getItem('prodeni_session') || '{}');
-  if (session.vehiculoAsignado) {
-    vehAsignado = session.vehiculoAsignado;
-    document.getElementById('assignedPill').classList.add('show');
-    document.getElementById('assignedPlacasText').textContent = session.vehiculoAsignado;
-    // Buscar datos del vehículo en cache
-    const vehiculos = JSON.parse(localStorage.getItem('prodeni_vehiculos_cache') || '[]');
-    const v = vehiculos.find(x => x.placas === session.vehiculoAsignado);
-    if (v) {
-      document.getElementById('assignedModeloText').textContent = [v.marca, v.modelo, v.version].filter(Boolean).join(' ');
-    }
-  }
-}
-
-window.usarVehiculoAsignado = function() {
-  if (!vehAsignado) return;
-  const sel = document.getElementById('vehiculoSelector');
-  // Buscar en el select
-  for (let i = 0; i < sel.options.length; i++) {
-    if (sel.options[i].value === vehAsignado) {
-      sel.value = vehAsignado;
-      cargarDatosVehiculo();
-      window.toast('Vehículo asignado cargado ✓', 'success');
-      return;
-    }
-  }
-  // Si no está en el select, cargar desde cache
-  const vehiculos = JSON.parse(localStorage.getItem('prodeni_vehiculos_cache') || '[]');
-  const v = vehiculos.find(x => x.placas === vehAsignado);
-  if (v) llenarCamposVehiculo(v);
+const SERVICIOS_MANTTO = {
+  'Motor y Fluidos': ['Cambio aceite y filtro', 'Filtro de aire', 'Filtro gasolina', 'Líquido frenos', 'Aceite transmisión', 'Nivel radiador'],
+  'Frenos y Suspensión': ['Balatas delanteras', 'Balatas traseras', 'Balanceo', 'Alineación', 'Rotación llantas'],
+  'Eléctrico y Seguridad': ['Batería', 'Fusibles', 'Luces', 'Bocina', 'Cinturones', 'Limpiaparabrisas']
 };
 
-// ── Dropdown inteligente por marca ─────────────────────────
-window.onMarcaChange = function() {
-  const marca    = document.getElementById('smMarca').value;
-  const selMod   = document.getElementById('smModelo');
-  const selVer   = document.getElementById('smVersion');
-  selMod.innerHTML = '<option value="">— Modelo —</option>';
-  selVer.innerHTML = '<option value="">— Versión —</option>';
-  selMod.disabled = !marca;
-  selVer.disabled = true;
-  if (!marca) return;
-  const modelos = Object.keys(CATALOGO_VEHICULOS[marca] || {});
-  modelos.forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; selMod.appendChild(o); });
-};
-
-window.onModeloChange = function() {
-  const marca  = document.getElementById('smMarca').value;
-  const modelo = document.getElementById('smModelo').value;
-  const selVer = document.getElementById('smVersion');
-  selVer.innerHTML = '<option value="">— Versión —</option>';
-  selVer.disabled = !modelo;
-  if (!marca || !modelo) return;
-  const data = CATALOGO_VEHICULOS[marca]?.[modelo];
-  if (!data) return;
-  data.versiones.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; selVer.appendChild(o); });
-};
-
-window.onVersionChange = function() {
-  const marca   = document.getElementById('smMarca').value;
-  const modelo  = document.getElementById('smModelo').value;
-  const version = document.getElementById('smVersion').value;
-  if (!marca || !modelo || !version) return;
-  const data  = CATALOGO_VEHICULOS[marca]?.[modelo];
-  const anios = data?.anios || [];
-
-  // Autocompletar campos del formulario
-  const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
-  setVal('marca',   marca);
-  setVal('modelo',  modelo);
-  setVal('version', version);
-  if (anios.length) setVal('anio', anios[anios.length - 1]);
-
-  window.toast(`${marca} ${modelo} ${version} cargado ✓`, 'success');
-};
-
-// ── Folio ──────────────────────────────────────────────────
 function generarFolio() {
-  const now    = new Date();
-  const pad    = n => String(n).padStart(2, '0');
-  currentFolio = `INS-${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`;
-  const el = document.getElementById('folioDisplay');
-  if (el) el.textContent = currentFolio;
+  const d = new Date();
+  currentFolio = `PROD-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${String(Math.floor(Math.random()*9000)+1000)}`;
+  const fd = document.getElementById('folioDisplay');
+  if (fd) fd.textContent = currentFolio;
 }
+window.generarFolio = generarFolio;
 
-// ── Cargar catálogo de vehículos en el selector ────────────
-async function cargarCatalogoSelector() {
+// Cargar vehículos para el selector (dropdown)
+async function cargarVehiculosSelector() {
   const sel = document.getElementById('vehiculoSelector');
-  vehiculosGlobal = JSON.parse(localStorage.getItem('prodeni_vehiculos_cache') || '[]');
-
-  // Intentar actualizar desde servidor
-  if (navigator.onLine) {
+  if (!sel) return;
+  
+  const cache = localStorage.getItem('prodeni_vehiculos_cache');
+  if (cache) {
+    vehiculosCatalogo = JSON.parse(cache);
+  } else if (navigator.onLine) {
     try {
       const r = await fetch(`${window.SCRIPT_URL}?action=getVehiculos`);
       const d = await r.json();
-      if (d.success) { vehiculosGlobal = d.vehiculos; localStorage.setItem('prodeni_vehiculos_cache', JSON.stringify(vehiculosGlobal)); }
+      if (d.success && d.vehiculos) {
+        vehiculosCatalogo = d.vehiculos;
+        localStorage.setItem('prodeni_vehiculos_cache', JSON.stringify(vehiculosCatalogo));
+      }
     } catch(e) {}
   }
-
-  vehiculosGlobal.filter(v => (v.activo || 'SI') === 'SI').forEach(v => {
-    const o = document.createElement('option');
-    o.value = v.placas;
-    o.textContent = `${v.placas}${v.economico ? ' · ' + v.economico : ''} — ${[v.marca, v.modelo].filter(Boolean).join(' ')} ${v.conductor ? '(' + v.conductor + ')' : ''}`;
-    sel.appendChild(o);
-  });
+  
+  // Llenar el dropdown con opciones
+  sel.innerHTML = '<option value="">— Seleccione una unidad —</option>' + 
+    vehiculosCatalogo.map(v => {
+      // Icono de marca para el dropdown
+      const marcaIcono = {
+        'RAM': '🐏', 'Nissan': '🇯🇵', 'Chevrolet': '🏁', 'Ford': '🛻', 'Freightliner': '🚛'
+      }[v.marca] || '🚗';
+      return `<option value="${v.placas}">${marcaIcono} ${v.placas} · ${v.marca || ''} ${v.modelo || ''} · ${v.conductor || 'Sin conductor'}</option>`;
+    }).join('');
 }
 
+// Auto-llenar datos del vehículo seleccionado (como Odoo)
 window.cargarDatosVehiculo = function() {
   const placas = document.getElementById('vehiculoSelector').value;
   if (!placas) return;
-  const v = vehiculosGlobal.find(x => x.placas === placas);
-  if (v) llenarCamposVehiculo(v);
+  
+  const vehiculo = vehiculosCatalogo.find(v => v.placas === placas);
+  if (!vehiculo) return;
+  
+  // Llenar campos del formulario
+  const campos = {
+    'placas': vehiculo.placas || '',
+    'economico': vehiculo.economico || '',
+    'marca': vehiculo.marca || '',
+    'modelo': vehiculo.modelo || '',
+    'version': vehiculo.version || '',
+    'anio': vehiculo.anio || '',
+    'color': vehiculo.color || '',
+    'vin': vehiculo.vin || '',
+    'conductor': vehiculo.conductor || '',
+    'telefono': vehiculo.telefono || '',
+    'email': vehiculo.email || '',
+    'ruta': vehiculo.ruta || '',
+    'baseOrigen': vehiculo.baseOrigen || ''
+  };
+  
+  Object.entries(campos).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+  
+  window.toast(`Datos de ${placas} cargados. Modifique solo lo necesario.`, 'success');
 };
 
-function llenarCamposVehiculo(v) {
-  const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
-  setVal('placas',    v.placas);
-  setVal('economico', v.economico);
-  setVal('marca',     v.marca);
-  setVal('modelo',    v.modelo);
-  setVal('version',   v.version);
-  setVal('anio',      v.anio);
-  setVal('color',     v.color);
-  setVal('vin',       v.vin);
-  setVal('conductor', v.conductor);
-  setVal('ruta',      v.ruta);
-  // Sincronizar selector de marca/modelo también
-  const sm = document.getElementById('smMarca');
-  if (sm && v.marca) { sm.value = v.marca; onMarcaChange(); }
-  window.toast(`Datos de ${v.placas} cargados ✓`, 'success');
-}
-
-// ── Renderizar formulario por tabs ─────────────────────────
-window.cargarFormulario = function() {
-  generarFolio();
-  checkVehiculoAsignado();
-  cargarCatalogoSelector();
-
-  document.getElementById('inspeccionContent').innerHTML = `
-    <!-- TAB 1: Vehículo -->
+async function cargarFormulario() {
+  const container = document.getElementById('inspeccionContent');
+  container.innerHTML = `
     <div class="tab-pane active" id="tab-vehiculo">
       <div class="ins-section">
-        <div class="ins-section-title"><i class="fas fa-id-card"></i> Datos del vehículo</div>
+        <div class="ins-section-title"><i class="fas fa-id-card"></i> Identificación del vehículo</div>
         <div class="f-grid">
-          <div class="f"><label>Placas *</label><input type="text" id="placas" placeholder="ABC-123-D" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
-          <div class="f"><label>No. económico</label><input type="text" id="economico" placeholder="U-001"></div>
-          <div class="f"><label>Marca</label><input type="text" id="marca" placeholder="RAM, Ford…"></div>
-          <div class="f"><label>Modelo</label><input type="text" id="modelo" placeholder="700, F-1500…"></div>
-          <div class="f"><label>Versión</label><input type="text" id="version" placeholder="Work, XLT…"></div>
-          <div class="f"><label>Año</label><input type="number" id="anio" placeholder="2024" min="2000" max="2030"></div>
+          <div class="f"><label>Placas *</label><input type="text" id="placas" placeholder="ABC-123" style="text-transform:uppercase"></div>
+          <div class="f"><label>No. Económico</label><input type="text" id="economico" placeholder="U-001"></div>
+          <div class="f"><label>Marca</label>
+            <select id="marca" onchange="window.onMarcaChange()">
+              <option value="">— Seleccione marca —</option>
+              ${Object.keys(CATALOGO_VEHICULOS).map(m => '<option value="'+m+'">'+m+'</option>').join('')}
+              <option value="__otra__">Otra…</option>
+            </select>
+          </div>
+          <div class="f"><label>Modelo</label>
+            <select id="modelo" onchange="window.onModeloChange()">
+              <option value="">— Primero seleccione marca —</option>
+            </select>
+          </div>
+          <div class="f"><label>Versión / Trim</label>
+            <select id="version">
+              <option value="">— Primero seleccione modelo —</option>
+            </select>
+          </div>
+          <div class="f"><label>Año</label>
+            <select id="anio">
+              <option value="">— Seleccione año —</option>
+            </select>
+          </div>
           <div class="f"><label>Color</label><input type="text" id="color" placeholder="Blanco"></div>
-          <div class="f"><label>VIN / NIV</label><input type="text" id="vin" placeholder="17 caracteres" maxlength="17"></div>
+          <div class="f"><label>NIV / VIN</label><input type="text" id="vin" placeholder="3C6UR5DL0MG123456" maxlength="17"></div>
         </div>
       </div>
       <div class="ins-section">
         <div class="ins-section-title"><i class="fas fa-tachometer-alt"></i> Kilometraje</div>
-        <div class="f-grid-3">
-          <div class="f"><label>Km actual *</label><input type="number" id="kmActual" placeholder="45000" oninput="calcProxKm()"></div>
-          <div class="f"><label>Km último servicio</label><input type="number" id="kmUltimoServ" placeholder="40000" oninput="calcProxKm()"></div>
-          <div class="f"><label>Km próximo servicio</label><input type="number" id="kmProxServ" placeholder="Auto" readonly style="background:var(--surface2)"></div>
+        <div class="f-grid-4">
+          <div class="f"><label>Km actual *</label><input type="number" id="kmActual" placeholder="0"></div>
+          <div class="f"><label>Km último servicio</label><input type="number" id="kmUltimoServ"></div>
+          <div class="f"><label>Km próximo servicio</label><input type="number" id="kmProxServ"></div>
+        </div>
+      </div>
+      <div class="ins-section">
+        <div class="ins-section-title"><i class="fas fa-shield-halved"></i> Seguro vehicular</div>
+        <div class="f-grid">
+          <div class="f"><label>Póliza de seguro</label><input type="text" id="poliza"></div>
+          <div class="f"><label>Vigencia seguro</label><input type="date" id="vigenciaSeguro"></div>
         </div>
       </div>
     </div>
 
-    <!-- TAB 2: Responsable -->
     <div class="tab-pane" id="tab-responsable">
       <div class="ins-section">
-        <div class="ins-section-title"><i class="fas fa-user-hard-hat"></i> Responsable y ruta</div>
+        <div class="ins-section-title"><i class="fas fa-user-circle"></i> Datos del conductor</div>
         <div class="f-grid">
-          <div class="f span-2"><label>Conductor *</label><input type="text" id="conductor" placeholder="Nombre completo del conductor"></div>
-          <div class="f"><label>Ruta / Destino</label><input type="text" id="ruta" placeholder="Morelia – Pátzcuaro"></div>
-          <div class="f"><label>Turno</label>
-            <select id="turno">
-              <option value="mañana">Mañana</option>
-              <option value="tarde">Tarde</option>
-              <option value="noche">Noche</option>
-              <option value="guardia">Guardia completa</option>
-            </select>
-          </div>
-          <div class="f"><label>Dictamen general</label>
-            <select id="dictamen">
-              <option value="Apto para circular">✅ Apto para circular</option>
-              <option value="Apto con observaciones">⚠️ Apto con observaciones</option>
-              <option value="No apto — requiere taller">❌ No apto — requiere taller</option>
-              <option value="No apto — emergencia">🚨 No apto — emergencia</option>
-            </select>
-          </div>
+          <div class="f"><label>Nombre completo *</label><input type="text" id="conductor" placeholder="Apellido, Nombre(s)"></div>
+          <div class="f"><label>No. Empleado</label><input type="text" id="empleado"></div>
+          <div class="f"><label>Teléfono celular</label><input type="tel" id="telefono" placeholder="+52 000 000 0000"></div>
+          <div class="f"><label>Correo electrónico</label><input type="email" id="email" placeholder="correo@prodeni.com"></div>
+          <div class="f"><label>No. de licencia</label><input type="text" id="licencia"></div>
+          <div class="f"><label>Tipo de licencia</label><select id="tipoLicencia"><option>A - Particular</option><option>B - Automovilista</option><option>C - Carga federal</option></select></div>
+          <div class="f"><label>Vigencia licencia</label><input type="date" id="vigenciaLicencia"></div>
         </div>
       </div>
       <div class="ins-section">
-        <div class="ins-section-title"><i class="fas fa-triangle-exclamation"></i> Fallas y acciones</div>
+        <div class="ins-section-title"><i class="fas fa-route"></i> Ruta y operación</div>
         <div class="f-grid">
-          <div class="f span-2"><label>Falla detectada</label><textarea id="fallaDetectada" placeholder="Describe la falla, síntoma o anomalía…"></textarea></div>
-          <div class="f span-2"><label>Acción correctiva</label><textarea id="accionCorrectiva" placeholder="Acción tomada o acción a tomar…"></textarea></div>
-          <div class="f span-2"><label>Observaciones generales</label><textarea id="obsGenerales" placeholder="Notas adicionales del inspector…"></textarea></div>
+          <div class="f"><label>Ruta asignada</label><input type="text" id="ruta" placeholder="Ruta Centro"></div>
+          <div class="f"><label>Base / Origen</label><input type="text" id="baseOrigen" placeholder="Pátzcuaro"></div>
+          <div class="f"><label>Turno</label><select id="turno"><option>Matutino (6am-2pm)</option><option>Diurno (9am-6pm)</option><option>Vespertino (2pm-10pm)</option><option>Nocturno (10pm-6am)</option></select></div>
+          <div class="f"><label>Tipo de uso</label><select id="tipoUso"><option>Supervisión campo</option><option>Reparto</option><option>Servicio técnico</option></select></div>
         </div>
+      </div>
+      <div class="ins-section">
+        <div class="f"><label>Inspector responsable</label><input type="text" id="inspector" value="${(window.currentUser || {}).username || ''}" readonly></div>
       </div>
     </div>
 
-    <!-- TAB 3: Estado de componentes -->
     <div class="tab-pane" id="tab-estado">
+      <div id="estadoDinamico"></div>
       <div class="ins-section">
-        <div class="ins-section-title"><i class="fas fa-clipboard-check"></i> Estado de componentes</div>
-        <div id="estadoComponentes"></div>
+        <div class="ins-section-title"><i class="fas fa-gavel"></i> Dictamen y observaciones</div>
+        <div class="f-grid">
+          <div class="f"><label>Dictamen general</label><select id="dictamen"><option>Apto para operación</option><option>Apto con observaciones</option><option>Requiere servicio</option><option>No apto - fuera de servicio</option></select></div>
+          <div class="f"><label>Nivel de urgencia</label><select id="urgencia"><option>Sin urgencia</option><option>Mantenimiento programado</option><option>Atención 7 días</option><option>Atención inmediata</option></select></div>
+          <div class="f span-2"><label>Observaciones generales</label><textarea id="obsGenerales" rows="3" placeholder="Notas adicionales…"></textarea></div>
+        </div>
       </div>
     </div>
 
-    <!-- TAB 4: Servicios de mantenimiento -->
     <div class="tab-pane" id="tab-mantenimiento">
+      <div id="mantenimientoDinamico"></div>
       <div class="ins-section">
-        <div class="ins-section-title"><i class="fas fa-wrench"></i> Servicios realizados en esta visita</div>
-        <div id="manttoChips"></div>
+        <div class="ins-section-title"><i class="fas fa-triangle-exclamation"></i> Mantenimiento correctivo</div>
+        <div class="f-grid">
+          <div class="f span-2"><label>Falla / Desperfecto detectado</label><textarea id="fallaDetectada" rows="2" placeholder="Describa la falla…"></textarea></div>
+          <div class="f span-2"><label>Acción correctiva realizada</label><textarea id="accionCorrectiva" rows="2" placeholder="Trabajo realizado…"></textarea></div>
+          <div class="f"><label>Taller / Proveedor</label><input type="text" id="taller"></div>
+          <div class="f"><label>Costo total</label><input type="text" id="costo" placeholder="$0.00"></div>
+        </div>
       </div>
     </div>
 
-    <!-- TAB 5: Fotos -->
     <div class="tab-pane" id="tab-fotos">
       <div class="ins-section">
-        <div class="ins-section-title"><i class="fas fa-camera"></i> Fotos de inspección (se suben a Drive)</div>
-        <p style="font-size:.73rem;color:var(--text3);margin-bottom:14px">Las fotos se comprimen automáticamente y se guardan en tu carpeta de Drive con el folio de la inspección.</p>
-        <div style="margin-bottom:18px">
-          <div class="cat-title"><i class="fas fa-car"></i> Vistas generales del vehículo</div>
-          <div class="foto-grid" id="fotosPrincipales"></div>
-        </div>
-        <div>
-          <div class="cat-title"><i class="fas fa-exclamation-triangle" style="color:var(--red)"></i> Daños y anomalías detectadas</div>
-          <div class="foto-grid" id="fotosDanios"></div>
-        </div>
+        <div class="ins-section-title"><i class="fas fa-camera"></i> Fotos del vehículo</div>
+        <div class="foto-grid" id="fotosPrincipalesGrid"></div>
+      </div>
+      <div class="ins-section">
+        <div class="ins-section-title"><i class="fas fa-circle-exclamation"></i> Evidencias de daños</div>
+        <div class="foto-grid" id="fotosDaniosGrid"></div>
       </div>
     </div>
 
-    <!-- TAB 6: GPS -->
     <div class="tab-pane" id="tab-gps">
       <div class="ins-section">
-        <div class="ins-section-title"><i class="fas fa-map-pin"></i> Ubicación GPS</div>
+        <div class="ins-section-title"><i class="fas fa-map-marked-alt"></i> Ubicación GPS</div>
         <div class="gps-box">
-          <i class="fas fa-location-crosshairs gps-icon"></i>
-          <div id="gpsCoordsDisplay">Sin coordenadas aún</div>
-          <button class="btn-primary" onclick="capturarGPS()"><i class="fas fa-location-dot"></i> Capturar ubicación</button>
-          <p style="font-size:.7rem;color:var(--text3);margin-top:12px">La ubicación se registra junto con la inspección para tener trazabilidad</p>
+          <i class="fas fa-map-pin gps-icon"></i>
+          <p id="gpsCoordsDisplay">No capturado</p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button class="btn-primary" onclick="capturarGPS()"><i class="fas fa-satellite-dish"></i> Capturar GPS</button>
+          </div>
         </div>
       </div>
     </div>
   `;
 
-  renderEstadoComponentes();
-  renderManttoChips();
-  renderFotoSlots();
-  bindTabs();
+  construirEstado();
+  construirMantenimiento();
+  construirFotos();
+  initTabs();
+  await cargarVehiculosSelector();  // <-- Carga el dropdown
+  generarFolio();
 
-  if (editingFolio) { cargarInspeccionExistente(editingFolio); sessionStorage.removeItem('editarFolio'); }
-};
-
-function calcProxKm() {
-  const actual   = parseInt(document.getElementById('kmActual')?.value) || 0;
-  const anterior = parseInt(document.getElementById('kmUltimoServ')?.value) || 0;
-  if (actual && anterior) {
-    const diff = actual - anterior;
-    const el   = document.getElementById('kmProxServ');
-    if (el) el.value = actual + Math.max(5000, diff);
+  // Auto-seleccionar vehículo asignado al usuario
+  if (typeof window.getVehiculoAsignado === 'function') {
+    const asignado = window.getVehiculoAsignado();
+    if (asignado && asignado.placas) {
+      const sel = document.getElementById('vehiculoSelector');
+      if (sel) {
+        sel.value = asignado.placas;
+        window.cargarDatosVehiculo();
+        window.toast(`Vehículo asignado: ${asignado.placas} (${asignado.marca} ${asignado.modelo})`, 'info');
+      }
+    }
   }
 }
 
-// ── Estado de componentes con alerta de foto ───────────────
-const ESTADO_GRUPOS = {
-  'Motor': ['Aceite','Filtro de aire','Radiador / Agua','Faja / Banda','Correa distribución'],
-  'Frenos': ['Pastillas delanteras','Pastillas traseras','Discos delanteros','Líquido de frenos','Freno de mano'],
-  'Suspensión': ['Amortiguadores del.','Amortiguadores tras.','Rótulas','Terminales dir.','Dirección'],
-  'Llantas': ['Llanta del. izq.','Llanta del. der.','Llanta tras. izq. ext','Llanta tras. izq. int','Llanta tras. der. ext','Llanta tras. der. int','Refacción'],
-  'Eléctrico': ['Batería','Alternador','Faros delanteros','Luces traseras','Luces de trabajo','Claxon'],
-  'Carrocería': ['Parabrisas','Espejos','Limpiabrisas','Extinguidor','Triángulos','Cinturón'],
-  'Documentos': ['Tarjeta circulación','Seguro vigente','Verificación','Licencia conductor']
-};
+window.cargarFormulario = cargarFormulario;
 
-function renderEstadoComponentes() {
-  const cont = document.getElementById('estadoComponentes');
-  if (!cont) return;
-  cont.innerHTML = Object.entries(ESTADO_GRUPOS).map(([cat, items]) => `
-    <div class="cat-section">
-      <div class="cat-title"><i class="fas fa-circle-dot"></i> ${cat}</div>
-      <div class="est-grid">
-        ${items.map(item => `
-          <div class="est-item" id="estItem_${item.replace(/[^a-zA-Z0-9]/g,'_')}">
-            <span>${item}</span>
-            <div class="est-btns">
-              <button class="e-btn ok"  data-item="${item}" data-val="ok"  onclick="setEstado(this)">OK</button>
-              <button class="e-btn reg" data-item="${item}" data-val="reg" onclick="setEstado(this)">Reg</button>
-              <button class="e-btn mal" data-item="${item}" data-val="mal" onclick="setEstado(this)">Mal</button>
-            </div>
-          </div>
-          <div class="foto-alerta-wrap" id="alerta_${item.replace(/[^a-zA-Z0-9]/g,'_')}">
-            <div class="foto-alerta-label"><i class="fas fa-camera"></i> Foto requerida para este componente en mal estado</div>
-            <div class="foto-alerta-input">
-              <input type="file" accept="image/*" capture="environment" id="fotoAlerta_${item.replace(/[^a-zA-Z0-9]/g,'_')}"
-                style="font-size:.75rem;flex:1" onchange="capturarFotoAlerta('${item}', this)">
-              <img id="thumbAlerta_${item.replace(/[^a-zA-Z0-9]/g,'_')}" class="foto-alerta-thumb">
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `).join('');
+function initTabs() {
+  document.querySelectorAll('.tp-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tp-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+    });
+  });
 }
 
-window.setEstado = function(btn) {
-  const item = btn.dataset.item;
-  const val  = btn.dataset.val;
-  const safe = item.replace(/[^a-zA-Z0-9]/g,'_');
-  // Desactivar todos en esta fila
-  btn.closest('.est-btns').querySelectorAll('.e-btn').forEach(b => b.classList.remove('active'));
+function construirEstado() {
+  const c = document.getElementById('estadoDinamico');
+  if (!c) return;
+  c.innerHTML = '';
+  Object.entries(CATEGORIAS_ESTADO).forEach(([cat, items]) => {
+    const d = document.createElement('div');
+    d.className = 'cat-section ins-section';
+    d.innerHTML = `<div class="cat-title"><i class="fas fa-tag"></i>${cat}</div><div class="est-grid" id="estado-${cat.replace(/ /g, '')}"></div>`;
+    c.appendChild(d);
+    const grid = d.querySelector('.est-grid');
+    items.forEach(item => {
+      grid.innerHTML += `<div class="est-item"><span>${item}</span><div class="est-btns"><button type="button" class="e-btn ok" data-item="${item}" data-val="OK" onclick="setEstado(this,'OK')">OK</button><button type="button" class="e-btn reg" data-item="${item}" data-val="REG" onclick="setEstado(this,'REG')">REG</button><button type="button" class="e-btn mal" data-item="${item}" data-val="MAL" onclick="setEstado(this,'MAL')">MAL</button></div></div>`;
+    });
+  });
+}
+
+window.setEstado = function(btn, valor) {
+  const c = btn.closest('.est-btns');
+  c.querySelectorAll('.e-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  // Mostrar alerta de foto si está en mal estado
-  const alertaEl = document.getElementById(`alerta_${safe}`);
-  if (alertaEl) alertaEl.classList.toggle('show', val === 'mal');
+  btn.dataset.selected = valor;
+
+  // Si es MAL, mostrar slot de evidencia fotográfica
+  const item = btn.closest('.est-item');
+  const compName = item.querySelector('span').textContent;
+  let evidenceSlot = item.querySelector('.evidence-slot');
+  if (valor === 'MAL') {
+    if (!evidenceSlot) {
+      const div = document.createElement('div');
+      div.className = 'evidence-slot';
+      div.style.cssText = 'width:100%;margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap';
+      div.innerHTML = `
+        <input type="file" accept="image/*" capture="environment" id="evid_${compName.replace(/\s/g,'_')}" style="display:none" onchange="previewEvidencia(this,'${compName.replace(/'/g,"\\'")}')">
+        <button type="button" onclick="document.getElementById('evid_${compName.replace(/\s/g,'_')}').click()" style="padding:5px 10px;border-radius:16px;border:1.5px solid var(--red);background:#FFF5F5;color:var(--red);font-size:.7rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px"><i class="fas fa-camera"></i> Adjuntar evidencia</button>
+        <img id="evidimg_${compName.replace(/\s/g,'_')}" style="display:none;height:40px;border-radius:6px">
+        <input type="text" placeholder="Observación del daño…" id="evidobs_${compName.replace(/\s/g,'_')}" style="flex:1;min-width:140px;padding:5px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.75rem;font-family:inherit">
+      `;
+      item.appendChild(div);
+    } else {
+      evidenceSlot.style.display = 'flex';
+    }
+  } else if (evidenceSlot) {
+    evidenceSlot.style.display = 'none';
+  }
 };
 
-window.capturarFotoAlerta = function(componente, input) {
+window.previewEvidencia = function(input, compName) {
   const f = input.files[0];
   if (!f) return;
-  comprimirImagen(f, 0.6, 800, (b64) => {
-    fotosAlertas[componente] = b64;
-    const safe  = componente.replace(/[^a-zA-Z0-9]/g,'_');
-    const thumb = document.getElementById(`thumbAlerta_${safe}`);
-    if (thumb) { thumb.src = b64; thumb.style.display = 'block'; }
-    window.toast(`Foto de ${componente} capturada ✓`, 'success');
-  });
-};
-
-// ── Mantenimiento chips ────────────────────────────────────
-const MANTTO_CATS = {
-  'Motor': ['Cambio aceite y filtro','Cambio filtro aire','Cambio filtro combustible','Cambio anticongelante','Revisión correas'],
-  'Frenos': ['Cambio pastillas del.','Cambio pastillas tras.','Cambio discos','Cambio líquido frenos','Ajuste freno mano'],
-  'Transmisión': ['Cambio aceite caja','Cambio aceite diferencial','Revisión clutch'],
-  'Suspensión': ['Cambio amortiguadores','Cambio rótulas','Cambio terminales','Alineación','Balanceo'],
-  'Llantas': ['Rotación de llantas','Inflado/calibración','Cambio llantas'],
-  'Eléctrico': ['Cambio batería','Revisión alternador','Cambio focos/faros','Revisión cableado'],
-  'Carrocería': ['Cambio limpiabrisas','Recarga extinguidor','Revisión seguridad'],
-  'General': ['Engrase general','Lavado completo','Revisión documentación']
-};
-
-function renderManttoChips() {
-  const cont = document.getElementById('manttoChips');
-  if (!cont) return;
-  cont.innerHTML = Object.entries(MANTTO_CATS).map(([cat, items]) => `
-    <div class="mantto-cat">
-      <h4>${cat}</h4>
-      <div class="mantto-items">
-        ${items.map(item => `
-          <label class="mantto-label">
-            <input type="checkbox" name="servicio" value="${item}">
-            <i class="fas fa-check" style="font-size:.65rem"></i> ${item}
-          </label>
-        `).join('')}
-      </div>
-    </div>
-  `).join('');
-}
-
-// ── Foto slots ─────────────────────────────────────────────
-const SLOTS_PRINCIPALES = ['Frente','Lateral izq.','Lateral der.','Trasera','Motor','Cabina'];
-const SLOTS_DANIOS       = ['Daño 1','Daño 2','Daño 3','Daño 4'];
-
-function renderFotoSlots() {
-  renderSlots('fotosPrincipales', SLOTS_PRINCIPALES, 'principal');
-  renderSlots('fotosDanios',      SLOTS_DANIOS,       'danio');
-}
-
-function renderSlots(containerId, labels, tipo) {
-  const cont = document.getElementById(containerId);
-  if (!cont) return;
-  cont.innerHTML = labels.map((lbl, i) => `
-    <div class="foto-slot" id="slot_${tipo}_${i}" onclick="triggerFoto('${tipo}','${lbl}',${i})">
-      <img id="img_${tipo}_${i}" style="display:none">
-      <div class="foto-preview" id="prev_${tipo}_${i}">
-        <i class="fas fa-camera"></i>
-        <span>${lbl}</span>
-      </div>
-    </div>
-    <input type="file" accept="image/*" capture="environment" id="file_${tipo}_${i}" style="display:none"
-      onchange="onFotoSelected('${tipo}','${lbl}',${i},this)">
-  `).join('');
-}
-
-window.triggerFoto = (tipo, lbl, i) => document.getElementById(`file_${tipo}_${i}`)?.click();
-
-window.onFotoSelected = function(tipo, lbl, i, input) {
-  const f = input.files[0];
-  if (!f) return;
-  comprimirImagen(f, 0.65, 900, (b64) => {
-    const img  = document.getElementById(`img_${tipo}_${i}`);
-    const prev = document.getElementById(`prev_${tipo}_${i}`);
-    const slot = document.getElementById(`slot_${tipo}_${i}`);
-    if (img)  { img.src = b64; img.style.display = 'block'; }
-    if (prev) prev.style.display = 'none';
-    if (slot) slot.classList.add('has-photo');
-    const arr = tipo === 'principal' ? (fotosData.principales) : (fotosData.danios);
-    arr[i] = { label: lbl, data: b64 };
-    window.toast(`Foto "${lbl}" capturada ✓`, 'success');
-  });
-};
-
-function comprimirImagen(file, quality, maxW, callback) {
   const reader = new FileReader();
-  reader.onload = e => {
-    const img    = new Image();
-    img.onload   = () => {
-      const ratio  = Math.min(1, maxW / img.width);
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width * ratio;
-      canvas.height= img.height * ratio;
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      callback(canvas.toDataURL('image/jpeg', quality));
-    };
-    img.src = e.target.result;
+  reader.onload = function(e) {
+    const key = compName.replace(/\s/g, '_');
+    const img = document.getElementById('evidimg_' + key);
+    if (img) { img.src = e.target.result; img.style.display = 'block'; }
+    // Guardar en fotosData para incluir en el guardado
+    if (!fotosData.evidencias) fotosData.evidencias = {};
+    fotosData.evidencias[compName] = e.target.result;
   };
-  reader.readAsDataURL(file);
-}
+  reader.readAsDataURL(f);
+};
 
 function obtenerEstados() {
-  const estados = {};
-  document.querySelectorAll('.e-btn.active').forEach(btn => {
-    estados[btn.dataset.item] = btn.dataset.val;
+  const e = {};
+  document.querySelectorAll('.est-item').forEach(item => {
+    const n = item.querySelector('span').textContent;
+    const sel = item.querySelector('.e-btn.active');
+    if (sel) e[n] = sel.dataset.val;
   });
-  return estados;
+  return e;
+}
+
+function construirMantenimiento() {
+  const c = document.getElementById('mantenimientoDinamico');
+  if (!c) return;
+  c.innerHTML = '';
+  Object.entries(SERVICIOS_MANTTO).forEach(([cat, servs]) => {
+    const d = document.createElement('div');
+    d.className = 'mantto-cat';
+    d.innerHTML = `<h4>${cat}</h4><div class="mantto-items" id="mantto-${cat.replace(/ /g, '')}"></div>`;
+    c.appendChild(d);
+    const grid = d.querySelector('.mantto-items');
+    servs.forEach(serv => {
+      grid.innerHTML += `<label class="mantto-label"><input type="checkbox" value="${serv}"><i class="fas fa-check" style="font-size:.65rem"></i>${serv}</label>`;
+    });
+  });
 }
 
 function obtenerServicios() {
-  return Array.from(document.querySelectorAll('input[name="servicio"]:checked')).map(c => c.value);
+  const s = [];
+  document.querySelectorAll('.mantto-label input:checked').forEach(cb => s.push(cb.value));
+  return s;
 }
 
-function obtenerTodasFotos() {
+function construirFotos() {
+  const pL = ['Frente', 'Lateral Izq.', 'Lateral Der.', 'Trasera', 'Motor', 'Interior'];
+  const dL = ['Daño 1', 'Daño 2', 'Daño 3', 'Daño 4'];
+  const gridP = document.getElementById('fotosPrincipalesGrid');
+  if (gridP) {
+    gridP.innerHTML = '';
+    pL.forEach((lbl, i) => {
+      gridP.innerHTML += `<div class="foto-slot" id="slotP_${i}" onclick="document.getElementById('fotoP_${i}').click()"><input type="file" accept="image/*" capture="environment" id="fotoP_${i}" data-type="principal" data-idx="${i}" data-label="${lbl}" style="display:none" onchange="previewFoto(this)"><div class="foto-preview" id="previewP_${i}"><i class="fas fa-camera"></i><span>${lbl}</span></div><img id="imgP_${i}" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0"></div>`;
+    });
+  }
+  const gridD = document.getElementById('fotosDaniosGrid');
+  if (gridD) {
+    gridD.innerHTML = '';
+    dL.forEach((lbl, i) => {
+      gridD.innerHTML += `<div class="foto-slot" id="slotD_${i}" onclick="document.getElementById('fotoD_${i}').click()"><input type="file" accept="image/*" capture="environment" id="fotoD_${i}" data-type="danio" data-idx="${i}" data-label="${lbl}" style="display:none" onchange="previewFoto(this)"><div class="foto-preview" id="previewD_${i}"><i class="fas fa-camera"></i><span>${lbl}</span></div><img id="imgD_${i}" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0"></div>`;
+    });
+  }
+}
+
+window.previewFoto = function(input) {
+  const f = input.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  const t = input.dataset.type;
+  const i = input.dataset.idx;
+  const lbl = input.dataset.label;
+  reader.onload = function(e) {
+    const img = document.getElementById(`img${t === 'principal' ? 'P' : 'D'}_${i}`);
+    const prev = document.getElementById(`preview${t === 'principal' ? 'P' : 'D'}_${i}`);
+    const slot = document.getElementById(`slot${t === 'principal' ? 'P' : 'D'}_${i}`);
+    if (img) img.src = e.target.result;
+    if (img) img.style.display = 'block';
+    if (prev) prev.style.display = 'none';
+    if (slot) slot.classList.add('has-photo');
+    if (!fotosData[t === 'principal' ? 'principales' : 'danios']) fotosData[t === 'principal' ? 'principales' : 'danios'] = [];
+    fotosData[t === 'principal' ? 'principales' : 'danios'][i] = { label: lbl, data: e.target.result };
+  };
+  reader.readAsDataURL(f);
+};
+
+function obtenerFotosParaGuardar() {
   const todas = [];
-  [...(fotosData.principales || []), ...(fotosData.danios || [])].forEach(f => { if (f?.data) todas.push(f); });
+  [...(fotosData.principales || []), ...(fotosData.danios || [])].forEach(f => { if (f && f.data) todas.push({ label: f.label, data: f.data }); });
   return todas;
 }
 
-// ── GPS ────────────────────────────────────────────────────
 window.capturarGPS = function() {
   if (!navigator.geolocation) { window.toast('GPS no disponible', 'error'); return; }
   window.toast('Obteniendo ubicación…', 'info');
   navigator.geolocation.getCurrentPosition(
-    pos => {
-      gpsData = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-      const el = document.getElementById('gpsCoordsDisplay');
-      if (el) { el.textContent = `${gpsData.lat.toFixed(6)}, ${gpsData.lon.toFixed(6)}`; el.className = 'gps-coords-ok'; }
-      window.toast('GPS capturado ✓', 'success');
-    },
+    pos => { gpsData = { lat: pos.coords.latitude, lon: pos.coords.longitude }; const el = document.getElementById('gpsCoordsDisplay'); if (el) { el.innerHTML = `${gpsData.lat.toFixed(6)}, ${gpsData.lon.toFixed(6)}`; el.className = 'gps-coords-ok'; } window.toast('GPS capturado ✓', 'success'); },
     err => window.toast('Error GPS: ' + err.message, 'error'),
     { enableHighAccuracy: true, timeout: 10000 }
   );
 };
 
-// ── Tabs ───────────────────────────────────────────────────
-function bindTabs() {
-  document.querySelectorAll('.tp-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tab = btn.dataset.tab;
-      document.querySelectorAll('.tp-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      const pane = document.getElementById(`tab-${tab}`);
-      if (pane) pane.classList.add('active');
-      activeTab = tab;
-    });
-  });
-}
-
-// ── Cargar inspección existente ────────────────────────────
 async function cargarInspeccionExistente(folio) {
-  if (!navigator.onLine) return;
+  if (!navigator.onLine) { window.toast('Sin conexión', 'error'); return; }
   try {
     const r = await fetch(`${window.SCRIPT_URL}?action=getInspeccion&folio=${folio}`);
     const d = await r.json();
     if (d.success && d.inspeccion) {
-      const ins = d.inspeccion;
-      const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
-      ['marca','modelo','version','anio','color','placas','economico','vin',
-       'kmActual','kmUltimoServ','kmProxServ','conductor','ruta','dictamen',
-       'fallaDetectada','accionCorrectiva','obsGenerales'].forEach(f => setVal(f, ins[f]));
-      if (ins.estados) {
-        Object.entries(ins.estados).forEach(([item, val]) => {
-          const btn = document.querySelector(`.e-btn[data-item="${item}"][data-val="${val}"]`);
-          if (btn) btn.click();
-        });
+      const i = d.inspeccion;
+      ['marca', 'modelo', 'placas', 'economico', 'vin', 'kmActual', 'conductor', 'ruta', 'dictamen', 'obsGenerales'].forEach(f => { const el = document.getElementById(f); if (el) el.value = i[f] || ''; });
+      if (i.estados) {
+        Object.entries(i.estados).forEach(([it, v]) => { const btn = document.querySelector(`.e-btn[data-item="${it}"][data-val="${v}"]`); if (btn) btn.click(); });
       }
-      currentFolio = folio;
-      document.getElementById('folioDisplay').textContent = folio;
-      window.toast('Inspección cargada para edición', 'success');
+      window.toast('Inspección cargada', 'success');
     }
-  } catch(e) {}
+  } catch(e) { window.toast('Error al cargar', 'error'); }
 }
 
-// ── Generar PDF con jsPDF ──────────────────────────────────
-async function generarPDFBlob() {
-  // Cargar jsPDF si no existe
-  if (!window.jspdf) {
-    await new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-      s.onload = res; s.onerror = rej;
-      document.head.appendChild(s);
-    });
-  }
+// ============================================
+// DROPDOWNS EN CASCADA: Marca → Modelo → Versión → Año
+// ============================================
+window.onMarcaChange = function() {
+  const marca = document.getElementById('marca').value;
+  const modeloSel = document.getElementById('modelo');
+  const versionSel = document.getElementById('version');
+  const anioSel = document.getElementById('anio');
 
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({ unit: 'mm', format: 'a4' });
-  const W   = 210;
-  const M   = 14;
-  let   y   = 0;
+  // Reset dependientes
+  versionSel.innerHTML = '<option value="">— Primero seleccione modelo —</option>';
+  anioSel.innerHTML = '<option value="">— Seleccione año —</option>';
 
-  const addLine = () => { pdf.setDrawColor(220); pdf.line(M, y, W - M, y); y += 4; };
-  const title   = (t, s = 11) => { pdf.setFontSize(s); pdf.setFont(undefined,'bold'); pdf.setTextColor(27,94,32); pdf.text(t, M, y); y += 6; pdf.setFont(undefined,'normal'); pdf.setTextColor(30,30,30); };
-  const row     = (l, v, x2 = 110) => { pdf.setFontSize(8); pdf.setFont(undefined,'bold'); pdf.text(l + ':', M, y); pdf.setFont(undefined,'normal'); pdf.text(String(v || '—'), x2, y); y += 5; };
-  const row2    = (l1, v1, l2, v2) => { pdf.setFontSize(8); pdf.setFont(undefined,'bold'); pdf.text(l1 + ':', M, y); pdf.setFont(undefined,'normal'); pdf.text(String(v1 || '—'), 60, y); pdf.setFont(undefined,'bold'); pdf.text(l2 + ':', 110, y); pdf.setFont(undefined,'normal'); pdf.text(String(v2 || '—'), 165, y); y += 5; };
-
-  // ── ENCABEZADO ──
-  pdf.setFillColor(27, 94, 32);
-  pdf.rect(0, 0, W, 28, 'F');
-  pdf.setTextColor(212, 175, 55);
-  pdf.setFontSize(16); pdf.setFont(undefined,'bold');
-  pdf.text('PRODENI Fleet', M, 11);
-  pdf.setFontSize(9); pdf.setFont(undefined,'normal'); pdf.setTextColor(255,255,255);
-  pdf.text('Control Vehicular — Reporte de Inspección', M, 17);
-  pdf.setFontSize(8);
-  pdf.text(`Folio: ${currentFolio || '—'}`, M, 22);
-  pdf.text(`Fecha: ${new Date().toLocaleDateString('es-MX')}`, 120, 22);
-  y = 34;
-
-  // ── DATOS VEHÍCULO ──
-  const g = id => document.getElementById(id)?.value || '';
-  title('DATOS DEL VEHÍCULO');
-  addLine();
-  row2('Placas', g('placas'), 'Económico', g('economico'));
-  row2('Marca', g('marca'), 'Modelo', g('modelo'));
-  row2('Versión', g('version'), 'Año', g('anio'));
-  row2('Color', g('color'), 'VIN', g('vin'));
-  row2('Km actual', g('kmActual'), 'Km próximo serv.', g('kmProxServ'));
-  y += 2;
-
-  // ── RESPONSABLE ──
-  title('RESPONSABLE Y DICTAMEN');
-  addLine();
-  row('Conductor', g('conductor'));
-  row('Ruta', g('ruta'));
-  row('Inspector', (window.currentUser || {}).username || '—');
-
-  // Dictamen con color
-  const dictamen = g('dictamen') || '—';
-  pdf.setFontSize(9); pdf.setFont(undefined,'bold');
-  pdf.text('Dictamen:', M, y);
-  const dictColor = dictamen.includes('No apto') ? [198,40,40] : dictamen.includes('observaciones') ? [230,81,0] : [27,94,32];
-  pdf.setTextColor(...dictColor);
-  pdf.text(dictamen, 45, y);
-  pdf.setTextColor(30,30,30); y += 7;
-
-  // ── ESTADOS ──
-  const estados = obtenerEstados();
-  if (Object.keys(estados).length) {
-    if (y > 240) { pdf.addPage(); y = 14; }
-    title('ESTADO DE COMPONENTES');
-    addLine();
-    Object.entries(estados).forEach(([item, val]) => {
-      const color = val === 'ok' ? [27,94,32] : val === 'reg' ? [230,81,0] : [198,40,40];
-      pdf.setFontSize(8); pdf.setFont(undefined,'normal'); pdf.setTextColor(30,30,30);
-      pdf.text(item + ':', M, y);
-      pdf.setFont(undefined,'bold'); pdf.setTextColor(...color);
-      pdf.text(val.toUpperCase(), 100, y);
-      pdf.setTextColor(30,30,30); pdf.setFont(undefined,'normal');
-      y += 4.5;
-      if (y > 270) { pdf.addPage(); y = 14; }
-    });
-    y += 3;
-  }
-
-  // ── FALLAS ──
-  const falla = g('fallaDetectada');
-  if (falla) {
-    if (y > 240) { pdf.addPage(); y = 14; }
-    title('FALLA DETECTADA', 10);
-    addLine();
-    pdf.setFontSize(8); pdf.setTextColor(198,40,40);
-    const fallaLines = pdf.splitTextToSize(falla, W - M*2);
-    pdf.text(fallaLines, M, y);
-    y += fallaLines.length * 4 + 3;
-    pdf.setTextColor(30,30,30);
-    const accion = g('accionCorrectiva');
-    if (accion) {
-      pdf.setFont(undefined,'bold'); pdf.text('Acción correctiva:', M, y); y += 4;
-      pdf.setFont(undefined,'normal');
-      const accionLines = pdf.splitTextToSize(accion, W - M*2);
-      pdf.text(accionLines, M, y); y += accionLines.length * 4 + 3;
+  if (!marca || marca === '__otra__') {
+    modeloSel.innerHTML = '<option value="">— Seleccione modelo —</option>';
+    if (marca === '__otra__') {
+      // Convertir a inputs de texto libre
+      modeloSel.outerHTML = '<input type="text" id="modelo" placeholder="Escriba el modelo">';
+      versionSel.outerHTML = '<input type="text" id="version" placeholder="Escriba la versión">';
+      anioSel.outerHTML = '<input type="number" id="anio" placeholder="2024" min="2000" max="2030">';
+      document.getElementById('marca').outerHTML = '<input type="text" id="marca" placeholder="Escriba la marca">';
     }
+    return;
   }
 
-  // ── SERVICIOS ──
-  const servicios = obtenerServicios();
-  if (servicios.length) {
-    if (y > 240) { pdf.addPage(); y = 14; }
-    title('SERVICIOS REALIZADOS', 10);
-    addLine();
-    servicios.forEach(s => { pdf.setFontSize(8); pdf.text('✓ ' + s, M, y); y += 4.5; });
-    y += 3;
-  }
-
-  // ── OBS GENERALES ──
-  const obs = g('obsGenerales');
-  if (obs) {
-    if (y > 240) { pdf.addPage(); y = 14; }
-    title('OBSERVACIONES', 10);
-    addLine();
-    pdf.setFontSize(8);
-    const obsLines = pdf.splitTextToSize(obs, W - M*2);
-    pdf.text(obsLines, M, y); y += obsLines.length * 4 + 3;
-  }
-
-  // ── GPS ──
-  if (gpsData) {
-    if (y > 255) { pdf.addPage(); y = 14; }
-    title('UBICACIÓN GPS', 10);
-    addLine();
-    row('Coordenadas', `${gpsData.lat.toFixed(6)}, ${gpsData.lon.toFixed(6)}`);
-  }
-
-  // ── FOTOS THUMBNAIL (primeras 4) ──
-  const todasFotos = obtenerTodasFotos().slice(0, 4);
-  if (todasFotos.length) {
-    pdf.addPage(); y = 14;
-    title('REGISTRO FOTOGRÁFICO');
-    addLine();
-    const imgW = 85; const imgH = 60;
-    for (let i = 0; i < todasFotos.length; i++) {
-      const col = i % 2;
-      const row_n = Math.floor(i / 2);
-      const x = M + col * (imgW + 6);
-      const iy = y + row_n * (imgH + 10);
-      try {
-        pdf.addImage(todasFotos[i].data, 'JPEG', x, iy, imgW, imgH);
-        pdf.setFontSize(7); pdf.setTextColor(100,100,100);
-        pdf.text(todasFotos[i].label || `Foto ${i+1}`, x, iy + imgH + 3);
-      } catch(e) {}
-    }
-  }
-
-  // ── PIE ──
-  const pages = pdf.getNumberOfPages();
-  for (let p = 1; p <= pages; p++) {
-    pdf.setPage(p);
-    pdf.setFontSize(7); pdf.setTextColor(160,160,160);
-    pdf.text(`PRODENI Fleet — ${currentFolio} · Pág. ${p}/${pages}`, M, 293);
-    pdf.text(`Generado: ${new Date().toLocaleString('es-MX')}`, W - M, 293, { align: 'right' });
-  }
-
-  return pdf.output('datauristring');
-}
-
-// ── Descargar PDF local ────────────────────────────────────
-window.descargarPDF = async function(silencioso = false) {
-  if (!silencioso) window.toast('Generando PDF…', 'info');
-  try {
-    const datauri = await generarPDFBlob();
-    const link    = document.createElement('a');
-    link.href     = datauri;
-    link.download = `Inspeccion_${currentFolio || 'PRODENI'}.pdf`;
-    link.click();
-    if (!silencioso) window.toast('PDF descargado ✓', 'success');
-    return datauri;
-  } catch(e) {
-    if (!silencioso) window.toast('Error generando PDF: ' + e.message, 'error');
-    return null;
-  }
+  const modelos = CATALOGO_VEHICULOS[marca];
+  if (!modelos) return;
+  modeloSel.innerHTML = '<option value="">— Seleccione modelo —</option>' +
+    Object.keys(modelos).map(m => `<option value="${m}">${m}</option>`).join('');
 };
 
-// ── Guardar inspección + Drive + Sheet ────────────────────
+window.onModeloChange = function() {
+  const marca = document.getElementById('marca').value;
+  const modelo = document.getElementById('modelo').value;
+  const versionSel = document.getElementById('version');
+  const anioSel = document.getElementById('anio');
+
+  if (!marca || !modelo || !CATALOGO_VEHICULOS[marca] || !CATALOGO_VEHICULOS[marca][modelo]) {
+    versionSel.innerHTML = '<option value="">— Primero seleccione modelo —</option>';
+    anioSel.innerHTML = '<option value="">— Seleccione año —</option>';
+    return;
+  }
+
+  const info = CATALOGO_VEHICULOS[marca][modelo];
+  versionSel.innerHTML = '<option value="">— Seleccione versión —</option>' +
+    info.versiones.map(v => `<option value="${v}">${v}</option>`).join('');
+  anioSel.innerHTML = '<option value="">— Seleccione año —</option>' +
+    [...info.anios].reverse().map(a => `<option value="${a}">${a}</option>`).join('');
+};
+
+// ============================================
+// GENERAR PDF DE INSPECCIÓN CON jsPDF
+// ============================================
+function generarPDFInspeccion(datos) {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p', 'mm', 'letter');
+  const w = 216, margin = 15;
+  let y = 15;
+
+  // Header
+  pdf.setFillColor(27, 94, 32);
+  pdf.rect(0, 0, w, 32, 'F');
+  pdf.setFillColor(212, 175, 55);
+  pdf.rect(0, 32, w, 2, 'F');
+  pdf.setTextColor(255,255,255);
+  pdf.setFontSize(18);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('PRODENI', margin, 16);
+  pdf.setFontSize(10);
+  pdf.setFont('helvetica', 'normal');
+  pdf.text('Control Vehicular - Inspección', margin, 23);
+  pdf.setFontSize(9);
+  pdf.text(`Folio: ${datos.folio}`, w - margin, 14, { align: 'right' });
+  pdf.text(`Fecha: ${datos.fecha}`, w - margin, 20, { align: 'right' });
+  pdf.text(`Inspector: ${datos.usuario}`, w - margin, 26, { align: 'right' });
+
+  y = 40;
+  pdf.setTextColor(27, 94, 32);
+  pdf.setFontSize(11);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('DATOS DEL VEHÍCULO', margin, y);
+  y += 2;
+  pdf.setDrawColor(200,220,200);
+  pdf.line(margin, y, w - margin, y);
+  y += 6;
+
+  pdf.setTextColor(60,60,60);
+  pdf.setFontSize(9);
+  pdf.setFont('helvetica', 'normal');
+  const campos = [
+    ['Placas', datos.placas], ['No. Económico', datos.economico], ['Marca', datos.marca],
+    ['Modelo', datos.modelo], ['Versión', datos.version], ['Año', datos.anio],
+    ['Color', datos.color], ['VIN', datos.vin], ['Km actual', datos.kmActual + ' km'],
+    ['Conductor', datos.conductor], ['Ruta', datos.ruta], ['Dictamen', datos.dictamen]
+  ];
+
+  let col = 0;
+  campos.forEach(([lbl, val]) => {
+    const x = margin + (col * 62);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(120,120,120);
+    pdf.text(lbl + ':', x, y);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(30,30,30);
+    pdf.text(String(val || '—'), x, y + 4.5);
+    col++;
+    if (col >= 3) { col = 0; y += 12; }
+  });
+  if (col > 0) y += 12;
+
+  // Estado de componentes
+  if (datos.estados && Object.keys(datos.estados).length) {
+    y += 4;
+    pdf.setTextColor(27, 94, 32);
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('ESTADO DE COMPONENTES', margin, y);
+    y += 2;
+    pdf.line(margin, y, w - margin, y);
+    y += 6;
+
+    pdf.setFontSize(8);
+    Object.entries(datos.estados).forEach(([comp, estado]) => {
+      if (y > 260) { pdf.addPage(); y = 20; }
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(60,60,60);
+      pdf.text(comp, margin, y);
+
+      const colors = { OK: [46,125,50], REG: [249,168,37], MAL: [198,40,40] };
+      const c = colors[estado] || [100,100,100];
+      pdf.setTextColor(c[0], c[1], c[2]);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(estado, margin + 80, y);
+      y += 5;
+    });
+  }
+
+  // Servicios realizados
+  if (datos.serviciosRealizados && datos.serviciosRealizados.length) {
+    y += 4;
+    if (y > 250) { pdf.addPage(); y = 20; }
+    pdf.setTextColor(27, 94, 32);
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('SERVICIOS REALIZADOS', margin, y);
+    y += 8;
+    pdf.setFontSize(8);
+    pdf.setTextColor(60,60,60);
+    pdf.setFont('helvetica', 'normal');
+    datos.serviciosRealizados.forEach(s => {
+      if (y > 260) { pdf.addPage(); y = 20; }
+      pdf.text('• ' + s, margin + 4, y);
+      y += 5;
+    });
+  }
+
+  // Fallas y observaciones
+  if (datos.fallaDetectada) {
+    y += 4;
+    if (y > 250) { pdf.addPage(); y = 20; }
+    pdf.setTextColor(198, 40, 40);
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('FALLA DETECTADA', margin, y);
+    y += 6;
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(60,60,60);
+    const lines = pdf.splitTextToSize(datos.fallaDetectada, w - margin * 2);
+    pdf.text(lines, margin, y);
+    y += lines.length * 5;
+  }
+
+  if (datos.accionCorrectiva) {
+    y += 2;
+    pdf.setTextColor(27, 94, 32);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Acción correctiva:', margin, y);
+    y += 5;
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(60,60,60);
+    const lines2 = pdf.splitTextToSize(datos.accionCorrectiva, w - margin * 2);
+    pdf.text(lines2, margin, y);
+    y += lines2.length * 5;
+  }
+
+  if (datos.obsGenerales) {
+    y += 4;
+    if (y > 250) { pdf.addPage(); y = 20; }
+    pdf.setTextColor(27, 94, 32);
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('OBSERVACIONES GENERALES', margin, y);
+    y += 6;
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(60,60,60);
+    const lines3 = pdf.splitTextToSize(datos.obsGenerales, w - margin * 2);
+    pdf.text(lines3, margin, y);
+  }
+
+  // GPS
+  if (datos.lat && datos.lon) {
+    y += 10;
+    if (y > 260) { pdf.addPage(); y = 20; }
+    pdf.setFontSize(8);
+    pdf.setTextColor(120,120,120);
+    pdf.text(`Ubicación GPS: ${datos.lat}, ${datos.lon}`, margin, y);
+  }
+
+  // Footer
+  const totalPages = pdf.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    pdf.setPage(i);
+    pdf.setFontSize(7);
+    pdf.setTextColor(180,180,180);
+    pdf.text(`PRODENI Fleet Management · ${datos.folio} · Página ${i}/${totalPages}`, w / 2, 275, { align: 'center' });
+  }
+
+  return pdf;
+}
+
+// ============================================
+// GUARDAR INSPECCIÓN COMPLETA (CORREGIDO)
+// ============================================
 window.guardarInspeccionCompleta = async function() {
-  const placas   = document.getElementById('placas')?.value.trim().toUpperCase();
-  const kmActual = document.getElementById('kmActual')?.value;
-  if (!placas)   { window.toast('Las placas son obligatorias', 'error');   return; }
-  if (!kmActual) { window.toast('El kilometraje es obligatorio', 'error'); return; }
+  const placas = document.getElementById('placas').value.trim().toUpperCase();
+  const kmActual = document.getElementById('kmActual').value;
+  if (!placas) { window.toast('Las placas son obligatorias', 'error'); return; }
+  if (!kmActual) { window.toast('El kilometraje actual es obligatorio', 'error'); return; }
 
   const syncEl = document.getElementById('syncStatus');
-  const btn    = document.getElementById('btnGuardarInspeccion');
   if (syncEl) syncEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando…';
-  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando…'; }
-
-  const g = id => document.getElementById(id)?.value || '';
-
-  // Generar PDF
-  let pdfBase64 = '';
-  try {
-    const raw = await generarPDFBlob();
-    pdfBase64 = raw ? raw.replace(/^data:application\/pdf;base64,/, '') : '';
-  } catch(e) {}
-
-  // Fotos de alerta comprimidas
-  const fotosAlertaArr = Object.entries(fotosAlertas).map(([componente, data]) => ({ label: 'ALERTA_' + componente, data }));
 
   const datos = {
     action: 'saveInspeccion',
-    folio:  currentFolio,
-    fecha:  new Date().toISOString().slice(0, 10),
-    usuario: (window.currentUser || {}).username || '',
-    marca: g('marca'), modelo: g('modelo'), version: g('version'),
-    anio: g('anio'), color: g('color'), placas: placas,
-    economico: g('economico'), vin: g('vin'), kmActual: kmActual,
-    kmUltimoServ: g('kmUltimoServ'), kmProxServ: g('kmProxServ'),
-    conductor: g('conductor'), ruta: g('ruta'), dictamen: g('dictamen'),
-    estados:  obtenerEstados(),
+    folio: currentFolio,
+    fecha: new Date().toISOString().slice(0, 10),
+    usuario: (window.currentUser || {}).username || 'tecnico',
+    marca: document.getElementById('marca')?.value || '',
+    modelo: document.getElementById('modelo')?.value || '',
+    version: document.getElementById('version')?.value || '',
+    anio: document.getElementById('anio')?.value || '',
+    color: document.getElementById('color')?.value || '',
+    placas: placas,
+    economico: document.getElementById('economico')?.value || '',
+    vin: document.getElementById('vin')?.value || '',
+    kmActual: kmActual,
+    kmUltimoServ: document.getElementById('kmUltimoServ')?.value || '',
+    kmProxServ: document.getElementById('kmProxServ')?.value || '',
+    conductor: document.getElementById('conductor')?.value || '',
+    telefono: document.getElementById('telefono')?.value || '',
+    email: document.getElementById('email')?.value || '',
+    ruta: document.getElementById('ruta')?.value || '',
+    baseOrigen: document.getElementById('baseOrigen')?.value || '',
+    dictamen: document.getElementById('dictamen')?.value || '',
+    urgencia: document.getElementById('urgencia')?.value || '',
+    estados: obtenerEstados(),
     serviciosRealizados: obtenerServicios(),
-    fallaDetectada:  g('fallaDetectada'),
-    accionCorrectiva: g('accionCorrectiva'),
-    obsGenerales: g('obsGenerales'),
-    fotos: [...obtenerTodasFotos(), ...fotosAlertaArr],
-    pdfBase64: pdfBase64,
-    lat: gpsData?.lat || '', lon: gpsData?.lon || '',
+    fallaDetectada: document.getElementById('fallaDetectada')?.value || '',
+    accionCorrectiva: document.getElementById('accionCorrectiva')?.value || '',
+    taller: document.getElementById('taller')?.value || '',
+    costo: document.getElementById('costo')?.value || '',
+    obsGenerales: document.getElementById('obsGenerales')?.value || '',
+    lat: gpsData?.lat || '',
+    lon: gpsData?.lon || '',
     timestamp: Date.now()
   };
 
-  // Guardar localmente como respaldo
+  const btn = document.getElementById('btnGuardarInspeccion');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando…'; }
+
+  // 1. Guardar localmente siempre
   const pendientes = JSON.parse(localStorage.getItem('prodeni_pendientes') || '[]');
-  pendientes.push({ ts: Date.now(), data: { ...datos, pdfBase64: '' } }); // sin PDF en cache local
+  pendientes.push({ ts: Date.now(), data: datos });
   localStorage.setItem('prodeni_pendientes', JSON.stringify(pendientes));
 
-  if (syncEl) syncEl.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Subiendo a Drive…';
+  // 2. Generar PDF y ofrecer descarga
+  try {
+    const pdf = generarPDFInspeccion(datos);
+    pdf.save(`Inspeccion_${datos.folio}_${datos.placas}.pdf`);
+    window.toast('PDF generado y descargado ✓', 'success');
+  } catch(e) {
+    console.error('Error PDF:', e);
+    window.toast('Error al generar PDF: ' + e.message, 'warn');
+  }
 
-  // Sincronizar con servidor
+  // 3. Sincronizar con servidor (FIX CORS: usar text/plain para evitar preflight)
   if (navigator.onLine) {
     try {
       const response = await fetch(window.SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(datos)
       });
       const result = await response.json();
       if (result.success) {
-        // Limpiar del pendientes
-        const nuevosPend = JSON.parse(localStorage.getItem('prodeni_pendientes') || '[]')
-          .filter(p => p.data.folio !== currentFolio);
-        localStorage.setItem('prodeni_pendientes', JSON.stringify(nuevosPend));
-
-        if (syncEl) syncEl.innerHTML = `<i class="fas fa-circle-check"></i> Guardado en Drive ✓`;
-        const pdfUrl = result.pdfUrl || '';
-        window.toast(
-          pdfUrl ? `Inspección guardada y PDF subido a Drive ✓` : 'Guardado en el sistema ✓',
-          'success'
-        );
-
-        // Subir fotos de alerta por separado si hay componentes en mal estado
-        const fotosAlertaKeys = Object.keys(fotosAlertas);
-        if (fotosAlertaKeys.length) {
-          for (const comp of fotosAlertaKeys) {
-            fetch(window.SCRIPT_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                action: 'saveFotoAlerta',
-                folio: currentFolio,
-                placas: placas,
-                componente: comp,
-                fotoBase64: fotosAlertas[comp].replace(/^data:image\/\w+;base64,/, ''),
-                usuario: (window.currentUser || {}).username || ''
-              })
-            }).catch(() => {});
-          }
-          window.toast(`${fotosAlertaKeys.length} foto(s) de alerta enviadas al administrador`, 'warn');
-        }
-
+        window.toast('Sincronizado con Google Sheets ✓', 'success');
+        if (syncEl) syncEl.innerHTML = '<i class="fas fa-circle-check"></i> Guardado en la nube';
+        // Quitar de pendientes
+        const nuevosPendientes = JSON.parse(localStorage.getItem('prodeni_pendientes') || '[]').filter(p => p.data.folio !== currentFolio);
+        localStorage.setItem('prodeni_pendientes', JSON.stringify(nuevosPendientes));
       } else {
-        window.toast('Guardado offline. Se sincronizará al conectar.', 'warn');
-        if (syncEl) syncEl.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Pendiente de sincronizar';
+        window.toast('Error en servidor: ' + (result.message || ''), 'warn');
+        if (syncEl) syncEl.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Guardado offline (pendiente de sync)';
       }
     } catch(e) {
-      window.toast('Sin conexión. Se guardó localmente.', 'warn');
-      if (syncEl) syncEl.innerHTML = '<i class="fas fa-wifi-slash"></i> Guardado offline';
+      console.warn('Error de sync:', e);
+      window.toast('Sin conexión al servidor. Guardado localmente.', 'warn');
+      if (syncEl) syncEl.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Guardado offline';
     }
   } else {
-    window.toast('Sin conexión. Se guardó localmente.', 'warn');
-    if (syncEl) syncEl.innerHTML = '<i class="fas fa-wifi-slash"></i> Guardado offline';
+    if (syncEl) syncEl.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Guardado offline';
+    window.toast('Inspección guardada localmente (sin conexión)', 'info');
   }
 
-  if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Guardar y subir Drive'; }
+  // 4. Generar alertas por componentes en MAL
+  const componentesMal = Object.entries(datos.estados).filter(([,v]) => v === 'MAL');
+  if (componentesMal.length > 0) {
+    const alertas = JSON.parse(localStorage.getItem('prodeni_alertas') || '[]');
+    componentesMal.forEach(([comp]) => {
+      const obsEl = document.getElementById('evidobs_' + comp.replace(/\s/g, '_'));
+      alertas.push({
+        tipo: 'inspeccion_falla',
+        fecha: datos.fecha,
+        hora: new Date().toLocaleTimeString('es-MX'),
+        usuario: datos.usuario,
+        placas: datos.placas,
+        componente: comp,
+        mensaje: `Componente "${comp}" en MAL estado - ${datos.placas}`,
+        observacion: obsEl ? obsEl.value : '',
+        folio: datos.folio,
+        tieneEvidencia: !!(fotosData.evidencias && fotosData.evidencias[comp]),
+        leida: false,
+        timestamp: Date.now()
+      });
+    });
+    localStorage.setItem('prodeni_alertas', JSON.stringify(alertas));
+    window.toast(`${componentesMal.length} alerta(s) generada(s) para el administrador`, 'warn');
 
-  setTimeout(() => {
-    if (confirm('¿Iniciar una nueva inspección?')) nuevaInspeccion();
-  }, 1200);
+    // Enviar notificación por correo al admin (vía Apps Script)
+    if (navigator.onLine) {
+      try {
+        await fetch(window.SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'sendAlertEmail',
+            placas: datos.placas,
+            folio: datos.folio,
+            usuario: datos.usuario,
+            fecha: datos.fecha,
+            componentes: componentesMal.map(([c]) => c).join(', '),
+            mensaje: `Se detectaron ${componentesMal.length} componente(s) en MAL estado durante la inspección ${datos.folio} del vehículo ${datos.placas}.`
+          })
+        });
+      } catch(e) { /* silencioso si falla el email */ }
+    }
+  }
+
+  if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Guardar inspección'; }
+  setTimeout(() => { if (confirm('¿Iniciar una nueva inspección?')) location.reload(); }, 1500);
 };
 
-window.nuevaInspeccion = function() {
-  editingFolio = null;
-  fotosData    = { principales: [], danios: [] };
-  fotosAlertas = {};
-  gpsData      = null;
-  generarFolio();
-  cargarFormulario();
+// Descargar PDF sin guardar (solo preview)
+window.descargarPDFManual = function() {
+  const placas = document.getElementById('placas')?.value?.trim().toUpperCase();
+  if (!placas) { window.toast('Llene al menos las placas antes de generar PDF', 'warn'); return; }
+  const datos = {
+    folio: currentFolio,
+    fecha: new Date().toISOString().slice(0, 10),
+    usuario: (window.currentUser || {}).username || 'tecnico',
+    marca: document.getElementById('marca')?.value || '',
+    modelo: document.getElementById('modelo')?.value || '',
+    version: document.getElementById('version')?.value || '',
+    anio: document.getElementById('anio')?.value || '',
+    color: document.getElementById('color')?.value || '',
+    placas: placas,
+    economico: document.getElementById('economico')?.value || '',
+    vin: document.getElementById('vin')?.value || '',
+    kmActual: document.getElementById('kmActual')?.value || '',
+    conductor: document.getElementById('conductor')?.value || '',
+    ruta: document.getElementById('ruta')?.value || '',
+    dictamen: document.getElementById('dictamen')?.value || '',
+    estados: obtenerEstados(),
+    serviciosRealizados: obtenerServicios(),
+    fallaDetectada: document.getElementById('fallaDetectada')?.value || '',
+    accionCorrectiva: document.getElementById('accionCorrectiva')?.value || '',
+    obsGenerales: document.getElementById('obsGenerales')?.value || '',
+    lat: gpsData?.lat || '',
+    lon: gpsData?.lon || ''
+  };
+  try {
+    const pdf = generarPDFInspeccion(datos);
+    pdf.save(`Inspeccion_${datos.folio}_${placas}.pdf`);
+    window.toast('PDF descargado ✓', 'success');
+  } catch(e) {
+    window.toast('Error al generar PDF: ' + e.message, 'error');
+  }
 };
 
 // Inicializar
-window.cargarFormulario = window.cargarFormulario || cargarFormulario;
 cargarFormulario();
+if (editingFolio) { cargarInspeccionExistente(editingFolio); sessionStorage.removeItem('editarFolio'); }
 })();
 </script>

@@ -150,6 +150,14 @@ window.cargarVehiculosSelector = async function() {
     } catch(e) {}
   }
   sel.innerHTML = '<option value="">— Seleccione una unidad —</option>' + vehiculosLista.map(v => `<option value="${v.placas}">${v.placas} · ${[v.marca, v.modelo].filter(Boolean).join(' ')} · ${v.conductor || 'Sin conductor'}</option>`).join('');
+
+  // Auto-seleccionar vehículo asignado
+  if (typeof window.getVehiculoAsignado === 'function') {
+    const asignado = window.getVehiculoAsignado();
+    if (asignado && asignado.placas) {
+      sel.value = asignado.placas;
+    }
+  }
 };
 
 window.cargarHistorial = async function() {

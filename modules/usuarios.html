@@ -56,11 +56,6 @@
       <div class="usr-field"><label>Contraseña <span id="passReq" style="color:var(--red)">*</span></label><input type="password" id="userPassword" placeholder="••••••••"></div>
       <div class="usr-field"><label>Rol</label><select id="userRole"><option value="tecnico">Técnico de campo</option><option value="admin">Administrador</option></select></div>
       <div class="usr-field"><label>Correo electrónico</label><input type="email" id="userEmail" placeholder="correo@prodeni.com"></div>
-      <div class="usr-field"><label>Vehículo asignado</label>
-        <select id="userVehiculo">
-          <option value="">— Sin asignar —</option>
-        </select>
-      </div>
     </div>
     <div class="usr-form-actions">
       <button class="btn-secondary" onclick="cancelarEdicionUsuario()">Cancelar</button>
@@ -113,140 +108,43 @@ function renderUsuarios(lista) {
   list.innerHTML = lista.map(u => {
     const isAdmin = u.role === 'admin';
     const ini = (u.username || '?')[0].toUpperCase();
-    const veh = u.vehiculoAsignado || '';
     return `<div class="usr-row">
       <div class="usr-row-avatar ${isAdmin ? 'avatar-admin' : 'avatar-tecnico'}">${ini}</div>
-      <div class="usr-info">
-        <div class="usr-name">${u.username}</div>
-        <div class="usr-email">${u.email || 'Sin correo'}</div>
-        ${veh ? `<div style="margin-top:3px"><span style="font-size:.67rem;background:#E3F2FD;color:#1565C0;padding:2px 8px;border-radius:12px;font-weight:700">🚛 ${veh}</span></div>` : ''}
-      </div>
+      <div class="usr-info"><div class="usr-name">${u.username}</div><div class="usr-email">${u.email || 'Sin correo registrado'}</div></div>
       <span class="role-badge ${isAdmin ? 'role-admin' : 'role-tecnico'}"><i class="fas ${isAdmin ? 'fa-shield-halved' : 'fa-hard-hat'}"></i>${isAdmin ? 'Administrador' : 'Técnico'}</span>
-      <div class="usr-acts">
-        <button class="icon-btn edit" onclick="editarUsuario('${u.username}')" title="Editar"><i class="fas fa-pen"></i></button>
-        <button class="icon-btn" style="color:#1565C0" onclick="abrirModalAsignar('${u.username}','${veh}')" title="Asignar vehículo"><i class="fas fa-truck"></i></button>
-        <button class="icon-btn del" onclick="eliminarUsuario('${u.username}')" title="Eliminar"><i class="fas fa-trash"></i></button>
-      </div>
+      <div class="usr-acts"><button class="icon-btn edit" onclick="editarUsuario('${u.username}')" title="Editar"><i class="fas fa-pen"></i></button><button class="icon-btn del" onclick="eliminarUsuario('${u.username}')" title="Eliminar"><i class="fas fa-trash"></i></button></div>
     </div>`;
   }).join('');
 }
-
-// Cargar vehículos en el select del form de usuario
-async function cargarVehiculosEnSelect() {
-  const sel = document.getElementById('userVehiculo');
-  if (!sel) return;
-  const vehiculos = JSON.parse(localStorage.getItem('prodeni_vehiculos_cache') || '[]');
-  sel.innerHTML = '<option value="">— Sin asignar —</option>';
-  vehiculos.filter(v => (v.activo || 'SI') === 'SI').forEach(v => {
-    const o = document.createElement('option');
-    o.value = v.placas;
-    o.textContent = `${v.placas}${v.economico ? ' · ' + v.economico : ''} — ${[v.marca, v.modelo].filter(Boolean).join(' ')}`;
-    sel.appendChild(o);
-  });
-  if (navigator.onLine) {
-    try {
-      const r = await fetch(`${window.SCRIPT_URL}?action=getVehiculos`);
-      const d = await r.json();
-      if (d.success) {
-        localStorage.setItem('prodeni_vehiculos_cache', JSON.stringify(d.vehiculos));
-        sel.innerHTML = '<option value="">— Sin asignar —</option>';
-        d.vehiculos.filter(v => (v.activo || 'SI') === 'SI').forEach(v => {
-          const o = document.createElement('option');
-          o.value = v.placas;
-          const asignado = v.usuarioAsignado ? ` [${v.usuarioAsignado}]` : '';
-          o.textContent = `${v.placas}${v.economico ? ' · ' + v.economico : ''} — ${[v.marca, v.modelo].filter(Boolean).join(' ')}${asignado}`;
-          sel.appendChild(o);
-        });
-      }
-    } catch(e) {}
-  }
-}
-
-// Modal de asignación rápida de vehículo
-window.abrirModalAsignar = function(username, vehActual) {
-  const vehiculos = JSON.parse(localStorage.getItem('prodeni_vehiculos_cache') || '[]');
-  const opts = vehiculos.filter(v => (v.activo || 'SI') === 'SI').map(v =>
-    `<option value="${v.placas}" ${v.placas === vehActual ? 'selected' : ''}>${v.placas}${v.economico ? ' · ' + v.economico : ''} — ${[v.marca, v.modelo].filter(Boolean).join(' ')}</option>`
-  ).join('');
-
-  const div = document.createElement('div');
-  div.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px';
-  div.innerHTML = `
-    <div style="background:var(--surface);border-radius:24px;width:100%;max-width:420px;padding:24px;box-shadow:0 24px 64px rgba(0,0,0,.18)">
-      <h3 style="font-size:.95rem;font-weight:800;color:var(--g1);margin-bottom:4px"><i class="fas fa-truck"></i> Asignar vehículo</h3>
-      <p style="font-size:.73rem;color:var(--text3);margin-bottom:16px">Usuario: <strong>${username}</strong></p>
-      <select id="modalVehSel" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:12px;font-family:inherit;font-size:.85rem;margin-bottom:16px">
-        <option value="">— Sin asignar —</option>
-        ${opts}
-      </select>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
-        <button class="btn-secondary" onclick="this.closest('[style]').remove()">Cancelar</button>
-        <button class="btn-primary" onclick="confirmarAsignacion('${username}',document.getElementById('modalVehSel').value,this.closest('[style]'))">
-          <i class="fas fa-check"></i> Asignar
-        </button>
-      </div>
-    </div>`;
-  document.body.appendChild(div);
-};
-
-window.confirmarAsignacion = async function(username, placas, modal) {
-  modal.remove();
-  // Actualizar localmente
-  usuariosGlobal = usuariosGlobal.map(u => u.username === username ? { ...u, vehiculoAsignado: placas } : u);
-  localStorage.setItem('prodeni_usuarios_cache', JSON.stringify(usuariosGlobal));
-  renderUsuarios(usuariosGlobal);
-  window.toast(placas ? `Vehículo ${placas} asignado a ${username}` : `Asignación de ${username} liberada`, 'success');
-
-  if (navigator.onLine) {
-    try {
-      await fetch(window.SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'assignVehiculo', username, placas })
-      });
-      window.toast('Sincronizado ✓', 'success');
-    } catch(e) {}
-  }
-};
 
 window.guardarUsuario = async function() {
   const username = document.getElementById('userUsername').value.trim().toLowerCase();
   const password = document.getElementById('userPassword').value;
   const role = document.getElementById('userRole').value;
   const email = document.getElementById('userEmail').value.trim();
-  const vehiculoAsignado = document.getElementById('userVehiculo').value;
   if (!username) { window.toast('El nombre de usuario es requerido', 'error'); return; }
   if (!editandoUsername && !password) { window.toast('La contraseña es requerida para nuevos usuarios', 'error'); return; }
   
-  const userData = { username, role, email, vehiculoAsignado };
+  const userData = { username, role, email };
   if (password) userData.password = password;
   if (editandoUsername) userData.oldUsername = editandoUsername;
   
   // Guardar localmente
   if (editandoUsername) usuariosGlobal = usuariosGlobal.filter(u => u.username !== editandoUsername);
-  usuariosGlobal.push({ username, role, email, vehiculoAsignado });
+  usuariosGlobal.push({ username, role, email });
   localStorage.setItem('prodeni_usuarios_cache', JSON.stringify(usuariosGlobal));
   renderUsuarios(usuariosGlobal);
-  window.toast(editandoUsername ? 'Usuario actualizado' : 'Usuario creado', 'success');
+  window.toast(editandoUsername ? 'Usuario actualizado localmente' : 'Usuario creado localmente', 'success');
   cancelarEdicionUsuario();
   
   // Sincronizar con servidor
   if (navigator.onLine) {
     try {
-      const action = editandoUsername ? 'updateUser' : 'createUser';
       await fetch(window.SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action, ...userData })
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: editandoUsername ? 'updateUser' : 'createUser', ...userData })
       });
-      // Si tiene vehículo asignado, también sincronizar asignación
-      if (vehiculoAsignado) {
-        await fetch(window.SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'assignVehiculo', username, placas: vehiculoAsignado })
-        });
-      }
       window.toast('Sincronizado con la nube ✓', 'success');
     } catch(e) {}
   }
@@ -260,7 +158,6 @@ window.editarUsuario = function(username) {
   document.getElementById('userPassword').value = '';
   document.getElementById('userRole').value = u.role || 'tecnico';
   document.getElementById('userEmail').value = u.email || '';
-  if (document.getElementById('userVehiculo')) document.getElementById('userVehiculo').value = u.vehiculoAsignado || '';
   document.getElementById('formTitle').innerHTML = '<i class="fas fa-user-pen"></i> Editar usuario';
   document.getElementById('btnUserText').textContent = 'Guardar cambios';
   document.getElementById('passReq').style.display = 'none';
@@ -271,7 +168,6 @@ window.cancelarEdicionUsuario = function() {
   editandoUsername = null;
   ['userUsername', 'userPassword', 'userEmail'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('userRole').value = 'tecnico';
-  if (document.getElementById('userVehiculo')) document.getElementById('userVehiculo').value = '';
   document.getElementById('formTitle').innerHTML = '<i class="fas fa-user-plus"></i> Nuevo usuario';
   document.getElementById('btnUserText').textContent = 'Crear usuario';
   document.getElementById('passReq').style.display = 'inline';
@@ -292,5 +188,5 @@ window.eliminarUsuario = async function(username) {
 };
 
 window.cargarUsuarios();
-cargarVehiculosEnSelect();
+})();
 </script>

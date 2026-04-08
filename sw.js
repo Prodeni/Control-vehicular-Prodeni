@@ -11,26 +11,23 @@ const urlsToCache = [
   './modules/usuarios.html',
   './modules/mantenimiento.html',
   './modules/checklist.html',
-  './modules/chat.html'
+  './modules/mensajes.html'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache).catch(() => {}))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache).catch(() => {}))
   );
   self.skipWaiting();
 });
 
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
-  if (
-    url.hostname === 'script.google.com' ||
-    url.hostname.includes('googleusercontent.com') ||
-    url.hostname.includes('googleapis.com') ||
-    url.hostname.includes('cdnjs.cloudflare.com') ||
-    url.hostname.includes('fonts.googleapis.com')
-  ) { return; }
+  if (url.hostname === 'script.google.com' || 
+      url.hostname.includes('googleusercontent.com') ||
+      url.hostname.includes('googleapis.com')) {
+    return;
+  }
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request).then(fetchResponse => {

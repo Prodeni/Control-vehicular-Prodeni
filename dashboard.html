@@ -498,6 +498,10 @@
       <div class="conn-dot online" id="connDot"></div>
       <span id="connTxt">Online</span>
     </div>
+    <button class="btn-exit" id="btnNotificaciones" onclick="toggleNotificaciones()" style="position:relative;padding:7px 12px">
+      <i class="fas fa-bell"></i>
+      <span id="notifBadge" style="display:none;position:absolute;top:-2px;right:-2px;width:18px;height:18px;background:var(--red);color:white;border-radius:50%;font-size:.6rem;font-weight:800;display:none;align-items:center;justify-content:center">0</span>
+    </button>
     <div class="user-pill">
       <div class="user-avatar" id="userAvatar">A</div>
       <span class="user-pill-name" id="userName">Admin</span>
@@ -508,6 +512,15 @@
     </button>
   </div>
 </header>
+
+<!-- Panel de notificaciones -->
+<div id="notifPanel" style="display:none;position:fixed;top:var(--header-h);right:16px;width:360px;max-height:70vh;background:var(--surface);border-radius:0 0 var(--radius-lg) var(--radius-lg);box-shadow:var(--shadow-lg);border:1px solid var(--border);z-index:300;overflow-y:auto;animation:moduleIn .2s ease both">
+  <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--surface2)">
+    <span style="font-size:.85rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px"><i class="fas fa-bell" style="color:var(--g2)"></i> Notificaciones</span>
+    <button onclick="limpiarNotificaciones()" style="background:none;border:none;font-size:.7rem;color:var(--text3);cursor:pointer;font-family:inherit;font-weight:600">Limpiar todo</button>
+  </div>
+  <div id="notifList" style="padding:8px"></div>
+</div>
 
 <nav class="sidebar" id="sidebar"></nav>
 <main class="main" id="main"></main>
@@ -535,6 +548,27 @@ let currentUser = null;
 let currentRole = 'tecnico';
 let activeModule = 'dashboard';
 
+// Vehículo asignado al usuario actual
+window.getVehiculoAsignado = function() {
+  if (!currentUser) return null;
+  const cache = localStorage.getItem('prodeni_vehiculos_cache');
+  if (!cache) return null;
+  const vehiculos = JSON.parse(cache);
+  // Buscar vehículo cuyo conductor coincida con el username del usuario
+  // O buscar por asignación explícita
+  const asignacion = localStorage.getItem('prodeni_asignacion_' + currentUser.username);
+  if (asignacion) {
+    const veh = vehiculos.find(v => v.placas === asignacion);
+    if (veh) return veh;
+  }
+  // Fallback: buscar por nombre de conductor
+  return vehiculos.find(v => v.conductor && v.conductor.toLowerCase().includes((currentUser.username || '').toLowerCase())) || null;
+};
+
+window.setVehiculoAsignado = function(username, placas) {
+  localStorage.setItem('prodeni_asignacion_' + username, placas);
+};
+
 function getSession() {
   try {
     const raw = localStorage.getItem('prodeni_session');
@@ -556,23 +590,23 @@ function cerrarSesion() {
 
 const NAV_MODULES = {
   tecnico: [
-    { id: 'dashboard',    name: 'Dashboard',        icon: 'fas fa-chart-line',       section: 'PRINCIPAL' },
-    { id: 'checklist',    name: 'Checklist Diario', icon: 'fas fa-clipboard-check',  section: 'OPERACIONES' },
-    { id: 'inspeccion',   name: 'Inspección',       icon: 'fas fa-clipboard-list',   section: 'OPERACIONES' },
-    { id: 'bitacora',     name: 'Bitácora',         icon: 'fas fa-history',          section: 'OPERACIONES' },
-    { id: 'mantenimiento',name: 'Mantenimiento',    icon: 'fas fa-wrench',           section: 'OPERACIONES' },
-    { id: 'chat',         name: 'Mensajes',         icon: 'fas fa-comments',         section: 'COMUNICACIÓN' },
+    { id: 'dashboard',   name: 'Dashboard',        icon: 'fas fa-chart-line',      section: 'PRINCIPAL' },
+    { id: 'checklist',   name: 'Checklist Diario', icon: 'fas fa-list-check',      section: 'OPERACIONES' },
+    { id: 'inspeccion',  name: 'Nueva Inspección', icon: 'fas fa-clipboard-list',  section: 'OPERACIONES' },
+    { id: 'bitacora',    name: 'Bitácora',         icon: 'fas fa-history',         section: 'OPERACIONES' },
+    { id: 'mantenimiento', name: 'Mantenimiento',  icon: 'fas fa-wrench',          section: 'OPERACIONES' },
+    { id: 'mensajes',    name: 'Mensajes',         icon: 'fas fa-comment-dots',    section: 'COMUNICACIÓN' },
   ],
   admin: [
-    { id: 'dashboard',    name: 'Dashboard',        icon: 'fas fa-chart-line',       section: 'PRINCIPAL' },
-    { id: 'checklist',    name: 'Checklist Diario', icon: 'fas fa-clipboard-check',  section: 'OPERACIONES' },
-    { id: 'inspeccion',   name: 'Inspección',       icon: 'fas fa-clipboard-list',   section: 'OPERACIONES' },
-    { id: 'vehiculos',    name: 'Flota',            icon: 'fas fa-truck',            section: 'OPERACIONES' },
-    { id: 'bitacora',     name: 'Bitácora',         icon: 'fas fa-history',          section: 'OPERACIONES' },
-    { id: 'mantenimiento',name: 'Mantenimiento',    icon: 'fas fa-wrench',           section: 'OPERACIONES' },
-    { id: 'reportes',     name: 'Reportes',         icon: 'fas fa-chart-bar',        section: 'ADMINISTRACIÓN' },
-    { id: 'usuarios',     name: 'Usuarios',         icon: 'fas fa-users',            section: 'ADMINISTRACIÓN' },
-    { id: 'chat',         name: 'Mensajes',         icon: 'fas fa-comments',         section: 'COMUNICACIÓN' },
+    { id: 'dashboard',   name: 'Dashboard',        icon: 'fas fa-chart-line',      section: 'PRINCIPAL' },
+    { id: 'checklist',   name: 'Checklist Diario', icon: 'fas fa-list-check',      section: 'OPERACIONES' },
+    { id: 'inspeccion',  name: 'Nueva Inspección', icon: 'fas fa-clipboard-list',  section: 'OPERACIONES' },
+    { id: 'vehiculos',   name: 'Vehículos',        icon: 'fas fa-truck',           section: 'OPERACIONES' },
+    { id: 'bitacora',    name: 'Bitácora',         icon: 'fas fa-history',         section: 'OPERACIONES' },
+    { id: 'mantenimiento', name: 'Mantenimiento',  icon: 'fas fa-wrench',          section: 'OPERACIONES' },
+    { id: 'reportes',    name: 'Reportes',         icon: 'fas fa-file-chart-column', section: 'ADMINISTRACIÓN' },
+    { id: 'usuarios',    name: 'Usuarios',         icon: 'fas fa-users',           section: 'ADMINISTRACIÓN' },
+    { id: 'mensajes',    name: 'Mensajes',         icon: 'fas fa-comment-dots',    section: 'COMUNICACIÓN' },
   ]
 };
 
@@ -653,15 +687,15 @@ async function cargarModulo(moduleName) {
     
     // Llamar a funciones init después de delay
     setTimeout(() => {
-    const initFns = {
-        vehiculos:     () => typeof cargarVehiculos === 'function'          && cargarVehiculos(),
-        bitacora:      () => typeof cargarVehiculosSelector === 'function'  && cargarVehiculosSelector(),
-        usuarios:      () => typeof cargarUsuarios === 'function'           && cargarUsuarios(),
-        reportes:      () => typeof cargarReportes === 'function'           && cargarReportes(),
-        inspeccion:    () => { if (typeof cargarFormulario === 'function') cargarFormulario(); if (typeof generarFolio === 'function') generarFolio(); },
+      const initFns = {
+        vehiculos:  () => typeof cargarVehiculos === 'function' && cargarVehiculos(),
+        bitacora:   () => typeof cargarVehiculosSelector === 'function' && cargarVehiculosSelector(),
+        usuarios:   () => typeof cargarUsuarios === 'function' && cargarUsuarios(),
+        reportes:   () => typeof cargarReportes === 'function' && cargarReportes(),
+        inspeccion: () => { if (typeof cargarFormulario === 'function') cargarFormulario(); if (typeof generarFolio === 'function') generarFolio(); },
         mantenimiento: () => { if (typeof cargarVehiculosSelectorMnt === 'function') cargarVehiculosSelectorMnt(); },
-        checklist:     () => {},
-        chat:          () => {}
+        checklist: () => {},
+        mensajes: () => {}
       };
       if (initFns[moduleName]) { try { initFns[moduleName](); } catch(e) { console.warn(e); } }
     }, 100);
@@ -676,17 +710,18 @@ function loadDashboard() {
   const main = document.getElementById('main');
   const isAdmin = currentRole === 'admin';
   const quickCards = isAdmin ? [
-    { icon: 'fas fa-clipboard-check', title: 'Checklist Diario', desc: 'Revisión antes de salir a ruta',  mod: 'checklist',    color: '#2E7D32' },
-    { icon: 'fas fa-plus-circle',     title: 'Nueva Inspección', desc: 'Registrar estado de unidad',       mod: 'inspeccion',   color: '#1565C0' },
-    { icon: 'fas fa-truck',           title: 'Flota',            desc: 'Gestionar vehículos',              mod: 'vehiculos',    color: '#6A1B9A' },
-    { icon: 'fas fa-chart-bar',       title: 'Reportes',         desc: 'Exportar y analizar datos',        mod: 'reportes',     color: '#E65100' },
-    { icon: 'fas fa-comments',        title: 'Mensajes',         desc: 'Chat interno del equipo',          mod: 'chat',         color: '#00838F' }
+    { icon: 'fas fa-list-check',  title: 'Checklist Diario', desc: 'Revisión diaria del vehículo', mod: 'checklist',  color: '#00695C' },
+    { icon: 'fas fa-plus-circle', title: 'Nueva Inspección', desc: 'Registrar estado de unidad', mod: 'inspeccion', color: '#2E7D32' },
+    { icon: 'fas fa-truck',       title: 'Vehículos',        desc: 'Gestionar flota',            mod: 'vehiculos',  color: '#1565C0' },
+    { icon: 'fas fa-history',     title: 'Bitácora',         desc: 'Historial por unidad',       mod: 'bitacora',   color: '#6A1B9A' },
+    { icon: 'fas fa-chart-bar',   title: 'Reportes',         desc: 'Exportar y analizar datos',  mod: 'reportes',   color: '#E65100' },
+    { icon: 'fas fa-wrench',      title: 'Mantenimiento',    desc: 'Control de componentes',     mod: 'mantenimiento', color: '#F9A825' },
+    { icon: 'fas fa-comment-dots',title: 'Mensajes',         desc: 'Chat interno del equipo',    mod: 'mensajes',   color: '#37474F' }
   ] : [
-    { icon: 'fas fa-clipboard-check', title: 'Checklist Diario', desc: 'Revisión antes de salir a ruta',  mod: 'checklist',    color: '#2E7D32' },
-    { icon: 'fas fa-plus-circle',     title: 'Nueva Inspección', desc: 'Registrar estado de unidad',       mod: 'inspeccion',   color: '#1565C0' },
-    { icon: 'fas fa-history',         title: 'Bitácora',         desc: 'Historial por unidad',             mod: 'bitacora',     color: '#6A1B9A' },
-    { icon: 'fas fa-wrench',          title: 'Mantenimiento',    desc: 'Control de componentes',           mod: 'mantenimiento',color: '#F9A825' },
-    { icon: 'fas fa-comments',        title: 'Mensajes',         desc: 'Comunícate con el equipo',         mod: 'chat',         color: '#00838F' }
+    { icon: 'fas fa-list-check',  title: 'Checklist Diario', desc: 'Revisión diaria del vehículo', mod: 'checklist',  color: '#00695C' },
+    { icon: 'fas fa-plus-circle', title: 'Nueva Inspección', desc: 'Registrar estado de unidad', mod: 'inspeccion', color: '#2E7D32' },
+    { icon: 'fas fa-history',     title: 'Bitácora',         desc: 'Historial por unidad',       mod: 'bitacora',   color: '#6A1B9A' },
+    { icon: 'fas fa-wrench',      title: 'Mantenimiento',    desc: 'Control de componentes',     mod: 'mantenimiento', color: '#F9A825' }
   ];
   main.innerHTML = `<div class="module-enter"><div class="section-header"><div><h2>Bienvenido, ${currentUser?.username || 'usuario'} 👋</h2><p>${new Date().toLocaleDateString('es-MX', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p></div></div>
     <div class="stat-grid" id="statGrid">${[0,1,2,3].map(() => `<div class="skel" style="height:110px;border-radius:18px;"></div>`).join('')}</div>
@@ -738,7 +773,7 @@ async function sincronizarPendientes() {
     try {
       const response = await fetch(window.SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(item.data)
       });
       const result = await response.json();
@@ -750,6 +785,67 @@ async function sincronizarPendientes() {
     window.toast(`${ok} registro(s) sincronizados ✓`, 'success');
   }
 }
+
+// ============================================
+// SISTEMA DE NOTIFICACIONES
+// ============================================
+window.toggleNotificaciones = function() {
+  const panel = document.getElementById('notifPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  if (panel.style.display === 'block') renderNotificaciones();
+};
+
+function renderNotificaciones() {
+  const alertas = JSON.parse(localStorage.getItem('prodeni_alertas') || '[]');
+  const list = document.getElementById('notifList');
+
+  if (!alertas.length) {
+    list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3);font-size:.82rem"><i class="fas fa-check-circle" style="font-size:1.5rem;opacity:.3;display:block;margin-bottom:8px"></i>Sin notificaciones</div>';
+    return;
+  }
+
+  list.innerHTML = [...alertas].reverse().slice(0, 20).map((a, i) => {
+    const iconMap = { inspeccion_falla: 'fa-triangle-exclamation', checklist_falla: 'fa-list-check' };
+    const colorMap = { inspeccion_falla: 'var(--red)', checklist_falla: '#E65100' };
+    const icon = iconMap[a.tipo] || 'fa-bell';
+    const color = colorMap[a.tipo] || 'var(--g2)';
+    return `<div style="padding:12px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start;${a.leida ? 'opacity:.6' : ''}">
+      <div style="width:32px;height:32px;border-radius:9px;background:${color}15;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas ${icon}" style="color:${color};font-size:.8rem"></i></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.78rem;font-weight:700;color:var(--text)">${a.mensaje || 'Alerta'}</div>
+        <div style="font-size:.68rem;color:var(--text3);margin-top:3px">${a.usuario || ''} · ${a.fecha || ''} ${a.hora || ''}</div>
+        ${a.placas ? `<div style="font-size:.68rem;color:var(--g2);font-weight:600;margin-top:2px">${a.placas}</div>` : ''}
+        ${a.observacion ? `<div style="font-size:.7rem;color:var(--text2);margin-top:4px;font-style:italic">"${a.observacion}"</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.limpiarNotificaciones = function() {
+  localStorage.setItem('prodeni_alertas', '[]');
+  renderNotificaciones();
+  actualizarBadgeNotificaciones();
+  window.toast('Notificaciones limpiadas', 'success');
+};
+
+function actualizarBadgeNotificaciones() {
+  const alertas = JSON.parse(localStorage.getItem('prodeni_alertas') || '[]');
+  const noLeidas = alertas.filter(a => !a.leida).length;
+  const badge = document.getElementById('notifBadge');
+  if (badge) {
+    badge.textContent = noLeidas;
+    badge.style.display = noLeidas > 0 ? 'flex' : 'none';
+  }
+}
+
+// Cerrar panel al hacer clic fuera
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('notifPanel');
+  const btn = document.getElementById('btnNotificaciones');
+  if (panel && panel.style.display === 'block' && !panel.contains(e.target) && !btn.contains(e.target)) {
+    panel.style.display = 'none';
+  }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   const session = getSession();
@@ -768,6 +864,9 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('offline', updateConn);
   updateConn();
   window.addEventListener('online', sincronizarPendientes);
+  actualizarBadgeNotificaciones();
+  // Actualizar badge periódicamente
+  setInterval(actualizarBadgeNotificaciones, 15000);
 });
 
 window.cargarModulo = cargarModulo;

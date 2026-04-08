@@ -205,47 +205,129 @@
           </div>
           <div class="m-field"><label>Componente / Sistema</label>
             <select id="mntComponente" onchange="autoFillVidaUtil()">
-              <optgroup label="Motor y fluidos">
+              <optgroup label="Motor y Fluidos">
                 <option value="Aceite motor">Aceite motor</option>
                 <option value="Filtro aceite">Filtro aceite</option>
-                <option value="Filtro aire">Filtro aire</option>
-                <option value="Filtro gasolina">Filtro gasolina</option>
+                <option value="Filtro aire motor">Filtro aire motor</option>
+                <option value="Filtro gasolina/diésel">Filtro gasolina/diésel</option>
                 <option value="Bujías">Bujías</option>
+                <option value="Cables de bujías">Cables de bujías</option>
                 <option value="Banda de tiempo">Banda de tiempo</option>
                 <option value="Cadena de distribución">Cadena de distribución</option>
                 <option value="Bomba de agua">Bomba de agua</option>
                 <option value="Termostato">Termostato</option>
-                <option value="Correa de accesorios">Correa de accesorios</option>
+                <option value="Correa de accesorios (serpentina)">Correa de accesorios (serpentina)</option>
+                <option value="Tensor de banda">Tensor de banda</option>
                 <option value="Bomba de combustible">Bomba de combustible</option>
-              </optgroup>
-              <optgroup label="Frenos y suspensión">
-                <option value="Balatas delanteras">Balatas delanteras</option>
-                <option value="Balatas traseras">Balatas traseras</option>
-                <option value="Discos de freno">Discos de freno</option>
-                <option value="Líquido de frenos">Líquido de frenos</option>
-                <option value="Amortiguadores delanteros">Amortiguadores delanteros</option>
-                <option value="Amortiguadores traseros">Amortiguadores traseros</option>
-                <option value="Rotulas y terminales">Rotulas y terminales</option>
-                <option value="Balero de rueda">Balero de rueda</option>
+                <option value="Inyectores">Inyectores</option>
+                <option value="Válvula EGR">Válvula EGR</option>
+                <option value="Anticongelante/Refrigerante">Anticongelante/Refrigerante</option>
+                <option value="Mangueras de radiador">Mangueras de radiador</option>
+                <option value="Radiador">Radiador</option>
+                <option value="Tapa de radiador">Tapa de radiador</option>
+                <option value="Junta de cabeza (empaque)">Junta de cabeza (empaque)</option>
+                <option value="Soportes de motor">Soportes de motor</option>
               </optgroup>
               <optgroup label="Transmisión">
-                <option value="Aceite transmisión">Aceite transmisión</option>
-                <option value="Embrague">Embrague</option>
+                <option value="Aceite transmisión manual">Aceite transmisión manual</option>
+                <option value="Aceite transmisión automática">Aceite transmisión automática</option>
+                <option value="Embrague (clutch completo)">Embrague (clutch completo)</option>
+                <option value="Disco de embrague">Disco de embrague</option>
+                <option value="Collarín">Collarín</option>
+                <option value="Crucetas de flecha cardán">Crucetas de flecha cardán</option>
+                <option value="Aceite de diferencial">Aceite de diferencial</option>
+                <option value="Juntas homocinéticas">Juntas homocinéticas</option>
               </optgroup>
-              <optgroup label="Eléctrico">
-                <option value="Batería">Batería</option>
-                <option value="Alternador">Alternador</option>
-                <option value="Marcha / Arrancador">Marcha / Arrancador</option>
-                <option value="Sensor de oxígeno">Sensor de oxígeno</option>
+              <optgroup label="Frenos">
+                <option value="Balatas delanteras">Balatas delanteras</option>
+                <option value="Balatas traseras">Balatas traseras</option>
+                <option value="Discos de freno delanteros">Discos de freno delanteros</option>
+                <option value="Discos de freno traseros">Discos de freno traseros</option>
+                <option value="Tambores de freno">Tambores de freno</option>
+                <option value="Líquido de frenos">Líquido de frenos</option>
+                <option value="Cilindro maestro de freno">Cilindro maestro de freno</option>
+                <option value="Mangueras de freno">Mangueras de freno</option>
+                <option value="Caliper de freno">Caliper de freno</option>
+                <option value="Freno de estacionamiento (ajuste)">Freno de estacionamiento (ajuste)</option>
+              </optgroup>
+              <optgroup label="Suspensión y Dirección">
+                <option value="Amortiguadores delanteros">Amortiguadores delanteros</option>
+                <option value="Amortiguadores traseros">Amortiguadores traseros</option>
+                <option value="Rotulas superiores">Rotulas superiores</option>
+                <option value="Rotulas inferiores">Rotulas inferiores</option>
+                <option value="Terminales de dirección">Terminales de dirección</option>
+                <option value="Barra estabilizadora (links)">Barra estabilizadora (links)</option>
+                <option value="Bujes de suspensión">Bujes de suspensión</option>
+                <option value="Muelles/Hojas de resorte">Muelles/Hojas de resorte</option>
+                <option value="Resortes helicoidales">Resortes helicoidales</option>
+                <option value="Brazos de control">Brazos de control</option>
+                <option value="Caja de dirección">Caja de dirección</option>
+                <option value="Bomba de dirección hidráulica">Bomba de dirección hidráulica</option>
+                <option value="Aceite de dirección hidráulica">Aceite de dirección hidráulica</option>
+                <option value="Balero de rueda delantero">Balero de rueda delantero</option>
+                <option value="Balero de rueda trasero">Balero de rueda trasero</option>
               </optgroup>
               <optgroup label="Llantas">
                 <option value="Llanta delantera izquierda">Llanta delantera izquierda</option>
                 <option value="Llanta delantera derecha">Llanta delantera derecha</option>
                 <option value="Llanta trasera izquierda">Llanta trasera izquierda</option>
                 <option value="Llanta trasera derecha">Llanta trasera derecha</option>
+                <option value="Llanta trasera int. izquierda (doble rodado)">Llanta trasera int. izq. (doble rodado)</option>
+                <option value="Llanta trasera int. derecha (doble rodado)">Llanta trasera int. der. (doble rodado)</option>
+                <option value="Llanta de refacción">Llanta de refacción</option>
                 <option value="Rotación de llantas">Rotación de llantas</option>
                 <option value="Balanceo">Balanceo</option>
                 <option value="Alineación">Alineación</option>
+              </optgroup>
+              <optgroup label="Eléctrico y Cableado">
+                <option value="Batería">Batería</option>
+                <option value="Alternador">Alternador</option>
+                <option value="Marcha / Arrancador">Marcha / Arrancador</option>
+                <option value="Regulador de voltaje">Regulador de voltaje</option>
+                <option value="Sensor de oxígeno (O2)">Sensor de oxígeno (O2)</option>
+                <option value="Sensor MAP/MAF">Sensor MAP/MAF</option>
+                <option value="Sensor de temperatura">Sensor de temperatura</option>
+                <option value="Sensor de velocidad (VSS)">Sensor de velocidad (VSS)</option>
+                <option value="Bobina de encendido">Bobina de encendido</option>
+                <option value="Módulo de encendido">Módulo de encendido</option>
+                <option value="Arnés eléctrico principal">Arnés eléctrico principal</option>
+                <option value="Fusibles (revisión general)">Fusibles (revisión general)</option>
+                <option value="Relevadores (relays)">Relevadores (relays)</option>
+                <option value="Switch de ignición">Switch de ignición</option>
+              </optgroup>
+              <optgroup label="Iluminación / Focos">
+                <option value="Faros delanteros (halógeno)">Faros delanteros (halógeno)</option>
+                <option value="Faros delanteros (LED)">Faros delanteros (LED)</option>
+                <option value="Luces traseras/calaveras">Luces traseras/calaveras</option>
+                <option value="Luces de freno">Luces de freno</option>
+                <option value="Luces direccionales">Luces direccionales</option>
+                <option value="Luces de reversa">Luces de reversa</option>
+                <option value="Luces de trabajo/auxiliares">Luces de trabajo/auxiliares</option>
+                <option value="Luces de galibo/posición">Luces de galibo/posición</option>
+                <option value="Faro antiniebla">Faro antiniebla</option>
+                <option value="Luz interior cabina">Luz interior cabina</option>
+                <option value="Luz de tablero (focos)">Luz de tablero (focos)</option>
+              </optgroup>
+              <optgroup label="Carrocería y Sellado">
+                <option value="Limpiaparabrisas (plumas)">Limpiaparabrisas (plumas)</option>
+                <option value="Motor de limpiaparabrisas">Motor de limpiaparabrisas</option>
+                <option value="Parabrisas">Parabrisas</option>
+                <option value="Espejos laterales">Espejos laterales</option>
+                <option value="Bisagras de puertas">Bisagras de puertas</option>
+                <option value="Cerraduras de puertas">Cerraduras de puertas</option>
+                <option value="Sellos de puertas (hules)">Sellos de puertas (hules)</option>
+                <option value="Amortiguadores de cofre/cajuela">Amortiguadores de cofre/cajuela</option>
+                <option value="Pintura (retoque general)">Pintura (retoque general)</option>
+              </optgroup>
+              <optgroup label="Seguridad y Accesorios">
+                <option value="Cinturones de seguridad">Cinturones de seguridad</option>
+                <option value="Extintor (recarga)">Extintor (recarga)</option>
+                <option value="Triángulos de seguridad">Triángulos de seguridad</option>
+                <option value="Botiquín de primeros auxilios">Botiquín de primeros auxilios</option>
+                <option value="Claxon/Bocina">Claxon/Bocina</option>
+                <option value="Filtro de cabina (A/C)">Filtro de cabina (A/C)</option>
+                <option value="Gas refrigerante A/C">Gas refrigerante A/C</option>
+                <option value="Compresor de A/C">Compresor de A/C</option>
               </optgroup>
               <option value="otro">Otro (especificar)</option>
             </select>
@@ -301,23 +383,188 @@
 
 <script>
 (function(){
+// ============================================================
+// VIDA ÚTIL POR CATEGORÍAS - Valores de referencia fabricante
+// ============================================================
 const VIDA_UTIL_KM = {
-  'Aceite motor': 5000, 'Filtro aceite': 5000, 'Filtro aire': 20000, 'Filtro gasolina': 30000,
-  'Bujías': 30000, 'Banda de tiempo': 60000, 'Cadena de distribución': 120000, 'Bomba de agua': 80000,
-  'Termostato': 80000, 'Correa de accesorios': 40000, 'Bomba de combustible': 80000,
-  'Balatas delanteras': 25000, 'Balatas traseras': 35000, 'Discos de freno': 50000, 'Líquido de frenos': 20000,
-  'Amortiguadores delanteros': 60000, 'Amortiguadores traseros': 60000, 'Rotulas y terminales': 60000, 'Balero de rueda': 80000,
-  'Aceite transmisión': 40000, 'Embrague': 80000, 'Batería': 40000, 'Alternador': 120000,
-  'Marcha / Arrancador': 120000, 'Sensor de oxígeno': 60000,
-  'Llanta delantera izquierda': 40000, 'Llanta delantera derecha': 40000, 'Llanta trasera izquierda': 40000,
-  'Llanta trasera derecha': 40000, 'Rotación de llantas': 10000, 'Balanceo': 10000, 'Alineación': 15000
+  // ── MOTOR Y FLUIDOS ──
+  'Aceite motor': 5000,
+  'Filtro aceite': 5000,
+  'Filtro aire motor': 20000,
+  'Filtro gasolina/diésel': 30000,
+  'Bujías': 30000,
+  'Cables de bujías': 60000,
+  'Banda de tiempo': 60000,
+  'Cadena de distribución': 120000,
+  'Bomba de agua': 80000,
+  'Termostato': 80000,
+  'Correa de accesorios (serpentina)': 40000,
+  'Tensor de banda': 60000,
+  'Bomba de combustible': 80000,
+  'Inyectores': 100000,
+  'Válvula EGR': 80000,
+  'Anticongelante/Refrigerante': 40000,
+  'Mangueras de radiador': 80000,
+  'Radiador': 120000,
+  'Tapa de radiador': 40000,
+  'Junta de cabeza (empaque)': 150000,
+  'Soportes de motor': 80000,
+
+  // ── TRANSMISIÓN ──
+  'Aceite transmisión manual': 40000,
+  'Aceite transmisión automática': 60000,
+  'Embrague (clutch completo)': 80000,
+  'Disco de embrague': 60000,
+  'Collarín': 60000,
+  'Crucetas de flecha cardán': 60000,
+  'Aceite de diferencial': 60000,
+  'Juntas homocinéticas': 80000,
+
+  // ── FRENOS ──
+  'Balatas delanteras': 25000,
+  'Balatas traseras': 35000,
+  'Discos de freno delanteros': 50000,
+  'Discos de freno traseros': 60000,
+  'Tambores de freno': 80000,
+  'Líquido de frenos': 20000,
+  'Cilindro maestro de freno': 100000,
+  'Mangueras de freno': 60000,
+  'Caliper de freno': 100000,
+  'Freno de estacionamiento (ajuste)': 20000,
+
+  // ── SUSPENSIÓN ──
+  'Amortiguadores delanteros': 60000,
+  'Amortiguadores traseros': 60000,
+  'Rotulas superiores': 60000,
+  'Rotulas inferiores': 60000,
+  'Terminales de dirección': 50000,
+  'Barra estabilizadora (links)': 50000,
+  'Bujes de suspensión': 60000,
+  'Muelles/Hojas de resorte': 100000,
+  'Resortes helicoidales': 100000,
+  'Brazos de control': 80000,
+  'Caja de dirección': 120000,
+  'Bomba de dirección hidráulica': 100000,
+  'Aceite de dirección hidráulica': 40000,
+  'Balero de rueda delantero': 80000,
+  'Balero de rueda trasero': 80000,
+
+  // ── LLANTAS ──
+  'Llanta delantera izquierda': 40000,
+  'Llanta delantera derecha': 40000,
+  'Llanta trasera izquierda': 40000,
+  'Llanta trasera derecha': 40000,
+  'Llanta trasera int. izquierda (doble rodado)': 40000,
+  'Llanta trasera int. derecha (doble rodado)': 40000,
+  'Llanta de refacción': 40000,
+  'Rotación de llantas': 10000,
+  'Balanceo': 10000,
+  'Alineación': 15000,
+
+  // ── ELÉCTRICO Y CABLEADO ──
+  'Batería': 40000,
+  'Alternador': 120000,
+  'Marcha / Arrancador': 120000,
+  'Regulador de voltaje': 80000,
+  'Sensor de oxígeno (O2)': 60000,
+  'Sensor MAP/MAF': 80000,
+  'Sensor de temperatura': 80000,
+  'Sensor de velocidad (VSS)': 80000,
+  'Bobina de encendido': 80000,
+  'Módulo de encendido': 100000,
+  'Arnés eléctrico principal': 200000,
+  'Fusibles (revisión general)': 20000,
+  'Relevadores (relays)': 80000,
+  'Switch de ignición': 100000,
+
+  // ── ILUMINACIÓN / FOCOS ──
+  'Faros delanteros (halógeno)': 30000,
+  'Faros delanteros (LED)': 80000,
+  'Luces traseras/calaveras': 50000,
+  'Luces de freno': 30000,
+  'Luces direccionales': 30000,
+  'Luces de reversa': 30000,
+  'Luces de trabajo/auxiliares': 40000,
+  'Luces de galibo/posición': 30000,
+  'Faro antiniebla': 40000,
+  'Luz interior cabina': 40000,
+  'Luz de tablero (focos)': 60000,
+
+  // ── CARROCERÍA Y SELLADO ──
+  'Limpiaparabrisas (plumas)': 10000,
+  'Motor de limpiaparabrisas': 100000,
+  'Parabrisas': 150000,
+  'Espejos laterales': 100000,
+  'Bisagras de puertas': 100000,
+  'Cerraduras de puertas': 80000,
+  'Sellos de puertas (hules)': 80000,
+  'Amortiguadores de cofre/cajuela': 60000,
+  'Pintura (retoque general)': 60000,
+
+  // ── SEGURIDAD Y ACCESORIOS ──
+  'Cinturones de seguridad': 100000,
+  'Extintor (recarga)': 20000,
+  'Triángulos de seguridad': 40000,
+  'Botiquín de primeros auxilios': 20000,
+  'Claxon/Bocina': 80000,
+  'Filtro de cabina (A/C)': 15000,
+  'Gas refrigerante A/C': 40000,
+  'Compresor de A/C': 120000
 };
 
 const COMPONENTE_ICONS = {
-  'Aceite motor': {icon:'fas fa-oil-can',color:'#FF8F00',bg:'#FFF8E1'},
-  'Batería': {icon:'fas fa-battery-full',color:'#1565C0',bg:'#E3F2FD'},
-  'Balatas': {icon:'fas fa-circle-dot',color:'#C62828',bg:'#FFEBEE'},
+  'Aceite': {icon:'fas fa-oil-can',color:'#FF8F00',bg:'#FFF8E1'},
+  'Filtro': {icon:'fas fa-filter',color:'#8D6E63',bg:'#EFEBE9'},
+  'Bujía': {icon:'fas fa-bolt',color:'#FFA000',bg:'#FFF8E1'},
+  'Banda': {icon:'fas fa-link',color:'#6D4C41',bg:'#EFEBE9'},
+  'Cadena': {icon:'fas fa-link',color:'#5D4037',bg:'#EFEBE9'},
+  'Bomba': {icon:'fas fa-pump-medical',color:'#0277BD',bg:'#E1F5FE'},
+  'Radiador': {icon:'fas fa-temperature-high',color:'#D32F2F',bg:'#FFEBEE'},
+  'Anticongelante': {icon:'fas fa-snowflake',color:'#0288D1',bg:'#E1F5FE'},
+  'Manguera': {icon:'fas fa-water',color:'#0288D1',bg:'#E1F5FE'},
+  'Embrague': {icon:'fas fa-circle-notch',color:'#6A1B9A',bg:'#F3E5F5'},
+  'Transmisión': {icon:'fas fa-gears',color:'#6A1B9A',bg:'#F3E5F5'},
+  'Cruceta': {icon:'fas fa-plus',color:'#5D4037',bg:'#EFEBE9'},
+  'Balata': {icon:'fas fa-circle-dot',color:'#C62828',bg:'#FFEBEE'},
+  'Disco': {icon:'fas fa-compact-disc',color:'#C62828',bg:'#FFEBEE'},
+  'Tambor': {icon:'fas fa-drum',color:'#AD1457',bg:'#FCE4EC'},
+  'Líquido': {icon:'fas fa-droplet',color:'#0288D1',bg:'#E1F5FE'},
+  'Freno': {icon:'fas fa-hand',color:'#C62828',bg:'#FFEBEE'},
+  'Caliper': {icon:'fas fa-grip-lines',color:'#B71C1C',bg:'#FFEBEE'},
+  'Amortiguador': {icon:'fas fa-arrows-up-down',color:'#37474F',bg:'#ECEFF1'},
+  'Rotula': {icon:'fas fa-circle',color:'#455A64',bg:'#ECEFF1'},
+  'Terminal': {icon:'fas fa-link',color:'#546E7A',bg:'#ECEFF1'},
+  'Buje': {icon:'fas fa-ring',color:'#607D8B',bg:'#ECEFF1'},
+  'Resorte': {icon:'fas fa-arrows-up-down',color:'#37474F',bg:'#ECEFF1'},
+  'Dirección': {icon:'fas fa-dharmachakra',color:'#455A64',bg:'#ECEFF1'},
+  'Balero': {icon:'fas fa-circle-notch',color:'#546E7A',bg:'#ECEFF1'},
   'Llanta': {icon:'fas fa-tire',color:'#37474F',bg:'#ECEFF1'},
+  'Alineación': {icon:'fas fa-ruler-combined',color:'#455A64',bg:'#ECEFF1'},
+  'Balanceo': {icon:'fas fa-scale-balanced',color:'#546E7A',bg:'#ECEFF1'},
+  'Batería': {icon:'fas fa-battery-full',color:'#1565C0',bg:'#E3F2FD'},
+  'Alternador': {icon:'fas fa-bolt-lightning',color:'#F57F17',bg:'#FFF8E1'},
+  'Marcha': {icon:'fas fa-key',color:'#E65100',bg:'#FFF3E0'},
+  'Sensor': {icon:'fas fa-microchip',color:'#1565C0',bg:'#E3F2FD'},
+  'Bobina': {icon:'fas fa-bolt',color:'#F57F17',bg:'#FFF8E1'},
+  'Arnés': {icon:'fas fa-code-branch',color:'#0D47A1',bg:'#E3F2FD'},
+  'Fusible': {icon:'fas fa-plug',color:'#E65100',bg:'#FFF3E0'},
+  'Relevador': {icon:'fas fa-toggle-on',color:'#1565C0',bg:'#E3F2FD'},
+  'Faro': {icon:'fas fa-lightbulb',color:'#FFC107',bg:'#FFFDE7'},
+  'Luz': {icon:'fas fa-lightbulb',color:'#FFA000',bg:'#FFF8E1'},
+  'Limpia': {icon:'fas fa-droplet-slash',color:'#546E7A',bg:'#ECEFF1'},
+  'Parabrisas': {icon:'fas fa-window-maximize',color:'#78909C',bg:'#ECEFF1'},
+  'Espejo': {icon:'fas fa-clone',color:'#607D8B',bg:'#ECEFF1'},
+  'Bisagra': {icon:'fas fa-door-open',color:'#795548',bg:'#EFEBE9'},
+  'Cerradura': {icon:'fas fa-lock',color:'#5D4037',bg:'#EFEBE9'},
+  'Sello': {icon:'fas fa-tape',color:'#795548',bg:'#EFEBE9'},
+  'Pintura': {icon:'fas fa-paint-roller',color:'#7B1FA2',bg:'#F3E5F5'},
+  'Cinturón': {icon:'fas fa-shield-halved',color:'#2E7D32',bg:'#E8F5E9'},
+  'Extintor': {icon:'fas fa-fire-extinguisher',color:'#D32F2F',bg:'#FFEBEE'},
+  'Triángulo': {icon:'fas fa-triangle-exclamation',color:'#E65100',bg:'#FFF3E0'},
+  'Botiquín': {icon:'fas fa-kit-medical',color:'#D32F2F',bg:'#FFEBEE'},
+  'Claxon': {icon:'fas fa-bell',color:'#F57F17',bg:'#FFF8E1'},
+  'Compresor': {icon:'fas fa-snowflake',color:'#0277BD',bg:'#E1F5FE'},
+  'Gas': {icon:'fas fa-wind',color:'#0288D1',bg:'#E1F5FE'},
   'default': {icon:'fas fa-gear',color:'#5A7A5A',bg:'#F0F4F1'},
 };
 
@@ -343,6 +590,15 @@ window.cargarVehiculosSelectorMnt = async function() {
   sel.innerHTML = '<option value="">— Selecciona una unidad —</option>' +
     mntVehiculos.map(v => `<option value="${v.placas}">${v.placas} · ${[v.marca, v.modelo].filter(Boolean).join(' ')} · ${v.conductor || 'Sin conductor'}</option>`).join('');
   sel.onchange = () => cargarMantenimientoVehiculo();
+
+  // Auto-seleccionar vehículo asignado
+  if (typeof window.getVehiculoAsignado === 'function') {
+    const asignado = window.getVehiculoAsignado();
+    if (asignado && asignado.placas) {
+      sel.value = asignado.placas;
+      cargarMantenimientoVehiculo();
+    }
+  }
 };
 
 async function cargarMantenimientoVehiculo() {
@@ -400,7 +656,8 @@ function renderComponentes() {
       else { estado = 'ok'; estadoTxt = `${kmRestantes.toLocaleString()} km restantes`; barClass = 'bar-ok'; }
     }
     
-    const iconData = COMPONENTE_ICONS[comp.split(' ')[0]] || COMPONENTE_ICONS.default;
+    const iconKey = Object.keys(COMPONENTE_ICONS).find(k => k !== 'default' && comp.toLowerCase().includes(k.toLowerCase()));
+    const iconData = (iconKey ? COMPONENTE_ICONS[iconKey] : null) || COMPONENTE_ICONS.default;
     const estadoBadge = { ok:'status-ok', warn:'status-warn', due:'status-due', unknown:'status-unknown' }[estado];
     const estadoBadgeTxt = { ok:'✓ Al día', warn:'⚠ Próximo', due:'⛔ Vencido', unknown:'Sin datos' }[estado];
     
@@ -581,7 +838,7 @@ window.guardarMantto = async function() {
     try {
       await fetch(window.SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(reg)
       });
       window.toast('Sincronizado con la nube ✓', 'success');
