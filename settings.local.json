@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -l /d/control-vehicular-pobreni-main/modules/*.html)"
+    ]
+  }
+}
