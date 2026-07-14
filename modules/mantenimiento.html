@@ -114,6 +114,8 @@
     </button>
   </div>
 
+  <div id="servicioMayorCard" style="display:none;background:var(--surface);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border)"></div>
+
   <div id="alertaBanner" class="alert-banner">
     <div class="alert-icon">⚠️</div>
     <div>
@@ -571,6 +573,7 @@ const COMPONENTE_ICONS = {
 let mntVehiculoActual = null;
 let mntHistorial = [];
 let mntVehiculos = [];
+let mntKmFlota = {}; // placa (mayusculas) -> {km_actual, km_proximo_servicio_mayor, fecha_ultimo_gps}
 
 window.cargarVehiculosSelectorMnt = async function() {
   const sel = document.getElementById('mntVehiculoSelector');
@@ -605,13 +608,13 @@ async function cargarMantenimientoVehiculo() {
   const placas = document.getElementById('mntVehiculoSelector').value;
   if (!placas) return;
   mntVehiculoActual = placas;
-  
+
   const local = localStorage.getItem(`prodeni_mantto_${placas}`);
   if (local) {
     mntHistorial = JSON.parse(local);
     renderTodoMantto();
   }
-  
+
   if (navigator.onLine) {
     try {
       const r = await fetch(`${window.SCRIPT_URL}?action=getMantenimientos&placas=${encodeURIComponent(placas)}`);
@@ -619,14 +622,52 @@ async function cargarMantenimientoVehiculo() {
       if (d.success && d.registros) {
         mntHistorial = d.registros;
         localStorage.setItem(`prodeni_mantto_${placas}`, JSON.stringify(mntHistorial));
-        renderTodoMantto();
       }
     } catch(e) {}
+
+    if (window.obtenerKmFlotaSupabase) {
+      mntKmFlota = await window.obtenerKmFlotaSupabase();
+    }
   }
   renderTodoMantto();
 }
 
+function renderServicioMayor() {
+  const card = document.getElementById('servicioMayorCard');
+  const km = mntKmFlota[String(mntVehiculoActual || '').trim().toUpperCase()];
+
+  if (!km || km.km_actual == null) {
+    card.style.display = 'block';
+    card.innerHTML = `<div style="display:flex;align-items:center;gap:10px;color:var(--text3);font-size:.82rem"><i class="fas fa-satellite-dish"></i> Sin datos de GPS/odómetro aún para esta unidad</div>`;
+    return;
+  }
+
+  const kmActual = Math.round(km.km_actual);
+  const kmProximo = km.km_proximo_servicio_mayor != null ? Math.round(km.km_proximo_servicio_mayor) : null;
+  const vencido = kmProximo != null && kmActual > kmProximo;
+  const kmRestantes = kmProximo != null ? kmProximo - kmActual : null;
+
+  card.style.display = 'block';
+  card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-size:.63rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--g2);margin-bottom:6px">Servicio mayor (cada 10,000 km)</div>
+        <div style="font-size:1.4rem;font-weight:800;color:var(--text)">${kmActual.toLocaleString()} km <span style="font-size:.8rem;font-weight:600;color:var(--text3)">actuales</span></div>
+      </div>
+      <div style="text-align:right">
+        ${kmProximo != null ? `
+          <div style="font-size:.78rem;color:var(--text3)">Próximo servicio</div>
+          <div style="font-size:1.1rem;font-weight:800;color:${vencido ? 'var(--red)' : 'var(--g2)'}">
+            ${vencido ? '⚠️ VENCIDO' : kmProximo.toLocaleString() + ' km'}
+          </div>
+          <div style="font-size:.72rem;color:var(--text3)">${vencido ? `excedido por ${Math.abs(kmRestantes).toLocaleString()} km` : `faltan ${kmRestantes.toLocaleString()} km`}</div>
+        ` : `<div style="font-size:.78rem;color:var(--text3)">Sin servicio mayor registrado aún</div>`}
+      </div>
+    </div>`;
+}
+
 function renderTodoMantto() {
+  renderServicioMayor();
   renderComponentes();
   renderHistorialMantto();
   renderLlantas();
@@ -635,7 +676,8 @@ function renderTodoMantto() {
 
 function renderComponentes() {
   const grid = document.getElementById('componentesGrid');
-  const kmActual = 0; // Se podría obtener del vehículo actual
+  const kmData = mntKmFlota[String(mntVehiculoActual || '').trim().toUpperCase()];
+  const kmActual = kmData && kmData.km_actual != null ? Math.round(kmData.km_actual) : 0;
   const componentesTrackeados = Object.keys(VIDA_UTIL_KM);
   const alertas = [];
   

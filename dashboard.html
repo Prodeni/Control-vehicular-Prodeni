@@ -535,6 +535,30 @@
 window.SCRIPT_URL = localStorage.getItem('prodeni_script_url') ||
   'https://script.google.com/macros/s/AKfycbzGKkNNv7QHHrdfaSLmaSCeYl0ZghshplY7nYw5j7BY3h0Oqs3iseE2Oi18UXuOsfUj/exec';
 
+// Supabase: solo lectura de km/odometro de la flota (key publica, protegida por RLS).
+// NUNCA poner aqui la service_role key.
+window.SUPABASE_URL = 'https://ezfxeyjhtochstqeuzvl.supabase.co';
+window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6ZnhleWpodG9jaHN0cWV1enZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3NTY2NzcsImV4cCI6MjA5MTMzMjY3N30.5SZMdXyNbY5exmXjiezNjKHk0IfeaJSj6wALXA_1W2o';
+
+// Trae {placa: {km_actual, km_proximo_servicio_mayor, fecha_ultimo_gps}} para TODAS las unidades activas.
+// Se usa en vehiculos.html (tarjetas de flota) y mantenimiento.html (servicio mayor).
+window.obtenerKmFlotaSupabase = async function() {
+  try {
+    const r = await fetch(
+      `${window.SUPABASE_URL}/rest/v1/v_flota_estado?activo=eq.true&select=placa,km_actual,km_proximo_servicio_mayor,fecha_ultimo_gps`,
+      { headers: { apikey: window.SUPABASE_ANON_KEY, Authorization: `Bearer ${window.SUPABASE_ANON_KEY}` } }
+    );
+    const rows = await r.json();
+    if (!Array.isArray(rows)) return {};
+    const mapa = {};
+    rows.forEach(v => { mapa[v.placa] = v; });
+    return mapa;
+  } catch (e) {
+    console.warn('No se pudo obtener km en vivo de Supabase:', e);
+    return {};
+  }
+};
+
 window.toast = function(msg, tipo = '') {
   const t = document.getElementById('toast');
   if (!t) return;

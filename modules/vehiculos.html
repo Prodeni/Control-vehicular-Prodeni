@@ -182,6 +182,7 @@
 (function(){
 let vehiculosGlobal = [];
 let editandoPlacas = null;
+let kmFlotaGlobal = {}; // placa (mayusculas) -> {km_actual, km_proximo_servicio_mayor, fecha_ultimo_gps}
 
 // Catálogo de marcas/modelos (mismo que inspección)
 const CATALOGO_VEH = {
@@ -241,7 +242,11 @@ window.cargarVehiculos = async function() {
     return;
   }
   try {
-    const r = await fetch(`${window.SCRIPT_URL}?action=getVehiculos`);
+    const [r, kmMapa] = await Promise.all([
+      fetch(`${window.SCRIPT_URL}?action=getVehiculos`),
+      window.obtenerKmFlotaSupabase ? window.obtenerKmFlotaSupabase() : Promise.resolve({})
+    ]);
+    kmFlotaGlobal = kmMapa;
     const d = await r.json();
     if (d.success && d.vehiculos) {
       vehiculosGlobal = d.vehiculos;
@@ -272,10 +277,27 @@ window.renderVehiculos = function(lista) {
     const marcaIcono = {
       'RAM': '🐏', 'Nissan': '🇯🇵', 'Chevrolet': '🏁', 'Ford': '🛻', 'Freightliner': '🚛'
     }[v.marca] || '🚗';
+
+    // Km en vivo desde Supabase (ConnectGPS) + estado del servicio mayor cada 10,000 km
+    const km = kmFlotaGlobal[String(v.placas || '').trim().toUpperCase()];
+    let kmBadge = '';
+    if (km && km.km_actual != null) {
+      const kmActual = Math.round(km.km_actual);
+      const kmProximo = km.km_proximo_servicio_mayor != null ? Math.round(km.km_proximo_servicio_mayor) : null;
+      const vencido = kmProximo != null && kmActual > kmProximo;
+      kmBadge = `<div style="margin-top:8px;padding:6px 10px;border-radius:8px;font-size:.7rem;font-weight:700;display:flex;align-items:center;gap:5px;background:${vencido ? '#FFEBEE' : '#E8F5E9'};color:${vencido ? '#C62828' : '#1B5E20'}">
+        <i class="fas fa-gauge-high"></i> ${kmActual.toLocaleString()} km
+        ${kmProximo != null ? `· Servicio ${kmProximo.toLocaleString()} km ${vencido ? '⚠️ vencido' : ''}` : ''}
+      </div>`;
+    } else {
+      kmBadge = `<div style="margin-top:8px;padding:6px 10px;border-radius:8px;font-size:.7rem;font-weight:600;color:var(--text3);background:var(--bg)"><i class="fas fa-gauge-high"></i> Sin datos GPS aún</div>`;
+    }
+
     return `<div class="veh-card">
       <div class="veh-card-top"><div><div class="veh-plates">${marcaIcono} ${v.placas || '—'}</div>${v.economico ? `<span class="veh-eco">${v.economico}</span>` : ''}</div><div class="veh-dot ${on ? 'on' : 'off'}" title="${on ? 'Activo' : 'Inactivo'}"></div></div>
       <div class="veh-model">${[v.marca, v.modelo, v.version].filter(Boolean).join(' ') || 'Sin especificar'}</div>
       <div class="veh-sub">${v.anio || ''}${v.color ? ' · ' + v.color : ''}${v.vin ? ' · VIN …' + v.vin.slice(-4) : ''}</div>
+      ${kmBadge}
       <div class="veh-sep"></div>
       <div class="veh-driver"><div class="veh-avatar">${ini}</div><div><div class="veh-driver-name">${v.conductor || 'Sin conductor'}</div><div class="veh-driver-route">${v.ruta || v.baseOrigen || 'Sin ruta'}</div></div></div>
       ${asignado ? `<div style="margin-top:10px;padding:6px 10px;background:#E3F2FD;border-radius:8px;font-size:.7rem;font-weight:700;color:#1565C0;display:flex;align-items:center;gap:5px"><i class="fas fa-user-check"></i> Asignado a: ${asignado}</div>` : ''}
